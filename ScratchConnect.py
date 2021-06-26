@@ -236,6 +236,16 @@ class ScratchConnect:
         }
         return data
 
+    # Main
+    def get_site_health(self):
+        return json.loads(requests.get("https://api.scratch.mit.edu/health").text)
+
+    def get_news(self):
+        return json.loads(requests.get("https://api.scratch.mit.edu/news").text)
+
+    def get_front_page_projects(self):
+        return json.loads(requests.get("https://api.scratch.mit.edu/proxy/featured").text)
+
     def connect_project(self, project_id):
         return Project.Project(project_id)
 
