@@ -240,4 +240,5 @@ class ScratchConnect:
         return Project.Project(project_id)
 
     def connect_user(self, username):
-        return User.User(username, self.username, self.csrf_token, self.session_id, self.token)
+        return User.User(username=username, client_username=self.username, csrf_token=self.csrf_token,
+                         session_id=self.session_id, token=self.token)
