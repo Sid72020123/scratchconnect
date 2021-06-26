@@ -256,6 +256,11 @@ class ScratchConnect:
         }
         return data
 
+    def _check_project(self, project_id):
+        try:
+            json.loads(requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").text)["id"]
+        except KeyError:
+            print("Error!")
     # Main
     def get_site_health(self):
         return json.loads(requests.get("https://api.scratch.mit.edu/health").text)
@@ -265,6 +270,57 @@ class ScratchConnect:
 
     def get_front_page_projects(self):
         return json.loads(requests.get("https://api.scratch.mit.edu/proxy/featured").text)
+
+    def explore_projects(self, mode="trending", query="*"):
+        return json.loads(requests.get(
+            "https://api.scratch.mit.edu/explore/projects/?mode="
+            + mode
+            + "&q="
+            + query
+        ).text)
+
+    def explore_studios(self, mode="trending", query="*"):
+        return json.loads(requests.get(
+            "https://api.scratch.mit.edu/explore/studios/?mode="
+            + mode
+            + "&q="
+            + query
+        ).text)
+
+    def search_projects(self, mode="trending", search="*"):
+        return json.loads(requests.get(
+            "https://api.scratch.mit.edu/search/projects/?mode="
+            + mode
+            + "&q="
+            + search
+        ).text)
+
+    def search_studios(self, mode="trending", search="*"):
+        return json.loads(requests.get(
+            "https://api.scratch.mit.edu/search/studios/?mode="
+            + mode
+            + "&q="
+            + search
+        ).text)
+
+    def set_featured_project(self, project_id, label='featured_project'):
+        self._check_project(project_id)
+        _label = (
+            {
+                "featured_project": "",
+                "featured_tutorial": 0,
+                "work_in_progress": 1,
+                "remix_this": 2,
+                "my_favorite_things": 3,
+                "why_i_scratch": 4,
+            }
+        )[label]
+        data = {"featured_project": project_id, "featured_project_label": _label}
+        return json.loads(requests.put(
+            "https://scratch.mit.edu/site-api/users/all/" + self.username + "/",
+            data=json.dumps(data),
+            headers=self.headers,
+        ).text)
 
     def connect_project(self, project_id):
         return Project.Project(project_id)
