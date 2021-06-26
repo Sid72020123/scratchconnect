@@ -77,6 +77,9 @@ class User:
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
             "favorites"]
 
+    def get_featured_data(self):
+        return json.loads(requests.get(f"https://scratch.mit.edu/site-api/users/all/{self.username}").text)
+
     def get_following(self, all=False, limit=40, offset=0):
         following = []
         if all:
