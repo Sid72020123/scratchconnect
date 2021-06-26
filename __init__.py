@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "0.1.9"
+__version__ = "0.2"
 __developer__ = "Siddhesh Chavan"
 __documentation__ = "--------------"
 __doc__ = f"""
@@ -12,7 +12,8 @@ Documentation(Tutorial):
 History:
     19/06/2021(v0.0.0.1) - First made the library and updated it.
     20/06/2021(v0.1) - Added many features.
-    21/06/2021(v0.1.1) - Bug fixes.
+    21/06/2021(v0.1.9) - Bug fixes.
+    26/06/2021(v0.2.0) - Made Improvements
 Credits:
     All code by Siddhesh Chavan.
 Information:

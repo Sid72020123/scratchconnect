@@ -236,21 +236,6 @@ class ScratchConnect:
         }
         return data
 
-    def set_bio(self, content):
-        data = {"bio": content}
-        return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
-                            data=data,
-                            headers=self.headers,
-                            )
-
-    def set_work(self, content):
-        data = {"status": content}
-        return requests.put(
-            f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
-            data=data,
-            headers=self.headers,
-        )
-
     def connect_project(self, project_id):
         return Project.Project(project_id)
 
