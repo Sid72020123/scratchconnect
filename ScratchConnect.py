@@ -116,6 +116,25 @@ class ScratchConnect:
     def get_featured_data(self):
         return json.loads(requests.get(f"https://scratch.mit.edu/site-api/users/all/{self.username}").text)
 
+    def get_projects(self, all=False, limit=20, offset=0):
+        if all:
+            projects = []
+            offset = 0
+            while True:
+                request = requests.get(
+                    f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit=40&offset={offset}").text
+                projects.append(request)
+                if len(request) != 40:
+                    break
+                offset += 40
+        if not all:
+            projects = []
+            for i in range(1, limit + 1):
+                request = requests.get(
+                    f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit={limit}&offset={offset}").text
+                projects.append(request)
+        return projects
+
     def get_follower_count(self):
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
             "followers"]
@@ -233,6 +252,7 @@ class ScratchConnect:
             'Followers': self.get_followers(all=True),
             'Following': self.get_following(all=True),
             'Favourites': self.get_favourites(all=True),
+            'Projects': self.get_projects(all=True)
         }
         return data
 
