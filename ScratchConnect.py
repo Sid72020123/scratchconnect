@@ -113,6 +113,9 @@ class ScratchConnect:
     def get_country(self):
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").text)["country"]
 
+    def get_featured_data(self):
+        return json.loads(requests.get(f"https://scratch.mit.edu/site-api/users/all/{self.username}").text)
+
     def get_follower_count(self):
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
             "followers"]
