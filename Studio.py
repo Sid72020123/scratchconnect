@@ -1,6 +1,7 @@
 import requests
 import json
 
+import scratchconnect.ScratchConnect
 import scratchconnect.Exceptions
 
 _website = "scratch.mit.edu"
@@ -39,3 +40,18 @@ class Studio:
 
     def get_title(self):
         return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["title"]
+
+    def get_owner(self):
+        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["owner"]
+
+    def get_description(self):
+        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["description"]
+
+    def get_visibility(self):
+        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["visibility"]
+
+    def get_public(self):
+        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["public"] == True
+
+    def get_open_to_all(self):
+        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["open_to_all"] == True
