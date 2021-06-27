@@ -55,3 +55,12 @@ class Studio:
 
     def get_open_to_all(self):
         return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["open_to_all"] == True
+
+    def get_comments_allowed(self):
+        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["comments_allowed"] == True
+
+    def get_history(self):
+        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["history"]
+
+    def get_stats(self):
+        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["stats"]

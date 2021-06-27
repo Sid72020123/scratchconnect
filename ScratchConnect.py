@@ -267,7 +267,6 @@ class ScratchConnect:
         except KeyError:
             raise Exceptions.InvalidProject(f"The project with ID - '{project_id}' doesn't exist!")
 
-    # Main
     def get_site_health(self):
         return json.loads(requests.get("https://api.scratch.mit.edu/health").text)
 
@@ -331,6 +330,10 @@ class ScratchConnect:
             data=json.dumps(data),
             headers=self.headers,
         ).text)
+
+    def get_user_follower_history(self, segment="", range=30):
+        return json.loads(requests.get(
+            f"https://scratchdb.lefty.one/v3/user/graph/{self.username}/followers?segment={segment}&range={range}").text)
 
     def connect_project(self, project_id):
         return Project.Project(project_id)

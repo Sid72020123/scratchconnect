@@ -150,6 +150,10 @@ class User:
             favorites.append(response)
         return favorites
 
+    def get_user_follower_history(self, segment="", range=30):
+        return json.loads(requests.get(
+            f"https://scratchdb.lefty.one/v3/user/graph/{self.username}/followers?segment={segment}&range={range}").text)
+
     def post_comment(self, content, commentee_id="", parent_id=""):
         data = {
             "commentee_id": commentee_id,
