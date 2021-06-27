@@ -216,6 +216,8 @@ class ScratchConnect:
 
     def follow_user(self, username):
         self.check(username)
+        if username == self.username:
+            raise Exceptions.UnauthorizedAction(f"You can't follow yourself!")
         return requests.put(
             "https://scratch.mit.edu/site-api/users/followers/"
             + username
@@ -226,6 +228,8 @@ class ScratchConnect:
 
     def unfollow_user(self, username):
         self.check(username)
+        if username == self.username:
+            raise Exceptions.UnauthorizedAction(f"You can't unfollow yourself!")
         return requests.put(
             "https://scratch.mit.edu/site-api/users/followers/"
             + username
@@ -306,6 +310,10 @@ class ScratchConnect:
 
     def set_featured_project(self, project_id, label='featured_project'):
         self._check_project(project_id)
+        if not json.loads(requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").text)["author"][
+                   "username"] == self.username:
+            raise Exceptions.UnauthorizedAction(
+                f"The project with ID - '{project_id}' cannot be set because the owner of that project is not '{self.username}'!")
         _label = (
             {
                 "featured_project": "",

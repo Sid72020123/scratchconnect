@@ -8,3 +8,7 @@ class InvalidUser(Exception):
 
 class InvalidProject(Exception):
     pass
+
+
+class UnauthorizedAction(Exception):
+    pass
