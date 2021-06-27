@@ -6,6 +6,10 @@ class InvalidUser(Exception):
     pass
 
 
+class InvalidStudio(Exception):
+    pass
+
+
 class InvalidProject(Exception):
     pass
 

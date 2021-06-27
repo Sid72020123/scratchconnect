@@ -4,6 +4,7 @@ import re
 
 from scratchconnect import Exceptions
 from scratchconnect import Project
+from scratchconnect import Studio
 from scratchconnect import User
 
 _website = "scratch.mit.edu"
@@ -333,6 +334,10 @@ class ScratchConnect:
 
     def connect_project(self, project_id):
         return Project.Project(project_id)
+
+    def connect_studio(self, studio_id):
+        return Studio.Studio(id=studio_id, client_username=self.username, csrf_token=self.csrf_token,
+                             session_id=self.session_id, token=self.token)
 
     def connect_user(self, username):
         return User.User(username=username, client_username=self.username, csrf_token=self.csrf_token,

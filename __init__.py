@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "0.2.7"
+__version__ = "0.2.9"
 __developer__ = "Siddhesh Chavan"
 __documentation__ = "--------------"
 __doc__ = f"""
@@ -14,7 +14,7 @@ History:
     20/06/2021(v0.1) - Added many features.
     21/06/2021(v0.1.9) - Bug fixes.
     26/06/2021(v0.2.0) - Made Improvements and added new features.
-    27/06/2021(v0.2.6) - Bug Fixes and update.
+    27/06/2021(v0.2.6) - Bug Fixes and update and made the 'Studio' class.
 Credits:
     All code by Siddhesh Chavan.
 Information:
