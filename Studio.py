@@ -126,3 +126,35 @@ class Studio:
             f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.id}/remove/?usernames={self.client_username}",
             headers=self.headers,
         ).text)
+
+    def toggle_commenting(self):
+        headers = self.headers
+        headers["referer"] = (
+            f"https://scratch.mit.edu/studios/{self.id}/comments/"
+        )
+        return requests.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.id}/toggle-comments/",
+                             headers=headers,
+                             ).text
+
+    def post_comment(self, content, parent_id="", commentee_id=""):
+        headers = self.headers
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/comments/"
+                              )
+        data = {
+            "commentee_id": commentee_id,
+            "content": content,
+            "parent_id": parent_id,
+        }
+        return requests.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.id}/add/",
+                             headers=headers,
+                             data=json.dumps(data),
+                             )
+
+    def delete_comment(self, comment_id):
+        headers = self.headers
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/comments/")
+        data = {"id": comment_id}
+        return requests.post(f"https://scratch.mit.edu/site-api/comments/user/{self.client_username}/del/",
+                             headers=headers,
+                             data=json.dumps(data),
+                             )
