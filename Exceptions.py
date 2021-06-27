@@ -4,3 +4,7 @@ class InvalidInfo(Exception):
 
 class InvalidUser(Exception):
     pass
+
+
+class InvalidProject(Exception):
+    pass

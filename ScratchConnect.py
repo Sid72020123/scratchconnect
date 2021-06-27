@@ -260,7 +260,8 @@ class ScratchConnect:
         try:
             json.loads(requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").text)["id"]
         except KeyError:
-            print("Error!")
+            raise Exceptions.InvalidProject(f"The project with ID - '{project_id}' doesn't exist!")
+
     # Main
     def get_site_health(self):
         return json.loads(requests.get("https://api.scratch.mit.edu/health").text)
