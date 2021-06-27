@@ -2,7 +2,7 @@ import requests
 import json
 
 import scratchconnect.ScratchConnect
-import scratchconnect.Exceptions
+from scratchconnect import Exceptions
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -35,6 +35,15 @@ class Studio:
         except KeyError:
             raise scratchconnect.Exceptions.InvalidStudio(f"Studio with ID - '{id}' doesn't exist!")
 
+    def _check_project(self, project_id):
+        try:
+            json.loads(requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").text)["id"]
+        except KeyError:
+            raise Exceptions.InvalidProject(f"The project with ID - '{project_id}' doesn't exist!")
+
+    def get_user_id(self, username):
+        return json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
+
     def get_id(self):
         return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["id"]
 
@@ -64,3 +73,56 @@ class Studio:
 
     def get_stats(self):
         return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["stats"]
+
+    def add_project(self, project_id):
+        self._check_project(project_id)
+        if not (self.get_owner() == self.get_user_id(self.client_username) and self.get_open_to_all()):
+            raise Exceptions.UnauthorizedAction(
+                f"The owner of the studio ID - '{self.id}' has forbidden to allow add projects to non-curators!")
+        headers = self.headers
+        headers["referer"] = f"https://scratch.mit.edu/projects/{project_id}/"
+        return json.loads(requests.post(
+            "https://api.scratch.mit.edu/studios/"
+            + str(self.id)
+            + "/project/"
+            + str(project_id)
+            + "/",
+            headers=headers,
+        ).text)
+
+    def remove_project(self, project_id):
+        self._check_project(project_id)
+        headers = self.headers
+        headers["referer"] = f"https://scratch.mit.edu/projects/{project_id}/"
+        return json.loads(requests.post(
+            "https://api.scratch.mit.edu/studios/"
+            + str(self.id)
+            + "/project/"
+            + str(project_id)
+            + "/",
+            headers=headers,
+        ).text)
+
+    def open_to_public(self):
+        return json.loads(requests.put(
+            f"https://scratch.mit.edu/site-api/galleries/{self.id}/mark/open/",
+            headers=self.headers,
+        ).text)
+
+    def close_to_public(self):
+        return json.loads(requests.put(
+            f"https://scratch.mit.edu/site-api/galleries/{self.id}/mark/closed/",
+            headers=self.headers,
+        ).text)
+
+    def follow_studio(self):
+        return json.loads(requests.put(
+            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.id}/add/?usernames={self.client_username}",
+            headers=self.headers,
+        ).text)
+
+    def unfollow_studio(self):
+        return json.loads(requests.put(
+            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.id}/remove/?usernames={self.client_username}",
+            headers=self.headers,
+        ).text)
