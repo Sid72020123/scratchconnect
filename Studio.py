@@ -200,4 +200,18 @@ class Studio:
         return requests.put(
             f"https://scratch.mit.edu/site-api/users/curators-in/{self.id}/promote/?usernames={username}",
             headers=headers,
-            )
+        )
+
+    def set_description(self, content):
+        data = {"description": content}
+        return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.id}/",
+                            headers=self.headers,
+                            data=json.dumps(data),
+                            ).json()
+
+    def set_title(self, content):
+        data = {"title": content}
+        return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.id}/",
+                            headers=self.headers,
+                            data=json.dumps(data),
+                            ).json()
