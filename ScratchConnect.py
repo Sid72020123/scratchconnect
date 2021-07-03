@@ -239,6 +239,20 @@ class ScratchConnect:
             headers=self.headers,
         )
 
+    def set_bio(self, content):
+        data = {"bio": content}
+        return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
+                            data=data,
+                            headers=self.headers,
+                            )
+
+    def set_work(self, content):
+        data = {"status": content}
+        return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
+                            data=data,
+                            headers=self.headers,
+                            )
+
     def get_all_data(self):
         data = {
             'UserName': self.username,
@@ -335,13 +349,14 @@ class ScratchConnect:
         return json.loads(requests.get(
             f"https://scratchdb.lefty.one/v3/user/graph/{self.username}/followers?segment={segment}&range={range}").text)
 
-    def connect_project(self, project_id):
-        return Project.Project(project_id)
+    def connect_user(self, username):
+        return User.User(username=username, client_username=self.username, csrf_token=self.csrf_token,
+                         session_id=self.session_id, token=self.token)
 
     def connect_studio(self, studio_id):
         return Studio.Studio(id=studio_id, client_username=self.username, csrf_token=self.csrf_token,
                              session_id=self.session_id, token=self.token)
 
-    def connect_user(self, username):
-        return User.User(username=username, client_username=self.username, csrf_token=self.csrf_token,
-                         session_id=self.session_id, token=self.token)
+    def connect_project(self, project_id):
+        return Project.Project(id=project_id, client_username=self.username, csrf_token=self.csrf_token,
+                               session_id=self.session_id, token=self.token)

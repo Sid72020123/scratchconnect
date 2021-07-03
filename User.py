@@ -1,7 +1,7 @@
 import requests
 import json
 
-import scratchconnect.Exceptions
+from scratchconnect import Exceptions
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -33,7 +33,7 @@ class User:
         try:
             json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
         except KeyError:
-            raise scratchconnect.Exceptions.InvalidUser(f"Username '{self.username}' doesn't exist!")
+            raise Exceptions.InvalidUser(f"Username '{self.username}' doesn't exist!")
 
     def get_id(self):
         return json.loads(requests.get(f"{_api}/users/{self.username}").text)["id"]
@@ -165,6 +165,15 @@ class User:
             headers=self.headers,
             data=json.dumps(data),
         )
+
+    def report(self, field):
+        if self.username != self.client_username:
+            raise Exceptions.UnauthorizedAction("You are not allowed to do that")
+        data = {"selected_field": field}
+        requests.post(f"https://scratch.mit.edu/site-api/users/all/{self.username}/report/",
+                      headers=self.headers,
+                      data=json.dumps(data),
+                      )
 
     def get_all_data(self):
         data = {

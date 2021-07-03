@@ -80,21 +80,16 @@ class Studio:
     def get_stats(self):
         return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["stats"]
 
+    def get_thumbnail_url(self):
+        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["image"]
+
     def add_project(self, project_id):
         self._check_project(project_id)
-        if not (self.get_owner() == self.get_user_id(self.client_username) and self.get_open_to_all()):
-            raise Exceptions.UnauthorizedAction(
-                f"The owner of the studio ID - '{self.id}' has forbidden to allow add projects to non-curators!")
         headers = self.headers
         headers["referer"] = f"https://scratch.mit.edu/projects/{project_id}/"
-        return json.loads(requests.post(
-            "https://api.scratch.mit.edu/studios/"
-            + str(self.id)
-            + "/project/"
-            + str(project_id)
-            + "/",
-            headers=headers,
-        ).text)
+        return json.loads(requests.post(f"https://api.scratch.mit.edu/studios/{self.id}/project/{project_id}/",
+                                        headers=headers,
+                                        ).text)
 
     def remove_project(self, project_id):
         self._check_project(project_id)
