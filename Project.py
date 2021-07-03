@@ -50,16 +50,16 @@ class Project:
     def get_comments_allowed(self):
         return json.loads(requests.get(f"{_project}{self.id}").text)["comments_allowed"] == True
 
-    def get_views(self):
+    def get_views_count(self):
         return json.loads(requests.get(f"{_project}{self.id}").text)["stats"]["views"]
 
-    def get_loves(self):
+    def get_loves_count(self):
         return json.loads(requests.get(f"{_project}{self.id}").text)["stats"]["loves"]
 
-    def get_favourites(self):
+    def get_favourites_count(self):
         return json.loads(requests.get(f"{_project}{self.id}").text)["stats"]["favorites"]
 
-    def get_remixes(self):
+    def get_remixes_count(self):
         return json.loads(requests.get(f"{_project}{self.id}").text)["stats"]["remixes"]
 
     def get_history(self):
