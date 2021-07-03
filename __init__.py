@@ -15,6 +15,7 @@ History:
     21/06/2021(v0.1.9) - Bug fixes.
     26/06/2021(v0.2.0) - Made Improvements and added new features.
     27/06/2021(v0.2.6) - Bug Fixes and update and made the 'Studio' class.
+    03/07/2021(v0.4.5) - Added many functions.
 Credits:
     All code by Siddhesh Chavan.
 Information:

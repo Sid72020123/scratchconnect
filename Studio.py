@@ -41,6 +41,12 @@ class Studio:
         except KeyError:
             raise Exceptions.InvalidProject(f"The project with ID - '{project_id}' doesn't exist!")
 
+    def _check_username(self, username):
+        try:
+            json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
+        except KeyError:
+            raise scratchconnect.Exceptions.InvalidUser(f"Username '{username}' doesn't exist!")
+
     def get_user_id(self, username):
         return json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
 
@@ -158,3 +164,40 @@ class Studio:
                              headers=headers,
                              data=json.dumps(data),
                              )
+
+    def report_comment(self, comment_id):
+        headers = self.headers
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/comments/")
+        data = {"id": comment_id}
+        return requests.post(f"https://scratch.mit.edu/site-api/comments/user/{self.client_username}/rep/",
+                             headers=headers,
+                             data=json.dumps(data),
+                             )
+
+    def invite_curator(self, username):
+        self._check_username(username)
+        headers = self.headers
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/curators/")
+        return requests.put(
+            f"https://scratch.mit.edu/site-api/users/curators-in/{self.id}/invite_curator/?usernames={username}",
+            headers=headers,
+        )
+
+    def accept_curator(self):
+        headers = self.headers
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/curators/")
+        return requests.put(
+            f"https://scratch.mit.edu/site-api/users/curators-in/{self.id}/add/?usernames={self.client_username}",
+            headers=headers,
+        )
+
+    def promote_curator(self, username):
+        self._check_username(username)
+        headers = self.headers
+        headers["referer"] = (
+                "https://scratch.mit.edu/studios/" + str(self.id) + "/curators/"
+        )
+        return requests.put(
+            f"https://scratch.mit.edu/site-api/users/curators-in/{self.id}/promote/?usernames={username}",
+            headers=headers,
+            )

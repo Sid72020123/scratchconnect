@@ -35,8 +35,8 @@ class User:
         except KeyError:
             raise scratchconnect.Exceptions.InvalidUser(f"Username '{self.username}' doesn't exist!")
 
-    def get_id(self, username):
-        return json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
+    def get_id(self):
+        return json.loads(requests.get(f"{_api}/users/{self.username}").text)["id"]
 
     def get_messages_count(self):
         return json.loads(requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count").text)[
