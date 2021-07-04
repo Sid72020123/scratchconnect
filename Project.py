@@ -29,6 +29,20 @@ class Project:
             "referer": "https://scratch.mit.edu/projects/" + self.id + "/",
         }
 
+        self.json_headers = {
+            "x-csrftoken": self.csrf_token,
+            "X-Token": self.token,
+            "x-requested-with": "XMLHttpRequest",
+            "Cookie": "scratchcsrftoken="
+                      + self.csrf_token
+                      + ";scratchlanguage=en;scratchsessionsid="
+                      + self.session_id
+                      + ";",
+            "referer": "https://scratch.mit.edu/projects/" + str(self.id) + "/",
+            "accept": "application/json",
+            "Content-Type": "application/json",
+        }
+
     def _check(self, id):
         try:
             json.loads(requests.get(f"https://api.scratch.mit.edu/projects/{id}/").text)["id"]
@@ -148,3 +162,56 @@ class Project:
             projects.append(requests.get(
                 f"https://api.scratch.mit.edu/projects/{self.id}/remixes/?limit={limit}&offset={offset}").json())
         return projects
+
+    def post_comment(self, content, parent_id="", commentee_id=""):
+        data = {
+            "commentee_id": commentee_id,
+            "content": content,
+            "parent_id": parent_id,
+        }
+        return requests.post(
+            "https://api.scratch.mit.edu/proxy/comments/project/" + str(self.id) + "/",
+            headers=self.json_headers,
+            data=json.dumps(data),
+        ).json()
+
+    def toggle_commenting(self):
+        if self.get_author()['username'] != self.client_username:
+            raise Exceptions.UnauthorizedAction(
+                f"You are not allowed to do that because you are not the owner of the project with ID - '{self.id}'!")
+        data = {"comments_allowed": not self.get_comments_allowed()}
+        return requests.put(f"https://api.scratch.mit.edu/projects/{self.id}/",
+                            data=json.dumps(data),
+                            headers=self.json_headers,
+                            ).json()
+
+    def turn_on_commenting(self):
+        if self.get_author()['username'] != self.client_username:
+            raise Exceptions.UnauthorizedAction(
+                f"You are not allowed to do that because you are not the owner of the project with ID - '{self.id}'!")
+        data = {"comments_allowed": True}
+        return requests.put(f"https://api.scratch.mit.edu/projects/{self.id}/",
+                            data=json.dumps(data),
+                            headers=self.json_headers,
+                            ).json()
+
+    def turn_off_commenting(self):
+        if self.get_author()['username'] != self.client_username:
+            raise Exceptions.UnauthorizedAction(
+                f"You are not allowed to do that because you are not the owner of the project with ID - '{self.id}'!")
+        data = {"comments_allowed": False}
+        return requests.put(f"https://api.scratch.mit.edu/projects/{self.id}/",
+                            data=json.dumps(data),
+                            headers=self.json_headers,
+                            ).json()
+
+    def report(self, category, reason, image=None):
+        if self.get_author()['username'] == self.client_username:
+            raise Exceptions.UnauthorizedAction("You can't report your own project!")
+        if not image:
+            self.get_thumbnail_url()
+        data = {"notes": reason, "report_category": category, "thumbnail": image}
+        return requests.post(f"https://api.scratch.mit.edu/proxy/comments/project/{self.id}/",
+                             data=json.dumps(data),
+                             headers=self.json_headers,
+                             ).text
