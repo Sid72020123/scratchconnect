@@ -252,3 +252,15 @@ class Project:
 
     def reply_comment(self, comment_id, content):
         return self.post_comment(content=content, parent_id=comment_id)
+
+    def set_title(self, title):
+        data = {'title': title}
+        return requests.put(f"{_project}{self.id}", data=json.dumps(data), headers=self.json_headers).json()
+
+    def set_description(self, description):
+        data = {'description': description}
+        return requests.put(f"{_project}{self.id}", data=json.dumps(data), headers=self.json_headers).json()
+
+    def set_instruction(self, instruction):
+        data = {'instructions': instruction}
+        return requests.put(f"{_project}{self.id}", data=json.dumps(data), headers=self.json_headers).json()
