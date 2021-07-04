@@ -1,2 +1,4 @@
 # scratchconnect
- Python Library to connect Scratch API and much more.
+
+Python Library to connect Scratch API and much more.
+
