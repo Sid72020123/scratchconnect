@@ -173,7 +173,7 @@ class Project:
             "https://api.scratch.mit.edu/proxy/comments/project/" + str(self.id) + "/",
             headers=self.json_headers,
             data=json.dumps(data),
-        ).json()
+        )
 
     def toggle_commenting(self):
         if self.get_author()['username'] != self.client_username:
@@ -215,3 +215,40 @@ class Project:
                              data=json.dumps(data),
                              headers=self.json_headers,
                              ).text
+
+    def unshare(self):
+        if self.get_author()['username'] != self.client_username:
+            raise Exceptions.UnauthorizedAction(
+                f"You are not allowed to do that because you are not the owner of the project with ID - '{self.id}'!")
+        return requests.put(f"https://api.scratch.mit.edu/proxy/projects/{self.id}/unshare/",
+                            headers=self.json_headers,
+                            )
+
+    def view(self):
+        return requests.post(f"https://api.scratch.mit.edu/users/{self.client_username}/projects/{self.id}/views/",
+                             headers=self.headers,
+                             )
+
+    def set_thumbnail(self, file):
+        if self.get_author()['username'] != self.client_username:
+            raise Exceptions.UnauthorizedAction(
+                f"You are not allowed to do that because you are not the owner of the project with ID - '{self.id}'!")
+        image = open(file, "rb")
+        return requests.post(f"https://scratch.mit.edu/internalapi/project/thumbnail/{self.id}/set/",
+                             data=image.read(),
+                             headers=self.headers,
+                             )
+
+    def delete_comment(self, comment_id):
+        return requests.delete(f"https://api.scratch.mit.edu/proxy/comments/project/{self.id}/comment/{comment_id}",
+                               headers=self.headers,
+                               )
+
+    def report_comment(self, comment_id):
+        return requests.delete(
+            f"https://api.scratch.mit.edu/proxy/comments/project/{self.id}/comment/{comment_id}/report",
+            headers=self.headers,
+        )
+
+    def reply_comment(self, comment_id, content):
+        return self.post_comment(content=content, parent_id=comment_id)
