@@ -264,3 +264,6 @@ class Project:
     def set_instruction(self, instruction):
         data = {'instructions': instruction}
         return requests.put(f"{_project}{self.id}", data=json.dumps(data), headers=self.json_headers).json()
+
+    def connect_cloud_variables(self):
+        pass
