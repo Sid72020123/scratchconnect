@@ -67,7 +67,7 @@ class ScratchConnect:
         return json.loads(requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count").text)[
             "count"]
 
-    def get_messages(self, all=False, limit=20, offset=0):
+    def get_messages(self, all=False, limit=20, offset=0, filter="all"):
         headers = {
             "x-csrftoken": self.csrf_token,
             "X-Token": self.token,
@@ -84,7 +84,7 @@ class ScratchConnect:
             offset = 0
             while True:
                 request = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/messages/?limit=40&offset={offset}",
+                    f"https://api.scratch.mit.edu/users/{self.username}/messages/?limit=40&offset={offset}&filter={filter}",
                     headers=headers).json()
                 messages.append(request)
                 if len(request) != 40:
@@ -94,7 +94,7 @@ class ScratchConnect:
             messages = []
             for i in range(1, limit + 1):
                 request = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/messages/?limit={limit}&offset={offset}",
+                    f"https://api.scratch.mit.edu/users/{self.username}/messages/?limit={limit}&offset={offset}&filter={filter}",
                     headers=headers).json()
                 messages.append(request)
         return messages

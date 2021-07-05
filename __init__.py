@@ -16,7 +16,8 @@ History:
     26/06/2021(v0.2.0) - Made Improvements and added new features.
     27/06/2021(v0.2.6) - Bug Fixes and update and made the 'Studio' class.
     03/07/2021(v0.4.5) - Added many functions and made the 'Project' class.
-    04/07/2021(v0.5.0) - Update. 
+    04/07/2021(v0.5.0) - Update.
+    05/07/2021(v0.5.1) - Updated the messages function. 
 Credits:
     All code by Siddhesh Chavan.
 Information:

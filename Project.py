@@ -2,6 +2,7 @@ import json
 import requests
 
 from scratchconnect import Exceptions
+from scratchconnect import CloudConnection
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -266,4 +267,6 @@ class Project:
         return requests.put(f"{_project}{self.id}", data=json.dumps(data), headers=self.json_headers).json()
 
     def connect_cloud_variables(self):
-        pass
+        return CloudConnection.CloudConnection(project_id=self.id, client_username=self.client_username,
+                                               csrf_token=self.csrf_token,
+                                               session_id=self.session_id, token=self.token)
