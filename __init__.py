@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 __developer__ = "Siddhesh Chavan"
 __documentation__ = "--------------"
 __doc__ = f"""
