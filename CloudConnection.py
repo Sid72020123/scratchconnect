@@ -51,3 +51,17 @@ class CloudConnection:
                          'Value': response[i]['value'],
                          })
         return data
+
+    def get_cloud_variable_value(self, variable_name):
+        if str(variable_name.strip())[0] != "☁":
+            n = f"☁ {variable_name.strip()}"
+        else:
+            n = f"{variable_name.strip()}"
+        data = []
+        d = self.get_variable_data()
+        i = 0
+        while i < len(d):
+            if d[i]['Name'] == n:
+                data.append(d[i]['Value'])
+            i = i + 1
+        print(data)
