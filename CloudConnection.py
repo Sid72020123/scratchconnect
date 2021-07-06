@@ -2,6 +2,8 @@ import json
 import requests
 import websocket
 
+from scratchconnect import Exceptions
+
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
 _api = f"api.{_website}"
@@ -39,6 +41,7 @@ class CloudConnection:
             "accept": "application/json",
             "Content-Type": "application/json",
         }
+        self._make_connection()
 
     def get_variable_data(self, limit=1000, offset=0):
         response = requests.get(
@@ -52,16 +55,61 @@ class CloudConnection:
                          })
         return data
 
-    def get_cloud_variable_value(self, variable_name):
+    def get_cloud_variable_value(self, variable_name, limit=100):
         if str(variable_name.strip())[0] != "☁":
             n = f"☁ {variable_name.strip()}"
         else:
             n = f"{variable_name.strip()}"
         data = []
-        d = self.get_variable_data()
+        d = self.get_variable_data(limit=limit)
         i = 0
         while i < len(d):
             if d[i]['Name'] == n:
                 data.append(d[i]['Value'])
             i = i + 1
-        print(data)
+        if len(data) == 0:
+            raise Exceptions.InvalidCloudVariableName(
+                f"No Cloud Variable with the name '{n}' in project with ID - '{self.project_id}'")
+        return data
+
+    def _send_packet(self, packet):
+        self._ws.send(json.dumps(packet) + "\n")
+
+    def _make_connection(self):
+        self._ws = websocket.WebSocket()
+        self._ws.connect(
+            "wss://clouddata.scratch.mit.edu",
+            cookie=f"scratchsessionsid={self.session_id};",
+            origin="https://scratch.mit.edu",
+            enable_multithread=True,
+        )
+        self._send_packet(
+            {
+                "method": "handshake",
+                "user": self.client_username,
+                "project_id": str(self.project_id),
+            }
+        )
+
+    def set_cloud_variable(self, variable_name, value):
+        try:
+            if str(variable_name.strip())[0] != "☁":
+                n = f"☁ {variable_name.strip()}"
+            else:
+                n = f"{variable_name.strip()}"
+            data = self.get_cloud_variable_value(variable_name=n, limit=1)
+            if len(data) == 0:
+                raise Exceptions.InvalidCloudVariableName(
+                    f"No Cloud Variable with the name '{n}' in project with ID - '{self.project_id}'")
+            packet = {
+                "method": "set",
+                "name": n,
+                "value": str(value),
+                "user": self.client_username,
+                "project_id": str(self.project_id),
+            }
+            self._send_packet(packet)
+            return True
+        except ConnectionAbortedError:
+            self._make_connection()
+            return False

@@ -16,3 +16,7 @@ class InvalidProject(Exception):
 
 class UnauthorizedAction(Exception):
     pass
+
+
+class InvalidCloudVariableName(Exception):
+    pass

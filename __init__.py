@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 __developer__ = "Siddhesh Chavan"
 __documentation__ = "--------------"
 __doc__ = f"""
@@ -9,6 +9,8 @@ Import Statement:
     import scratchconnect
 Documentation(Tutorial):
     For documentation, go to {__documentation__}
+Required Libraries:
+    requests, re, json, websocket, websocket-client
 History:
     19/06/2021(v0.0.0.1) - First made the library and updated it.
     20/06/2021(v0.1) - Added many features.
@@ -31,5 +33,6 @@ Information:
 """
 
 from scratchconnect.ScratchConnect import ScratchConnect
+from scratchconnect import Exceptions
 
 print(f"{__name__} v{__version__} - {__documentation__}")
