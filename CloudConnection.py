@@ -83,6 +83,7 @@ class CloudConnection:
             cookie=f"scratchsessionsid={self.session_id};",
             origin="https://scratch.mit.edu",
             enable_multithread=True,
+            subprotocols=["binary", "base64"]
         )
         self._send_packet(
             {
