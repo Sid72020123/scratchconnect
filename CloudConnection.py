@@ -1,6 +1,7 @@
 import json
 import requests
 import websocket
+import time
 
 from scratchconnect import Exceptions
 
@@ -97,10 +98,6 @@ class CloudConnection:
                 n = f"☁ {variable_name.strip()}"
             else:
                 n = f"{variable_name.strip()}"
-            data = self.get_cloud_variable_value(variable_name=n, limit=1)
-            if len(data) == 0:
-                raise Exceptions.InvalidCloudVariableName(
-                    f"No Cloud Variable with the name '{n}' in project with ID - '{self.project_id}'")
             packet = {
                 "method": "set",
                 "name": n,
@@ -112,4 +109,6 @@ class CloudConnection:
             return True
         except ConnectionAbortedError:
             self._make_connection()
+            time.sleep(0.1)
+            self.set_cloud_variable(variable_name, value)
             return False
