@@ -113,3 +113,9 @@ class CloudConnection:
             time.sleep(0.1)
             self.set_cloud_variable(variable_name, value)
             return False
+
+        except BrokenPipeError:
+            self._make_connection()
+            time.sleep(0.1)
+            self.set_cloud_variable(variable_name, value)
+            return False
