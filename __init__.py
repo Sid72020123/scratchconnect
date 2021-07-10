@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "0.8.7"
+__version__ = "0.9.0"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "--------------"
 __doc__ = f"""
@@ -10,7 +10,7 @@ Import Statement:
 Documentation(Tutorial):
     For documentation, go to {__documentation__}
 Required Libraries:
-    requests*, re*, json*, websocket, websocket-client
+    requests*, re*, json*, time*, websocket, websocket-client
     * -> In-built
 History:
     19/06/2021(v0.0.0.1) - First made the library and updated it.
