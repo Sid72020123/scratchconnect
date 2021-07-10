@@ -18,5 +18,5 @@ class UnauthorizedAction(Exception):
     pass
 
 
-class InvalidCloudVariableName(Exception):
+class InvalidCloudValue(Exception):
     pass

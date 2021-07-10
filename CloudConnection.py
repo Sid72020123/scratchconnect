@@ -44,7 +44,7 @@ class CloudConnection:
         }
         self._make_connection()
 
-    def get_variable_data(self, limit=1000, offset=0):
+    def get_variable_data(self, limit=100, offset=0):
         response = requests.get(
             f"https://clouddata.scratch.mit.edu/logs?projectid={self.project_id}&limit={limit}&offset={offset}").json()
         data = []
@@ -68,9 +68,6 @@ class CloudConnection:
             if d[i]['Name'] == n:
                 data.append(d[i]['Value'])
             i = i + 1
-        if len(data) == 0:
-            raise Exceptions.InvalidCloudVariableName(
-                f"No Cloud Variable with the name '{n}' in project with ID - '{self.project_id}'")
         return data
 
     def _send_packet(self, packet):
@@ -94,6 +91,8 @@ class CloudConnection:
         )
 
     def set_cloud_variable(self, variable_name, value):
+        if not str(value).isdigit():
+            raise Exceptions.InvalidCloudValue(f"The Cloud Value should be a set of digits and not '{value}'!")
         try:
             if str(variable_name.strip())[0] != "☁":
                 n = f"☁ {variable_name.strip()}"
@@ -108,13 +107,7 @@ class CloudConnection:
             }
             self._send_packet(packet)
             return True
-        except ConnectionAbortedError:
-            self._make_connection()
-            time.sleep(0.1)
-            self.set_cloud_variable(variable_name, value)
-            return False
-
-        except BrokenPipeError:
+        except ConnectionAbortedError or BrokenPipeError:
             self._make_connection()
             time.sleep(0.1)
             self.set_cloud_variable(variable_name, value)

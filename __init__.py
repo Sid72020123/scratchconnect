@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "0.7.5"
+__version__ = "0.8.0"
 __developer__ = "Siddhesh Chavan"
 __documentation__ = "--------------"
 __doc__ = f"""
@@ -22,6 +22,7 @@ History:
     05/07/2021(v0.5.1) - Updated the messages function.
     06/07/2021(v0.6.0) - Updated CloudConnection.
     08/07/2021(v0.7.5) - Updated CloudConnection.
+    10/07/2021(v0.7.5) - Updated CloudConnection and made the Forum class.
 Credits:
     All code by Siddhesh Chavan.
 Information:
