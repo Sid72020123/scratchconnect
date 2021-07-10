@@ -1,3 +1,6 @@
+"""
+Main File to Connect all the Scratch API nad Scratch DB
+"""
 import requests
 import json
 import re
@@ -15,11 +18,19 @@ _api = f"api.{_website}"
 
 class ScratchConnect:
     def __init__(self, username, password):
+        """
+        Class to make a connection to Scratch
+        :param username: The username of a Scratch Profile
+        :param password: The password of a Scratch Profile
+        """
         self.username = username
         self.password = password
         self._login()
 
     def _login(self):
+        """
+        Function to login(don't use this)
+        """
         global _user_link
         headers = {
             "x-csrftoken": "a",
@@ -56,19 +67,38 @@ class ScratchConnect:
         }
 
     def check(self, username):
+        """
+        Check if a username exists
+        :param username: The username
+        """
         try:
             json.loads(requests.get(f"https://{_api}/users/{username}").text)["id"]
         except KeyError:
             raise Exceptions.InvalidUser(f"Username '{username}' doesn't exist!")
 
     def get_id(self, username):
+        """
+        Get the ID of a user's profile
+        :param username: The username
+        """
         return json.loads(requests.get(f"https://{_api}/users/{username}").text)["id"]
 
     def get_messages_count(self):
+        """
+        Get the messages count of the logged in user
+        """
         return json.loads(requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count").text)[
             "count"]
 
     def get_messages(self, all=False, limit=20, offset=0, filter="all"):
+        """
+        Get the list of messages
+        :param all: True if you want all the messages
+        :param limit: The limit of the messages
+        :param offset: The number of messages to be skipped from the beginning
+        :param filter: Filter the messages
+        :return: The list of the messages
+        """
         headers = {
             "x-csrftoken": self.csrf_token,
             "X-Token": self.token,
@@ -101,24 +131,48 @@ class ScratchConnect:
         return messages
 
     def get_work(self):
+        """
+        Returns the 'What I am working on' of a Scratch profile
+        """
         return json.loads(requests.get(_user_link).text)["profile"]["status"]
 
     def get_bio(self):
+        """
+        Returns the 'About me' of a Scratch profile
+        """
         return json.loads(requests.get(_user_link).text)["profile"]["bio"]
 
     def get_status(self):
+        """
+        Returns the status(Scratcher or New Scratcher) of a Scratch profile
+        """
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").text)["status"]
 
     def get_joined_date(self):
+        """
+        Returns the joined date of a Scratch profile
+        """
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").text)["joined"]
 
     def get_country(self):
+        """
+        Returns the country of a Scratch profile
+        """
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").text)["country"]
 
     def get_featured_data(self):
+        """
+        Returns the featured project data of the Scratch profile
+        """
         return json.loads(requests.get(f"https://scratch.mit.edu/site-api/users/all/{self.username}").text)
 
     def get_projects(self, all=False, limit=20, offset=0):
+        """
+        Returns the list of shared projects of a user
+        :param all: If you want all then set it to True
+        :param limit: The limit of the projects
+        :param offset: The number of projects to be skipped from the beginning
+        """
         if all:
             projects = []
             offset = 0
@@ -138,26 +192,47 @@ class ScratchConnect:
         return projects
 
     def get_follower_count(self):
+        """
+        Returns the follower count of a user
+        """
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
             "followers"]
 
     def get_following_count(self):
+        """
+        Returns the following count of a user
+        """
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
             "following"]
 
     def get_total_views(self):
+        """
+        Returns the total views count of all the shared projects of a user
+        """
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
             "views"]
 
     def get_total_loves(self):
+        """
+        Returns the total loves count of all the shared projects of a user
+        """
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
             "loves"]
 
     def get_total_favourites(self):
+        """
+        Returns the total favourites count of all the shared projects of a user
+        """
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
             "favorites"]
 
     def get_following(self, all=False, limit=40, offset=0):
+        """
+        Returns the list of the user following
+        :param all: If you want all then set it to True
+        :param limit: The limit of the users
+        :param offset: The number of users to be skipped from the beginning
+        """
         following = []
         if all:
             offset = 0
@@ -175,6 +250,12 @@ class ScratchConnect:
         return following
 
     def get_followers(self, all=False, limit=40, offset=0):
+        """
+        Returns the list of the user followers
+        :param all: If you want all then set it to True
+        :param limit: The limit of the users
+        :param offset: The number of users to be skipped from the beginning
+        """
         followers = []
         if all:
             offset = 0
@@ -192,6 +273,12 @@ class ScratchConnect:
         return followers
 
     def get_favourites(self, all=False, limit=40, offset=0):
+        """
+        Returns the list of the user favourites
+        :param all: If you want all then set it to True
+        :param limit: The limit of the projects
+        :param offset: The number of projects to be skipped from the beginning
+        """
         favorites = []
         if all:
             offset = 0
@@ -209,6 +296,9 @@ class ScratchConnect:
         return favorites
 
     def toggle_commenting(self):
+        """
+        Toggle the commenting of the profile
+        """
         return requests.post(
             "https://scratch.mit.edu/site-api/comments/user/"
             + self.username
@@ -217,6 +307,10 @@ class ScratchConnect:
         )
 
     def follow_user(self, username):
+        """
+        Follow a user
+        :param username: The username
+        """
         self.check(username)
         if username == self.username:
             raise Exceptions.UnauthorizedAction(f"You can't follow yourself!")
@@ -229,6 +323,10 @@ class ScratchConnect:
         )
 
     def unfollow_user(self, username):
+        """
+        UnFollow a user
+        :param username: The username
+        """
         self.check(username)
         if username == self.username:
             raise Exceptions.UnauthorizedAction(f"You can't unfollow yourself!")
@@ -241,6 +339,10 @@ class ScratchConnect:
         )
 
     def set_bio(self, content):
+        """
+        Set the bio or 'About Me' of the profile
+        :param content: The bio or the content.
+        """
         data = {"bio": content}
         return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
                             data=data,
@@ -248,6 +350,10 @@ class ScratchConnect:
                             )
 
     def set_work(self, content):
+        """
+        Set the status or 'What I am Working On' of the profile
+        :param content: The work or the content.
+        """
         data = {"status": content}
         return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
                             data=data,
@@ -255,6 +361,9 @@ class ScratchConnect:
                             )
 
     def get_all_data(self):
+        """
+        Returns all the data of the user
+        """
         data = {
             'UserName': self.username,
             'UserId': self.get_id(self.username),
@@ -277,21 +386,38 @@ class ScratchConnect:
         return data
 
     def _check_project(self, project_id):
+        """
+        Don't use this function
+        """
         try:
             json.loads(requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").text)["id"]
         except KeyError:
             raise Exceptions.InvalidProject(f"The project with ID - '{project_id}' doesn't exist!")
 
     def get_site_health(self):
+        """
+        Returns the health of the Scratch Website.
+        """
         return json.loads(requests.get("https://api.scratch.mit.edu/health").text)
 
     def get_news(self):
+        """
+        Returns the news of the Scratch Website.
+        """
         return json.loads(requests.get("https://api.scratch.mit.edu/news").text)
 
     def get_front_page_projects(self):
+        """
+        Returns the front page projects of the Scratch Website.
+        """
         return json.loads(requests.get("https://api.scratch.mit.edu/proxy/featured").text)
 
     def explore_projects(self, mode="trending", query="*"):
+        """
+        Explore the projects
+        :param mode: The mode such as 'popular' or 'trending'
+        :param query: The query
+        """
         return json.loads(requests.get(
             "https://api.scratch.mit.edu/explore/projects/?mode="
             + mode
@@ -300,6 +426,11 @@ class ScratchConnect:
         ).text)
 
     def explore_studios(self, mode="trending", query="*"):
+        """
+        Explore the studios
+        :param mode: The mode such as 'popular' or 'trending'
+        :param query: The query
+        """
         return json.loads(requests.get(
             "https://api.scratch.mit.edu/explore/studios/?mode="
             + mode
@@ -308,6 +439,11 @@ class ScratchConnect:
         ).text)
 
     def search_projects(self, mode="trending", search="*"):
+        """
+        Search the projects
+        :param mode: The mode such as 'popular' or 'trending'
+        :param query: The query
+        """
         return json.loads(requests.get(
             "https://api.scratch.mit.edu/search/projects/?mode="
             + mode
@@ -316,6 +452,11 @@ class ScratchConnect:
         ).text)
 
     def search_studios(self, mode="trending", search="*"):
+        """
+        Search the studios
+        :param mode: The mode such as 'popular' or 'trending'
+        :param query: The query
+        """
         return json.loads(requests.get(
             "https://api.scratch.mit.edu/search/studios/?mode="
             + mode
@@ -324,6 +465,17 @@ class ScratchConnect:
         ).text)
 
     def set_featured_project(self, project_id, label='featured_project'):
+        """
+        Set the 'Featured Project' of a Scratch Profile
+        :param project_id: The project id
+        :param label: The Label, options:
+                "featured_project": "",
+                "featured_tutorial": 0,
+                "work_in_progress": 1,
+                "remix_this": 2,
+                "my_favorite_things": 3,
+                "why_i_scratch": 4,
+        """
         self._check_project(project_id)
         if not json.loads(requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").text)["author"][
                    "username"] == self.username:
@@ -347,21 +499,42 @@ class ScratchConnect:
         ).text)
 
     def get_user_follower_history(self, segment="", range=30):
+        """
+        Return the follower history of the user
+        :param segment: The length of time between each segment, defaults to 1 day.
+        :param range: Of how far back to get history, defaults to 30 days
+        """
         return json.loads(requests.get(
             f"https://scratchdb.lefty.one/v3/user/graph/{self.username}/followers?segment={segment}&range={range}").text)
 
     def connect_user(self, username):
+        """
+        Connect a Scratch User
+        :param username: A valid Username
+        """
         return User.User(username=username, client_username=self.username, csrf_token=self.csrf_token,
                          session_id=self.session_id, token=self.token)
 
     def connect_studio(self, studio_id):
+        """
+        Connect a Scratch Studio
+        :param studio_id: A valid studio ID
+        """
         return Studio.Studio(id=studio_id, client_username=self.username, csrf_token=self.csrf_token,
                              session_id=self.session_id, token=self.token)
 
     def connect_project(self, project_id):
+        """
+        Connect a Scratch Project
+        :param project_id: A valid project ID
+        """
         return Project.Project(id=project_id, client_username=self.username, csrf_token=self.csrf_token,
                                session_id=self.session_id, token=self.token)
 
     def connect_forum_topic(self, forum_id):
+        """
+        Connect a Scratch Forum Topic
+        :param forum_id: A valid forum topic ID
+        """
         return Forum.Forum(id=forum_id, client_username=self.username, csrf_token=self.csrf_token,
                            session_id=self.session_id, token=self.token)

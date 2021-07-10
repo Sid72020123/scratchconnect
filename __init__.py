@@ -1,6 +1,6 @@
 __name__ = "scratchconnect"
-__version__ = "0.8.5"
-__developer__ = "Siddhesh Chavan"
+__version__ = "0.8.7"
+__author__ = "Siddhesh Chavan"
 __documentation__ = "--------------"
 __doc__ = f"""
 scratchconnect is a Python Library to connect Scratch Programming Language and get the data from thr Scratch Website(https://scratch.mit.edu/)
@@ -10,7 +10,8 @@ Import Statement:
 Documentation(Tutorial):
     For documentation, go to {__documentation__}
 Required Libraries:
-    requests, re, json, websocket, websocket-client
+    requests*, re*, json*, websocket, websocket-client
+    * -> In-built
 History:
     19/06/2021(v0.0.0.1) - First made the library and updated it.
     20/06/2021(v0.1) - Added many features.
@@ -22,7 +23,7 @@ History:
     05/07/2021(v0.5.1) - Updated the messages function.
     06/07/2021(v0.6.0) - Updated CloudConnection.
     08/07/2021(v0.7.5) - Updated CloudConnection.
-    10/07/2021(v0.7.5) - Updated CloudConnection and made the Forum class.
+    10/07/2021(v0.7.5) - Updated CloudConnection, made the Forum class and added DocString.
 Credits:
     All code by Siddhesh Chavan.
 Information:
