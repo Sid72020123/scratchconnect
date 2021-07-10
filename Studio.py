@@ -33,7 +33,7 @@ class Studio:
         try:
             json.loads(requests.get(f"{_api}/studios/{id}/").text)["id"]
         except KeyError:
-            raise scratchconnect.Exceptions.InvalidStudio(f"Studio with ID - '{id}' doesn't exist!")
+            raise Exceptions.InvalidStudio(f"Studio with ID - '{id}' doesn't exist!")
 
     def _check_project(self, project_id):
         try:

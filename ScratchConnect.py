@@ -6,6 +6,7 @@ from scratchconnect import Exceptions
 from scratchconnect import Project
 from scratchconnect import Studio
 from scratchconnect import User
+from scratchconnect import Forum
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -360,3 +361,7 @@ class ScratchConnect:
     def connect_project(self, project_id):
         return Project.Project(id=project_id, client_username=self.username, csrf_token=self.csrf_token,
                                session_id=self.session_id, token=self.token)
+
+    def connect_forum_topic(self, forum_id):
+        return Forum.Forum(id=forum_id, client_username=self.username, csrf_token=self.csrf_token,
+                           session_id=self.session_id, token=self.token)
