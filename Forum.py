@@ -1,7 +1,6 @@
 import requests
 import json
 
-import scratchconnect.ScratchConnect
 from scratchconnect import Exceptions
 
 _website = "scratch.mit.edu"
@@ -26,7 +25,7 @@ class Forum:
                       + ";scratchlanguage=en;scratchsessionsid="
                       + self.session_id
                       + ";",
-            "referer": "https://scratch.mit.edu/studios/" + self.id + "/",
+            "referer": "https://scratch.mit.edu/discuss/topic/" + self.id + "/",
         }
 
     def _check(self, id):
@@ -43,3 +42,27 @@ class Forum:
 
     def get_category(self):
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)["category"]
+
+    def get_closed(self):
+        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)[
+                   "closed"] == 1
+
+    def get_deleted(self):
+        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)[
+                   "deleted"] == 1
+
+    def get_time(self):
+        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)["time"]
+
+    def get_post_count(self):
+        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)["post_count"]
+
+    def follow(self):
+        self.headers['referer'] = f"https://scratch.mit.edu/discuss/topic/{self.id}/"
+        return requests.post(f"https://scratch.mit.edu/discuss/subscription/topic/{self.id}/add/",
+                             headers=self.headers)
+
+    def unfollow(self):
+        self.headers['referer'] = f"https://scratch.mit.edu/discuss/topic/{self.id}/"
+        return requests.post(f"https://scratch.mit.edu/discuss/subscription/topic/{self.id}/delete/",
+                             headers=self.headers)
