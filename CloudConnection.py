@@ -1,3 +1,6 @@
+"""
+The Cloud Variables File
+"""
 import json
 import requests
 import websocket
@@ -12,6 +15,9 @@ _api = f"api.{_website}"
 
 class CloudConnection:
     def __init__(self, project_id, client_username, csrf_token, session_id, token):
+        """
+        Main class to connect cloud variables
+        """
         self.project_id = str(project_id)
         self.client_username = client_username
         self.csrf_token = csrf_token
@@ -45,6 +51,11 @@ class CloudConnection:
         self._make_connection()
 
     def get_variable_data(self, limit=100, offset=0):
+        """
+        Returns the cloud variable data
+        :param limit: The limit
+        :param offset: The offset or the number of values you want to skip from the beginning
+        """
         response = requests.get(
             f"https://clouddata.scratch.mit.edu/logs?projectid={self.project_id}&limit={limit}&offset={offset}").json()
         data = []
@@ -57,6 +68,11 @@ class CloudConnection:
         return data
 
     def get_cloud_variable_value(self, variable_name, limit=100):
+        """
+        Returns the cloud variable value
+        :param variable_name: The name of the variable
+        :param limit: The limit
+        """
         if str(variable_name.strip())[0] != "☁":
             n = f"☁ {variable_name.strip()}"
         else:
@@ -71,9 +87,15 @@ class CloudConnection:
         return data
 
     def _send_packet(self, packet):
+        """
+        Don't use this
+        """
         self._ws.send(json.dumps(packet) + "\n")
 
     def _make_connection(self):
+        """
+        Don't use this
+        """
         self._ws = websocket.WebSocket()
         self._ws.connect(
             "wss://clouddata.scratch.mit.edu",
@@ -91,6 +113,11 @@ class CloudConnection:
         )
 
     def set_cloud_variable(self, variable_name, value):
+        """
+        Set a cloud variable
+        :param variable_name: Variable name
+        :param value: Variable value
+        """
         if not str(value).isdigit():
             raise Exceptions.InvalidCloudValue(f"The Cloud Value should be a set of digits and not '{value}'!")
         try:

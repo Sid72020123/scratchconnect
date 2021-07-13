@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "0.9.5"
+__version__ = "0.9.7"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "--------------"
 __doc__ = f"""
@@ -24,6 +24,7 @@ History:
     06/07/2021(v0.6.0) - Updated CloudConnection.
     08/07/2021(v0.7.5) - Updated CloudConnection.
     10/07/2021(v0.7.5) - Updated CloudConnection, made the Forum class and added DocString.
+    13/07/2021(v0.9.7) - Added DocString.
 Credits:
     All code by Siddhesh Chavan.
 Information:
