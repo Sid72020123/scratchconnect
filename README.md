@@ -73,7 +73,7 @@ To connect a Scratch User use the `connect_user()` function. Use the following p
 ```python
 import scratchconnect
 
-login = scratchconnect.ScratchConnect("Sid_tutorials", "Siddhesh_38856541")
+login = scratchconnect.ScratchConnect("Username", "Password")
 user = login.connect_user(username="Sid72020123")
 user.get_id()  # Returns the ID of the user
 user.get_messages_count()  # Returns the messages count of the user
@@ -105,7 +105,7 @@ To connect a Scratch Studio use the `connect_studio()` function. Use the followi
 ```python
 import scratchconnect
 
-user = scratchconnect.ScratchConnect("Sid_tutorials", "Siddhesh_38856541")
+user = scratchconnect.ScratchConnect("Username", "Password")
 studio = user.connect_studio(studio_id=1)
 studio.get_id()  # Returns the studio ID
 studio.get_title()  # Returns the studio title
@@ -134,3 +134,9 @@ studio.promote_curator(username="Sid72020123")  # Promote a user in the studio
 studio.set_description(content="Hi!")  # Set the description of a Studio
 studio.set_title(content="Hi!")  # Set the title of a Studio
 ```
+
+### Connect a Scratch Project:
+
+To connect a Scratch Project use the `connect_project()` function. Use the following program to connect a Scratch
+Project:
+
