@@ -183,3 +183,22 @@ project.set_title()  # Set the title of the project
 project.set_description()  # Set the description of the project
 project.set_instruction()  # Set the instruction of the project
 ```
+
+### Connect Cloud Variables of a Scratch Project:
+
+To connect the cloud variables of a Scratch Project use the `connect_cloud_variables()` function. Use the following
+program to connect the cloud variables of a Scratch Project:
+
+```python
+import scratchconnect
+
+user = scratchconnect.ScratchConnect("Username", "Password")
+project = user.connect_project(project_id=1)
+variables = project.connect_cloud_variables()
+variables.get_variable_data(limit=100, offset=0)  # Returns the cloud variable data
+variables.get_cloud_variable_value(variable_name="Name", limit=100)  # Returns the cloud variable value
+# Program to set cloud variables:
+set = variables.set_cloud_variable(variable_name="Name", value=123)  # Set a Cloud Variable
+if set:
+    print("Cloud Variable Updated!")
+```
