@@ -132,5 +132,5 @@ studio.invite_curator(username="Sid72020123")  # Invite a user to the studio
 studio.accept_curator()  # Accept the curator invitation in a studio
 studio.promote_curator(username="Sid72020123")  # Promote a user in the studio
 studio.set_description(content="Hi!")  # Set the description of a Studio
-studio.set_title(content="Hi!")  #
+studio.set_title(content="Hi!")  # Set the title of a Studio
 ```
