@@ -140,3 +140,46 @@ studio.set_title(content="Hi!")  # Set the title of a Studio
 To connect a Scratch Project use the `connect_project()` function. Use the following program to connect a Scratch
 Project:
 
+```python
+import scratchconnect
+
+user = scratchconnect.ScratchConnect("Username", "Password")
+project = user.connect_project(project_id=1)
+project.get_author()  # Returns the author of the project
+project.get_title()  # Returns the title of the project
+project.get_notes()  # Returns the notes(Notes or Credits) of the project
+project.get_instruction()  # Returns the instructions of the project
+project.get_comments_allowed()  # Returns whether the comments are allowed in a project
+project.get_views_count()  # Returns the views count of a project
+project.get_loves_count()  # Returns the loves count of a project
+project.get_favourites_count()  # Returns the favourites count of a project
+project.get_remixes_count()  # Returns the remixes count of a project
+project.get_history()  # Returns the history of a project
+project.get_remix_data()  # Returns the remix data of a project
+project.get_visibility()  # Returns whether the project is visible
+project.get_is_public()  # Returns whether the project is public
+project.get_is_published()  # Returns whether the project is published
+project.get_thumbnail_url()  # Returns the thumbnail url of a project
+project.get_assets_info()  # Returns the Assets info of a project
+project.get_scripts()  # Returns the scripts of a project
+project.love()  # Love a project
+project.unlove()  # UnLove a project
+project.favourite()  # Favourite a project
+project.unfavourite()  # UnFavourite a project
+project.get_comments(all=False, limit=40, offset=0, comment_id=None)  # Returns the list of comments of a project
+project.get_remixes(all=False, limit=20, offset=0)  # Returns the list of remixes of a project
+project.post_comment(content="Hi!")  # Post a comment
+project.toggle_commenting()  # Toggle the commenting of a project
+project.turn_on_commenting()  # Turn On the commenting of a project
+project.turn_off_commenting()  # Turn Off the commenting of a project
+project.report(category="", reason="")  # Report a project
+project.unshare()  # Unshare a project
+project.view()  # Just view a project
+project.set_thumbnail(file="")  # Set the thumbnail of a project
+project.delete_comment(comment_id=1)  # Delete a comment
+project.report_comment(comment_id=1)  # Report a comment
+project.reply_comment(comment_id=1, content="Hi!")  # Reply a comment
+project.set_title()  # Set the title of the project
+project.set_description()  # Set the description of the project
+project.set_instruction()  # Set the instruction of the project
+```
