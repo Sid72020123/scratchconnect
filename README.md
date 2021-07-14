@@ -97,3 +97,40 @@ user.post_comment(content="Hi!")  # Post a comment on the user's profile
 user.report(field="")  # Report a user
 user.get_all_data()  # Returns all the data of the user
 ```
+
+### Connect a Scratch Studio:
+
+To connect a Scratch Studio use the `connect_studio()` function. Use the following program to connect a Scratch Studio:
+
+```python
+import scratchconnect
+
+user = scratchconnect.ScratchConnect("Sid_tutorials", "Siddhesh_38856541")
+studio = user.connect_studio(studio_id=1)
+studio.get_id()  # Returns the studio ID
+studio.get_title()  # Returns the studio title
+studio.get_owner()  # Returns the studio owner
+studio.get_description()  # Returns the studio description
+studio.get_visibility()  # Returns the studio visibility
+studio.get_public()  # Returns whether a studio is public
+studio.get_open_to_all()  # Returns whether a studio is open to all
+studio.get_comments_allowed()  # Returns whether a studio has comments allowed
+studio.get_history()  # Returns the history of the studio
+studio.get_stats()  # Returns the stats of the studio
+studio.get_thumbnail_url()  # Returns the thumbnail URL of the studio
+studio.add_project(project_id=1)  # Add a project to a studio
+studio.remove_project(project_id=1)  # Remove a project from a studio
+studio.open_to_public()  # Open the studio to public
+studio.close_to_public()  # Close the studio to public
+studio.follow_studio()  # Follow the studio
+studio.unfollow_studio()  # UnFollow the studio
+studio.toggle_commenting()  # Toggle the commenting of the studio
+studio.post_comment(content="Hi!")  # Post comment in the studio
+studio.delete_comment()  # Delete comment in the studio
+studio.report_comment(comment_id=1)  # Report comment in the studio
+studio.invite_curator(username="Sid72020123")  # Invite a user to the studio
+studio.accept_curator()  # Accept the curator invitation in a studio
+studio.promote_curator(username="Sid72020123")  # Promote a user in the studio
+studio.set_description(content="Hi!")  # Set the description of a Studio
+studio.set_title(content="Hi!")  #
+```
