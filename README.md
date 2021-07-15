@@ -202,3 +202,27 @@ set = variables.set_cloud_variable(variable_name="Name", value=123)  # Set a Clo
 if set:
     print("Cloud Variable Updated!")
 ```
+
+### Connect a Scratch Forum:
+
+To connect a Scratch Forum use the `connect_forum_topic()` function. Use the following program to connect a Scratch
+Forum:
+
+```python
+import scratchconnect
+
+user = scratchconnect.ScratchConnect("Username", "Password")
+forum = user.connect_forum_topic(forum_id=1)
+forum.get_id()  # Returns the id of the forum
+forum.get_title()  # Returns the title of the forum
+forum.get_category()  # Returns the category of the forum
+forum.get_closed()  # Returns whether the forum is closed or not
+forum.get_deleted()  # Returns whether the forum is deleted or not
+forum.get_time()  # Returns the activity of the forum
+forum.get_post_count()  # Returns the total post count of the forum
+forum.follow()  # Follow a Forum
+forum.unfollow()  # Unfollow a Forum
+```
+
+### Bug Reporting:
+All Bugs to be reported on my [Scratch Profile](https://scratch.mit.edu/users/Sid72020123/) or [Github](https://github.com/Sid72020123/scratchconnect/issues)
