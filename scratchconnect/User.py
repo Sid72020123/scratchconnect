@@ -45,11 +45,13 @@ class User:
         except KeyError:
             raise Exceptions.InvalidUser(f"Username '{self.username}' doesn't exist!")
 
-    def get_id(self, username):
+    def get_id(self, username=None):
         """
         Get the ID of a user's profile
         :param username: The username
         """
+        if username is None:
+            username = self.username
         return json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
 
     def get_messages_count(self):

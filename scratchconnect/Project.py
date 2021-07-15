@@ -149,7 +149,7 @@ class Project:
 
     def get_assets_info(self):
         """
-        Returns the Assests info of a project
+        Returns the Assets info of a project
         """
         return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/project/info/{self.id}").text)["metadata"]
 
