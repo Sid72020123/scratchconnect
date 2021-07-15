@@ -7,6 +7,10 @@ project!
 
 This library needs a Scratch account. Visit the Scratch Website: [https://scratch.mit.edu/](https://scratch.mit.edu/)
 
+[![PyPI Latest Release](https://img.shields.io/pypi/v/scratchconnect.svg)](https://pypi.org/project/scratchconnect/)
+[![Package Status](https://img.shields.io/pypi/status/scratchconnect.svg)](https://pypi.org/project/scratchconnect/)
+[![Downloads](https://static.pepy.tech/personalized-badge/scratchconnect?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/scratchconnect)
+
 ### Documentation
 
 Documentation coming soon.......
