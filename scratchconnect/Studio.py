@@ -317,3 +317,26 @@ class Studio:
                             headers=self.headers,
                             data=json.dumps(data),
                             ).json()
+
+    def get_projects(self, all=False, limit=40, offset=0):
+        """
+        Get the projects of the studio
+        :param all: If you want all the projects then set it to True
+        :param limit: The limit
+        :param offset: The offset or the number of data you want from the beginning
+        """
+        projects = []
+        if all:
+            limit = 40
+            offset = 0
+            while True:
+                response = json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.id}/projects/?limit={limit}&offset={offset}").text)
+                projects.append(response)
+                offset += 40
+                if len(response) != 40:
+                    break
+        if not all:
+            projects.append(json.loads(requests.get(
+                f"https://api.scratch.mit.edu/studios/{self.id}/projects/?limit={limit}&offset={offset}").text))
+        return projects
