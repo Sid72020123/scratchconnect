@@ -7,10 +7,6 @@ project!
 
 This library needs a Scratch account. Visit the Scratch Website: [https://scratch.mit.edu/](https://scratch.mit.edu/)
 
-[![PyPI Latest Release](https://img.shields.io/pypi/v/scratchconnect.svg)](https://pypi.org/project/scratchconnect/)
-[![Package Status](https://img.shields.io/pypi/status/scratchconnect.svg)](https://pypi.org/project/scratchconnect/)
-[![Downloads](https://static.pepy.tech/personalized-badge/scratchconnect?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/scratchconnect)
-
 ### Documentation
 
 Documentation coming soon.......
@@ -137,6 +133,7 @@ studio.accept_curator()  # Accept the curator invitation in a studio
 studio.promote_curator(username="Sid72020123")  # Promote a user in the studio
 studio.set_description(content="Hi!")  # Set the description of a Studio
 studio.set_title(content="Hi!")  # Set the title of a Studio
+studio.get_projects(all=False, limit=40, offset=0)  # Get the projects of the studio
 ```
 
 ### Connect a Scratch Project:
@@ -229,4 +226,6 @@ forum.unfollow()  # Unfollow a Forum
 ```
 
 ### Bug Reporting:
-All Bugs to be reported on my [Scratch Profile](https://scratch.mit.edu/users/Sid72020123/) or [Github](https://github.com/Sid72020123/scratchconnect/issues)
+
+All Bugs to be reported on my [Scratch Profile](https://scratch.mit.edu/users/Sid72020123/)
+or [Github](https://github.com/Sid72020123/scratchconnect/issues)
