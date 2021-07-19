@@ -340,3 +340,95 @@ class Studio:
             projects.append(json.loads(requests.get(
                 f"https://api.scratch.mit.edu/studios/{self.id}/projects/?limit={limit}&offset={offset}").text))
         return projects
+
+    def get_comments(self, all=False, limit=40, offset=0):
+        """
+        Get the comments of the studio
+        :param all: If you want all the comments then set it to True
+        :param limit: The limit
+        :param offset: The offset or the number of data you want from the beginning
+        """
+        comments = []
+        if all:
+            limit = 40
+            offset = 0
+            while True:
+                response = json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.id}/comments/?limit={limit}&offset={offset}").text)
+                comments.append(response)
+                offset += 40
+                if len(response) != 40:
+                    break
+        if not all:
+            comments.append(json.loads(requests.get(
+                f"https://api.scratch.mit.edu/studios/{self.id}/comments/?limit={limit}&offset={offset}").text))
+        return comments
+
+    def get_curators(self, all=False, limit=40, offset=0):
+        """
+        Get the curators of the studio
+        :param all: If you want all the curators then set it to True
+        :param limit: The limit
+        :param offset: The offset or the number of data you want from the beginning
+        """
+        curators = []
+        if all:
+            limit = 40
+            offset = 0
+            while True:
+                response = json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.id}/curators/?limit={limit}&offset={offset}").text)
+                curators.append(response)
+                offset += 40
+                if len(response) != 40:
+                    break
+        if not all:
+            curators.append(json.loads(requests.get(
+                f"https://api.scratch.mit.edu/studios/{self.id}/curators/?limit={limit}&offset={offset}").text))
+        return curators
+
+    def get_managers(self, all=False, limit=40, offset=0):
+        """
+        Get the managers of the studio
+        :param all: If you want all the managers then set it to True
+        :param limit: The limit
+        :param offset: The offset or the number of data you want from the beginning
+        """
+        managers = []
+        if all:
+            limit = 40
+            offset = 0
+            while True:
+                response = json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.id}/managers/?limit={limit}&offset={offset}").text)
+                managers.append(response)
+                offset += 40
+                if len(response) != 40:
+                    break
+        if not all:
+            managers.append(json.loads(requests.get(
+                f"https://api.scratch.mit.edu/studios/{self.id}/managers/?limit={limit}&offset={offset}").text))
+        return managers
+
+    def get_activity(self, all=False, limit=40, offset=0):
+        """
+        Get the activity of the studio
+        :param all: If you want all the activity then set it to True
+        :param limit: The limit
+        :param offset: The offset or the number of data you want from the beginning
+        """
+        activity = []
+        if all:
+            limit = 40
+            offset = 0
+            while True:
+                response = json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.id}/activity/?limit={limit}&offset={offset}").text)
+                activity.append(response)
+                offset += 40
+                if len(response) != 40:
+                    break
+        if not all:
+            activity.append(json.loads(requests.get(
+                f"https://api.scratch.mit.edu/studios/{self.id}/activity/?limit={limit}&offset={offset}").text))
+        return activity
