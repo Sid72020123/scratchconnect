@@ -1,4 +1,4 @@
-# scratchconnect v1.1
+# scratchconnect v1.2
 
 Python Library to connect Scratch API and much more.
 
@@ -140,6 +140,10 @@ studio.promote_curator(username="Sid72020123")  # Promote a user in the studio
 studio.set_description(content="Hi!")  # Set the description of a Studio
 studio.set_title(content="Hi!")  # Set the title of a Studio
 studio.get_projects(all=False, limit=40, offset=0)  # Get the projects of the studio
+studio.get_comments(all=False, limit=40, offset=0)  # Get the comments of the studio
+studio.get_curators(all=False, limit=40, offset=0)  # Get the curators of the studio
+studio.get_managers(all=False, limit=40, offset=0)  # Get the managers of the studio
+studio.get_activity(all=False, limit=40, offset=0)  # Get the activity of the studio
 ```
 
 ### Connect a Scratch Project:
