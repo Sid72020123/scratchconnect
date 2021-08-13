@@ -1,4 +1,4 @@
-# scratchconnect v1.2
+# scratchconnect v1.3
 
 Python Library to connect Scratch API and much more.
 
@@ -70,6 +70,7 @@ user.search_projects(mode="trending", search="*")  # Search the projects
 user.search_studios(mode="trending", search="*")  # Search the studios
 user.set_featured_project(project_id="1", label='featured_project')  # Set the 'Featured Project' of a Scratch Profile
 user.get_user_follower_history()  # Return the follower history of the user
+user.get_comments(limit=5, page=1)  # Get comments of the profile of the user
 ```
 
 ### Connect a Scratch User:
@@ -102,6 +103,7 @@ user.get_user_follower_history()  # Return the follower history of the user
 user.post_comment(content="Hi!")  # Post a comment on the user's profile
 user.report(field="")  # Report a user
 user.get_all_data()  # Returns all the data of the user
+user.get_comments(limit=5, page=1)  # Get comments of the profile of the user
 ```
 
 ### Connect a Scratch Studio:
