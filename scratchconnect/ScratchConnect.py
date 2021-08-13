@@ -466,6 +466,14 @@ class ScratchConnect:
             + search
         ).text)
 
+    def get_comments(self, limit=5, page=1):
+        """
+        Get comments of the profile of the user
+        :param limit: The limit
+        :param page: The page
+        """
+        return requests.get(f"https://scratch-profile-comments.sid72020123.repl.co/comments/?username={self.username}&limit={limit}&page={page}").json()
+
     def set_featured_project(self, project_id, label='featured_project'):
         """
         Set the 'Featured Project' of a Scratch Profile

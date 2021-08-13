@@ -1,10 +1,10 @@
 __name__ = "scratchconnect"
-__version__ = "1.2"
+__version__ = "1.3"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
-scratchconnect is a Python Library to connect Scratch Programming Language and get the data from thr Scratch Website(https://scratch.mit.edu/)
-scratchconnect uses Scratch-Api and the Scratch DB to get the data.
+scratchconnect is a Python Library to connect Scratch API and much more.
+This library can show the statistics of Users, Projects, Studios, Forums and also connect and set cloud variables of a project!
 Import Statement:
     import scratchconnect
 Documentation(Tutorial):
