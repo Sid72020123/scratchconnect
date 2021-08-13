@@ -29,6 +29,7 @@ History:
     15/07/2021(v1.0) - First Release!
     18/07/2021(V1.1) - Made the 'studio.get_projects()'.
     19/07/2021(v1.2) - Made the get comments, curators, managers of the studio
+    13/08/2021(v1.3) - Added the get comments function
 Credits:
     All code by Siddhesh Chavan.
 Information:
