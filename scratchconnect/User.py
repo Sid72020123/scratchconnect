@@ -56,10 +56,10 @@ class User:
 
     def get_messages_count(self):
         """
-        Get the messages count of a user
+        Get the messages count of the user
         """
-        headers = {"User-Agent":"For a python library."}
-        return json.loads(requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count",headers=headers).text)[
+        headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"}
+        return json.loads(requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count", headers=headers).text)[
             "count"]
 
     def get_work(self):

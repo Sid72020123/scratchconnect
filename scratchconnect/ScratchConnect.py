@@ -89,7 +89,8 @@ class ScratchConnect:
         """
         Get the messages count of the logged in user
         """
-        return json.loads(requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count").text)[
+        headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"}
+        return json.loads(requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count", headers=headers).text)[
             "count"]
 
     def get_messages(self, all=False, limit=20, offset=0, filter="all"):
