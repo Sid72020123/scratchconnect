@@ -145,7 +145,7 @@ class User:
             offset = 0
             while True:
                 request = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit=40&offset={offset}").text
+                    f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit=40&offset={offset}").json()
                 projects.append(request)
                 if len(request) != 40:
                     break
@@ -154,7 +154,7 @@ class User:
             projects = []
             for i in range(1, limit + 1):
                 request = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit={limit}&offset={offset}").text
+                    f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit={limit}&offset={offset}").json()
                 projects.append(request)
         return projects
 
@@ -170,14 +170,14 @@ class User:
             offset = 0
             while True:
                 response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/following/?limit=40&offset={offset}").text
+                    f"https://api.scratch.mit.edu/users/{self.username}/following/?limit=40&offset={offset}").json()
                 offset += 40
                 following.append(response)
                 if len(response) != 40:
                     break
         if not all:
             response = requests.get(
-                f"https://api.scratch.mit.edu/users/{self.username}/following/?limit={limit}&offset={offset}").text
+                f"https://api.scratch.mit.edu/users/{self.username}/following/?limit={limit}&offset={offset}").json()
             following.append(response)
         return following
 
@@ -193,14 +193,14 @@ class User:
             offset = 0
             while True:
                 response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit=40&offset={offset}").text
+                    f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit=40&offset={offset}").json()
                 offset += 40
                 followers.append(response)
                 if len(response) != 40:
                     break
         if not all:
             response = requests.get(
-                f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit={limit}&offset={offset}").text
+                f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit={limit}&offset={offset}").json()
             followers.append(response)
         return followers
 
@@ -216,14 +216,14 @@ class User:
             offset = 0
             while True:
                 response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit=40&offset={offset}").text
+                    f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit=40&offset={offset}").json()
                 offset += 40
                 favorites.append(response)
                 if len(response) != 40:
                     break
         if not all:
             response = requests.get(
-                f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit={limit}&offset={offset}").text
+                f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit={limit}&offset={offset}").json()
             favorites.append(response)
         return favorites
 

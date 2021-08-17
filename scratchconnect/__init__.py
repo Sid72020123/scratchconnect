@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "1.4"
+__version__ = "1.5"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -31,6 +31,7 @@ History:
     19/07/2021(v1.2) - Made the get comments, curators, managers of the studio
     13/08/2021(v1.3) - Added the get comments function
     14/08/2021(v1.4) - Updated the get messages function
+    17/08/2021(v1.5) - Made some bug fixes
 Credits:
     All code by Siddhesh Chavan.
 Information:
