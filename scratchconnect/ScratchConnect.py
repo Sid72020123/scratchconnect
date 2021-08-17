@@ -272,7 +272,6 @@ class ScratchConnect:
         if not all:
             response = requests.get(
                 f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit={limit}&offset={offset}").json()
-            print(response)
             followers.append(response)
         return followers
 
