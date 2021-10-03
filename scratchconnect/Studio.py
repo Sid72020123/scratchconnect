@@ -18,9 +18,8 @@ class Studio:
         The Studio Class
         :param id: The ID of the studio
         """
-        self.id = str(id)
         self.client_username = client_username
-        self._check(self.id)
+        self.studio_id = str(id)
         self.csrf_token = csrf_token
         self.session_id = session_id
         self.token = token
@@ -33,24 +32,50 @@ class Studio:
                       + ";scratchlanguage=en;scratchsessionsid="
                       + self.session_id
                       + ";",
-            "referer": "https://scratch.mit.edu/studios/" + self.id + "/",
+            "referer": "https://scratch.mit.edu/studios/" + self.studio_id + "/",
         }
+        self.update_data()
 
-    def _check(self, id):
+    def update_data(self):
         """
-        Don't use this function
+        Update the studio data
         """
+        self.studio_title = None
+        self.studio_owner = None
+        self.studio_description = None
+        self.studio_visibility = None
+        self.studio_are_comments_allowed = None
+        self.studio_history = None
+        self.studio_stats = None
+        self.studio_thumbnail_url = None
+        self.studio_projects = None
+        self.studio_comments = None
+        self.studio_curators = None
+        self.studio_managers = None
+        self.studio_activity = None
+
+        data = requests.get(f"{_api}/studios/{self.studio_id}/").json()
         try:
-            json.loads(requests.get(f"{_api}/studios/{id}/").text)["id"]
+            self.studio_id = data["id"]
         except KeyError:
-            raise Exceptions.InvalidStudio(f"Studio with ID - '{id}' doesn't exist!")
+            raise Exceptions.InvalidStudio(f"Studio with ID - '{self.studio_id}' doesn't exist!")
+        self.studio_title = data["title"]
+        self.studio_owner = data["host"]
+        self.studio_description = data["description"]
+        self.studio_visibility = data["visibility"]
+        self.studio_is_public = data["public"] == True
+        self.studio_is_open_to_all = data["open_to_all"] == True
+        self.studio_are_comments_allowed = data["comments_allowed"] == True
+        self.studio_history = data["history"]
+        self.studio_stats = data["stats"]
+        self.studio_thumbnail_url = data["image"]
 
     def _check_project(self, project_id):
         """
         Don't use this function
         """
         try:
-            json.loads(requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").text)["id"]
+            requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").json()["id"]
         except KeyError:
             raise Exceptions.InvalidProject(f"The project with ID - '{project_id}' doesn't exist!")
 
@@ -59,82 +84,104 @@ class Studio:
         Don't use this function
         """
         try:
-            json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
+            requests.get(f"{_api}/users/{username}").json()["id"]
         except KeyError:
             raise scratchconnect.Exceptions.InvalidUser(f"Username '{username}' doesn't exist!")
 
-    def get_user_id(self, username):
+    def user_id(self, username):
         """
         Returns the user ID
         :param username: Username
         """
-        return json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
+        return requests.get(f"{_api}/users/{username}").json()["id"]
 
-    def get_id(self):
+    def id(self):
         """
         Returns the studio ID
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["id"]
+        if self.studio_id is None:
+            self.update_data()
+        return self.studio_id
 
-    def get_title(self):
+    def title(self):
         """
         Returns the studio title
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["title"]
+        if self.studio_title is None:
+            self.update_data()
+        return self.studio_title
 
-    def get_owner(self):
+    def host_id(self):
         """
-        Returns the studio owner
+        Returns the studio owner/host ID
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["owner"]
+        if self.studio_owner is None:
+            self.update_data()
+        return self.studio_owner
 
-    def get_description(self):
+    def description(self):
         """
         Returns the studio description
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["description"]
+        if self.studio_description is None:
+            self.update_data()
+        return self.studio_description
 
-    def get_visibility(self):
+    def visibility(self):
         """
         Returns the studio visibility
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["visibility"]
+        if self.studio_visibility is None:
+            self.update_data()
+        return self.studio_visibility
 
-    def get_public(self):
+    def is_public(self):
         """
         Returns whether a studio is public
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["public"] == True
+        if self.studio_is_public is None:
+            self.update_data()
+        return self.studio_is_public
 
-    def get_open_to_all(self):
+    def is_open_to_all(self):
         """
         Returns whether a studio is open to all
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["open_to_all"] == True
+        if self.studio_is_open_to_all is None:
+            self.update_data()
+        return self.studio_is_open_to_all
 
-    def get_comments_allowed(self):
+    def are_comments_allowed(self):
         """
         Returns whether a studio has comments allowed
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["comments_allowed"] == True
+        if self.studio_are_comments_allowed is None:
+            self.update_data()
+        return self.studio_are_comments_allowed
 
-    def get_history(self):
+    def history(self):
         """
         Returns the history of the studio
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["history"]
+        if self.studio_history is None:
+            self.update_data()
+        return self.studio_history
 
-    def get_stats(self):
+    def stats(self):
         """
         Returns the stats of the studio
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["stats"]
+        if self.studio_stats is None:
+            self.update_data()
+        return self.studio_stats
 
-    def get_thumbnail_url(self):
+    def thumbnail_url(self):
         """
         Returns the thumbnail URL of the studio
         """
-        return json.loads(requests.get(f"{_api}/studios/{self.id}/").text)["image"]
+        if self.studio_thumbnail_url is None:
+            self.update_data()
+        return self.studio_thumbnail_url
 
     def add_project(self, project_id):
         """
@@ -144,9 +191,9 @@ class Studio:
         self._check_project(project_id)
         headers = self.headers
         headers["referer"] = f"https://scratch.mit.edu/projects/{project_id}/"
-        return json.loads(requests.post(f"https://api.scratch.mit.edu/studios/{self.id}/project/{project_id}/",
-                                        headers=headers,
-                                        ).text)
+        return requests.post(f"https://api.scratch.mit.edu/studios/{self.studio_id}/project/{project_id}/",
+                             headers=headers,
+                             ).json()
 
     def remove_project(self, project_id):
         """
@@ -156,50 +203,50 @@ class Studio:
         self._check_project(project_id)
         headers = self.headers
         headers["referer"] = f"https://scratch.mit.edu/projects/{project_id}/"
-        return json.loads(requests.post(
+        return requests.post(
             "https://api.scratch.mit.edu/studios/"
-            + str(self.id)
+            + str(self.studio_id)
             + "/project/"
             + str(project_id)
             + "/",
             headers=headers,
-        ).text)
+        ).json()
 
     def open_to_public(self):
         """
         Open the studio to public
         """
-        return json.loads(requests.put(
-            f"https://scratch.mit.edu/site-api/galleries/{self.id}/mark/open/",
+        return requests.put(
+            f"https://scratch.mit.edu/site-api/galleries/{self.studio_id}/mark/open/",
             headers=self.headers,
-        ).text)
+        ).json()
 
     def close_to_public(self):
         """
         Close the studio to public
         """
-        return json.loads(requests.put(
-            f"https://scratch.mit.edu/site-api/galleries/{self.id}/mark/closed/",
+        return requests.put(
+            f"https://scratch.mit.edu/site-api/galleries/{self.studio_id}/mark/closed/",
             headers=self.headers,
-        ).text)
+        ).json()
 
     def follow_studio(self):
         """
         Follow the studio
         """
-        return json.loads(requests.put(
-            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.id}/add/?usernames={self.client_username}",
+        return requests.put(
+            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.studio_id}/add/?usernames={self.client_username}",
             headers=self.headers,
-        ).text)
+        ).json()
 
     def unfollow_studio(self):
         """
         UnFollow the studio
         """
-        return json.loads(requests.put(
-            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.id}/remove/?usernames={self.client_username}",
+        return requests.put(
+            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.studio_id}/remove/?usernames={self.client_username}",
             headers=self.headers,
-        ).text)
+        ).json()
 
     def toggle_commenting(self):
         """
@@ -207,9 +254,9 @@ class Studio:
         """
         headers = self.headers
         headers["referer"] = (
-            f"https://scratch.mit.edu/studios/{self.id}/comments/"
+            f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"
         )
-        return requests.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.id}/toggle-comments/",
+        return requests.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.studio_id}/toggle-comments/",
                              headers=headers,
                              ).text
 
@@ -219,17 +266,25 @@ class Studio:
         :param content: The comment
         """
         headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/comments/"
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"
                               )
         data = {
             "commentee_id": commentee_id,
             "content": content,
             "parent_id": parent_id,
         }
-        return requests.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.id}/add/",
+        return requests.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.studio_id}/add/",
                              headers=headers,
                              data=json.dumps(data),
                              )
+
+    def reply_comment(self, content, comment_id):
+        """
+        Reply a comment
+        :param content: The content
+        :param comment_id: The comment ID
+        """
+        return self.post_comment(content=content, parent_id=comment_id)
 
     def delete_comment(self, comment_id):
         """
@@ -237,7 +292,7 @@ class Studio:
         :param comment_id: The comment ID
         """
         headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/comments/")
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/comments/")
         data = {"id": comment_id}
         return requests.post(f"https://scratch.mit.edu/site-api/comments/user/{self.client_username}/del/",
                              headers=headers,
@@ -250,7 +305,7 @@ class Studio:
         :param comment_id: The comment ID
         """
         headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/comments/")
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/comments/")
         data = {"id": comment_id}
         return requests.post(f"https://scratch.mit.edu/site-api/comments/user/{self.client_username}/rep/",
                              headers=headers,
@@ -264,9 +319,9 @@ class Studio:
         """
         self._check_username(username)
         headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/curators/")
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/curators/")
         return requests.put(
-            f"https://scratch.mit.edu/site-api/users/curators-in/{self.id}/invite_curator/?usernames={username}",
+            f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/invite_curator/?usernames={username}",
             headers=headers,
         )
 
@@ -275,9 +330,9 @@ class Studio:
         Accept the curator invitation in a studio
         """
         headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.id}/curators/")
+        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/curators/")
         return requests.put(
-            f"https://scratch.mit.edu/site-api/users/curators-in/{self.id}/add/?usernames={self.client_username}",
+            f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/add/?usernames={self.client_username}",
             headers=headers,
         )
 
@@ -289,10 +344,10 @@ class Studio:
         self._check_username(username)
         headers = self.headers
         headers["referer"] = (
-                "https://scratch.mit.edu/studios/" + str(self.id) + "/curators/"
+                "https://scratch.mit.edu/studios/" + str(self.studio_id) + "/curators/"
         )
         return requests.put(
-            f"https://scratch.mit.edu/site-api/users/curators-in/{self.id}/promote/?usernames={username}",
+            f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/promote/?usernames={username}",
             headers=headers,
         )
 
@@ -302,7 +357,7 @@ class Studio:
         :param content: The description or content
         """
         data = {"description": content}
-        return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.id}/",
+        return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
                             headers=self.headers,
                             data=json.dumps(data),
                             ).json()
@@ -313,122 +368,132 @@ class Studio:
         :param content: The title or content
         """
         data = {"title": content}
-        return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.id}/",
+        return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
                             headers=self.headers,
                             data=json.dumps(data),
                             ).json()
 
-    def get_projects(self, all=False, limit=40, offset=0):
+    def projects(self, all=False, limit=20, offset=0):
         """
         Get the projects of the studio
         :param all: If you want all the projects then set it to True
         :param limit: The limit
         :param offset: The offset or the number of data you want from the beginning
         """
-        projects = []
-        if all:
-            limit = 40
-            offset = 0
-            while True:
-                response = json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.id}/projects/?limit={limit}&offset={offset}").text)
-                projects.append(response)
-                offset += 40
-                if len(response) != 40:
-                    break
-        if not all:
-            projects.append(json.loads(requests.get(
-                f"https://api.scratch.mit.edu/studios/{self.id}/projects/?limit={limit}&offset={offset}").text))
-        return projects
+        if self.studio_projects is None:
+            projects = []
+            if all:
+                limit = 40
+                offset = 0
+                while True:
+                    response = json.loads(requests.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/projects/?limit={limit}&offset={offset}").text)
+                    projects.append(response)
+                    offset += 40
+                    if len(response) != 40:
+                        break
+            if not all:
+                projects.append(json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/projects/?limit={limit}&offset={offset}").text))
+            self.studio_projects = projects
+        return self.studio_projects
 
-    def get_comments(self, all=False, limit=40, offset=0):
+    def comments(self, all=False, limit=20, offset=0):
         """
         Get the comments of the studio
         :param all: If you want all the comments then set it to True
         :param limit: The limit
         :param offset: The offset or the number of data you want from the beginning
         """
-        comments = []
-        if all:
-            limit = 40
-            offset = 0
-            while True:
-                response = json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.id}/comments/?limit={limit}&offset={offset}").text)
-                comments.append(response)
-                offset += 40
-                if len(response) != 40:
-                    break
-        if not all:
-            comments.append(json.loads(requests.get(
-                f"https://api.scratch.mit.edu/studios/{self.id}/comments/?limit={limit}&offset={offset}").text))
-        return comments
+        if self.studio_comments is None:
+            comments = []
+            if all:
+                limit = 40
+                offset = 0
+                while True:
+                    response = json.loads(requests.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/comments/?limit={limit}&offset={offset}").text)
+                    comments.append(response)
+                    offset += 40
+                    if len(response) != 40:
+                        break
+            if not all:
+                comments.append(json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/comments/?limit={limit}&offset={offset}").text))
+            self.studio_comments = comments
+        return self.studio_comments
 
-    def get_curators(self, all=False, limit=40, offset=0):
+    def curators(self, all=False, limit=20, offset=0):
         """
         Get the curators of the studio
         :param all: If you want all the curators then set it to True
         :param limit: The limit
         :param offset: The offset or the number of data you want from the beginning
         """
-        curators = []
-        if all:
-            limit = 40
-            offset = 0
-            while True:
-                response = json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.id}/curators/?limit={limit}&offset={offset}").text)
-                curators.append(response)
-                offset += 40
-                if len(response) != 40:
-                    break
-        if not all:
-            curators.append(json.loads(requests.get(
-                f"https://api.scratch.mit.edu/studios/{self.id}/curators/?limit={limit}&offset={offset}").text))
-        return curators
+        if self.studio_curators is None:
+            curators = []
+            if all:
+                limit = 40
+                offset = 0
+                while True:
+                    response = json.loads(requests.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/curators/?limit={limit}&offset={offset}").text)
+                    curators.append(response)
+                    offset += 40
+                    if len(response) != 40:
+                        break
+            if not all:
+                curators.append(json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/curators/?limit={limit}&offset={offset}").text))
+            self.studio_curators = curators
+        return self.studio_curators
 
-    def get_managers(self, all=False, limit=40, offset=0):
+    def managers(self, all=False, limit=20, offset=0):
         """
         Get the managers of the studio
         :param all: If you want all the managers then set it to True
         :param limit: The limit
         :param offset: The offset or the number of data you want from the beginning
         """
-        managers = []
-        if all:
-            limit = 40
-            offset = 0
-            while True:
-                response = json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.id}/managers/?limit={limit}&offset={offset}").text)
-                managers.append(response)
-                offset += 40
-                if len(response) != 40:
-                    break
-        if not all:
-            managers.append(json.loads(requests.get(
-                f"https://api.scratch.mit.edu/studios/{self.id}/managers/?limit={limit}&offset={offset}").text))
-        return managers
+        if self.studio_managers is None:
+            managers = []
+            if all:
+                limit = 40
+                offset = 0
+                while True:
+                    response = json.loads(requests.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/managers/?limit={limit}&offset={offset}").text)
+                    managers.append(response)
+                    offset += 40
+                    if len(response) != 40:
+                        break
+            if not all:
+                managers.append(json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/managers/?limit={limit}&offset={offset}").text))
+            self.studio_managers = managers
+        return self.studio_managers
 
-    def get_activity(self, all=False, limit=40, offset=0):
+    def activity(self, all=False, limit=20, offset=0):
         """
         Get the activity of the studio
         :param all: If you want all the activity then set it to True
         :param limit: The limit
         :param offset: The offset or the number of data you want from the beginning
         """
-        activity = []
-        if all:
-            limit = 40
-            offset = 0
-            while True:
-                response = json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.id}/activity/?limit={limit}&offset={offset}").text)
-                activity.append(response)
-                offset += 40
-                if len(response) != 40:
-                    break
-        if not all:
-            activity.append(json.loads(requests.get(
-                f"https://api.scratch.mit.edu/studios/{self.id}/activity/?limit={limit}&offset={offset}").text))
+        if self.studio_activity is None:
+            activity = []
+            if all:
+                limit = 40
+                offset = 0
+                while True:
+                    response = json.loads(requests.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/activity/?limit={limit}&offset={offset}").text)
+                    activity.append(response)
+                    offset += 40
+                    if len(response) != 40:
+                        break
+            if not all:
+                activity.append(json.loads(requests.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/activity/?limit={limit}&offset={offset}").text))
+            self.studio_activity = activity
         return activity

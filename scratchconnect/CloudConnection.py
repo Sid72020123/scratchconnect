@@ -1,5 +1,6 @@
 """
-The Cloud Variables File
+The Cloud Variables File.
+Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Encode/Decode Engine!
 """
 import json
 import requests
@@ -7,6 +8,7 @@ import websocket
 import time
 
 from scratchconnect import Exceptions
+from scratchconnect.scEncoder import Encoder
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -49,6 +51,7 @@ class CloudConnection:
             "Content-Type": "application/json",
         }
         self._make_connection()
+        self.encoder = Encoder()
 
     def get_variable_data(self, limit=100, offset=0):
         """
@@ -121,6 +124,9 @@ class CloudConnection:
         if not str(value).isdigit():
             raise Exceptions.InvalidCloudValue(f"The Cloud Value should be a set of digits and not '{value}'!")
         try:
+            if len(str(value)) > 128:
+                raise ValueError(
+                    "Scratch has Cloud Variable Limit of 128 Characters per variable. Try making the value shorter!")
             if str(variable_name.strip())[0] != "☁":
                 n = f"☁ {variable_name.strip()}"
             else:
@@ -139,3 +145,33 @@ class CloudConnection:
             time.sleep(0.1)
             self.set_cloud_variable(variable_name, value)
             return False
+
+    def encode(self, text):
+        """
+        Encode a text. For example: A -> 1
+        Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Engine!
+        :param text: The text to encode
+        """
+        return self.encoder.encode(text)
+
+    def decode(self, encoded_text):
+        """
+        Decode a text. For example: 1 -> A
+        Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Engine!
+        :param encoded_text: The text to decode
+        """
+        return self.encoder.decode(encoded_text)
+
+    def encode_list(self, data):
+        """
+        Encode a Python List
+        :param data: The list
+        """
+        return self.encoder.encode_list(data)
+
+    def decode_list(self, encoded_data):
+        """
+        Decode a Python List
+        :param encoded_data: The data to be decoded
+        """
+        return self.encoder.decode_list(encoded_data)

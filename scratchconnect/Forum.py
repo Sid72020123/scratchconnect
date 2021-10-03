@@ -17,9 +17,9 @@ class Forum:
         The Main Forum Class
         :param id: The id of the forum
         """
-        self.id = str(id)
+        self.f_id = str(id)
         self.client_username = client_username
-        self._check(self.id)
+        self.update_data()
         self.csrf_token = csrf_token
         self.session_id = session_id
         self.token = token
@@ -32,61 +32,65 @@ class Forum:
                       + ";scratchlanguage=en;scratchsessionsid="
                       + self.session_id
                       + ";",
-            "referer": "https://scratch.mit.edu/discuss/topic/" + self.id + "/",
+            "referer": "https://scratch.mit.edu/discuss/topic/" + self.f_id + "/",
         }
 
-    def _check(self, id):
+    def update_data(self):
         """
-        Don't use this
+        Update the data
         """
         try:
-            json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{id}").text)["id"]
+            data = requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.f_id}").json()
         except KeyError:
-            raise Exceptions.InvalidStudio(f"Forum with ID - '{id}' doesn't exist!")
+            raise Exceptions.InvalidForumTopic(f"Forum with ID - '{self.f_id}' doesn't exist!")
+        self.f_title = data['title']
+        self.f_category = data['category']
+        self.f_is_closed = data['closed'] == 1
+        self.f_is_deleted = data['deleted'] == 1
+        self.f_time = data['time']
+        self.f_post_count = data["post_count"]
 
-    def get_id(self):
+    def id(self):
         """
         Returns the id of the forum
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)["id"]
+        return self.f_id
 
-    def get_title(self):
+    def title(self):
         """
         Returns the title of the forum
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)["title"]
+        return self.f_title
 
-    def get_category(self):
+    def category(self):
         """
         Returns the category of the forum
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)["category"]
+        return self.f_category
 
-    def get_closed(self):
+    def is_closed(self):
         """
         Returns whether the forum is closed or not
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)[
-                   "closed"] == 1
+        return self.f_is_closed
 
-    def get_deleted(self):
+    def is_deleted(self):
         """
         Returns whether the forum is deleted or not
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)[
-                   "deleted"] == 1
+        return self.f_is_deleted
 
-    def get_time(self):
+    def time(self):
         """
         Returns the activity of the forum
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)["time"]
+        return self.f_time
 
-    def get_post_count(self):
+    def post_count(self):
         """
         Returns the total post count of the forum
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/info/{self.id}").text)["post_count"]
+        return self.f_post_count
 
     def follow(self):
         """

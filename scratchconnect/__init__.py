@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "1.5.1"
+__version__ = "2.0"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -32,6 +32,10 @@ History:
     13/08/2021(v1.3) - Added the get comments function
     14/08/2021(v1.4) - Updated the get messages function
     17/08/2021(v1.5) - Made some bug fixes
+    18/09/2021(v1.7) - Made the ScratchConnect and User Classes fast and Improved methods
+    19/09/2021(v1.8) - Made the Studio Class Faster and Improved methods
+    25/09/2021(v1.8.5) - Updated the Project and User classes
+    02/10/2021(v2.0) - Updated the Cloud and Forum Class
 Credits:
     All code by Siddhesh Chavan.
 Information:

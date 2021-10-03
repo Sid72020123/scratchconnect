@@ -38,3 +38,10 @@ class InvalidCloudValue(Exception):
     Raised when the cloud value is invalid
     """
     pass
+
+
+class InvalidForumTopic(Exception):
+    """
+    Raised when the forum topic is invalid
+    """
+    pass

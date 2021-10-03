@@ -18,8 +18,8 @@ class User:
         :param username: The username
         """
         self.username = username
+
         self.client_username = client_username
-        self._check(self.username)
         self._user_link = f"{_api}/users/{self.username}"
         self.csrf_token = csrf_token
         self.session_id = session_id
@@ -35,206 +35,288 @@ class User:
                       + ";",
             "referer": "https://scratch.mit.edu/users/" + self.username + "/",
         }
+        self.update_data()
 
-    def _check(self, username):
+    def update_data(self):
         """
-        Don't use this.
+        Update the stored data
         """
+        self.user_id = None
+        self.user_messages_count = None
+        self.user_messages = None
+        self.user_work = None
+        self.user_status = None
+        self.user_joined_date = None
+        self.user_country = None
+        self.user_featured_data = None
+        self.user_projects = None
+        self.user_followers_count = None
+        self.user_following_count = None
+        self.user_total_views = None
+        self.user_total_loves = None
+        self.user_total_faves = None
+        self.user_following = None
+        self.user_followers = None
+        self.user_favourites = None
+        self.user_projects_count = None
+        self.user_projects_count = None
+
+        data = requests.get(f"{self._user_link}").json()
         try:
-            json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
+            self.user_id = data["id"]
         except KeyError:
             raise Exceptions.InvalidUser(f"Username '{self.username}' doesn't exist!")
+        self.user_work = data["profile"]["status"]
+        self.user_bio = data["profile"]["bio"]
+        self.user_joined_date = data["history"]["joined"]
+        self.user_country = data["profile"]["country"]
+        self.user_thumbnail_url = data["profile"]["images"]
 
-    def get_id(self, username=None):
+    def _update_db_data(self):
+        """
+        Update the stored Data (DON'T USE)
+        """
+        data = requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").json()
+        self.user_status = data["status"]
+        self.user_followers_count = data["statistics"]["followers"]
+        self.user_following_count = data["statistics"]["following"]
+        self.user_total_views = data["statistics"]["views"]
+        self.user_total_loves = data["statistics"]["loves"]
+        self.user_total_faves = data["statistics"]["favorites"]
+
+    def id(self):
         """
         Get the ID of a user's profile
-        :param username: The username
         """
-        if username is None:
-            username = self.username
-        return json.loads(requests.get(f"{_api}/users/{username}").text)["id"]
+        if self.id is None:
+            self.update_data()
+        return self.user_id
 
-    def get_messages_count(self):
-        """
-        Get the messages count of the user
-        """
-        headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"}
-        return json.loads(requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count", headers=headers).text)[
-            "count"]
+    def thumbnail_url(self):
+        """Return the thumbnail URL of a user"""
+        if self.user_thumbnail_url is None:
+            self.update_data()
+        return self.user_thumbnail_url
 
-    def get_work(self):
+    def messages_count(self):
+        """
+        Get the messages count of the logged in user
+        """
+        headers = {
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"}
+        if self.user_messages_count is None:
+            self.user_messages_count = \
+                requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count",
+                             headers=headers).json()[
+                    "count"]
+        return self.user_messages_count
+
+    def work(self):
         """
         Returns the 'What I am working on' of a Scratch profile
         """
-        return json.loads(requests.get(self._user_link).text)["profile"]["status"]
+        if self.user_work is None:
+            self.update_data()
+        return self.user_work
 
-    def get_bio(self):
+    def bio(self):
         """
         Returns the 'About me' of a Scratch profile
         """
-        return json.loads(requests.get(self._user_link).text)["profile"]["bio"]
+        if self.user_bio is None:
+            self.update_data()
+        return self.user_bio
 
-    def get_status(self):
+    def status(self):
         """
         Returns the status(Scratcher or New Scratcher) of a Scratch profile
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").text)["status"]
+        if self.user_status is None:
+            self._update_db_data()
+        return self.user_status
 
-    def get_joined_date(self):
+    def joined_date(self):
         """
         Returns the joined date of a Scratch profile
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").text)["joined"]
+        if self.user_joined_date is None:
+            self.update_data()
+        return self.user_joined_date
 
-    def get_country(self):
+    def country(self):
         """
         Returns the country of a Scratch profile
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").text)["country"]
+        if self.user_country is None:
+            self.update_data()
+        return self.user_country
 
-    def get_follower_count(self):
+    def followers_count(self):
         """
         Returns the follower count of a user
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
-            "followers"]
+        if self.user_followers_count is None:
+            self._update_db_data()
+        return self.user_followers_count
 
-    def get_following_count(self):
+    def following_count(self):
         """
         Returns the following count of a user
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
-            "following"]
+        if self.user_following_count is None:
+            self._update_db_data()
+        return self.user_following_count
 
-    def get_total_views(self):
+    def total_views(self):
         """
         Returns the total views count of all the shared projects of a user
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
-            "views"]
+        if self.user_total_views is None:
+            self._update_db_data()
+        return self.user_total_views
 
-    def get_total_loves(self):
+    def total_loves_count(self):
         """
         Returns the total loves count of all the shared projects of a user
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
-            "loves"]
+        if self.user_total_loves is None:
+            self._update_db_data()
+        return self.user_total_loves
 
-    def get_total_favourites(self):
+    def total_favourites_count(self):
         """
         Returns the total favourites count of all the shared projects of a user
         """
-        return json.loads(requests.get(f"https://scratchdb.lefty.one/v2/user/info/{self.username}").text)["statistics"][
-            "favorites"]
+        if self.user_total_faves is None:
+            self._update_db_data()
+        return self.user_total_faves
 
-    def get_featured_data(self):
+    def featured_data(self):
         """
         Returns the featured project data of the Scratch profile
         """
-        return json.loads(requests.get(f"https://scratch.mit.edu/site-api/users/all/{self.username}").text)
+        if self.user_featured_data is None:
+            self.user_featured_data = requests.get(f"https://scratch.mit.edu/site-api/users/all/{self.username}").json()
+        return self.user_featured_data
 
-    def get_projects(self, all=False, limit=20, offset=0):
+    def projects(self, all=False, limit=20, offset=0):
         """
         Returns the list of shared projects of a user
         :param all: If you want all then set it to True
         :param limit: The limit of the projects
         :param offset: The number of projects to be skipped from the beginning
         """
-        if all:
+        if self.user_projects is None:
             projects = []
-            offset = 0
-            while True:
-                request = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit=40&offset={offset}").json()
-                projects.append(request)
-                if len(request) != 40:
-                    break
-                offset += 40
-        if not all:
-            projects = []
-            for i in range(1, limit + 1):
-                request = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit={limit}&offset={offset}").json()
-                projects.append(request)
-        return projects
+            if all:
+                offset = 0
+                while True:
+                    request = requests.get(
+                        f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit=40&offset={offset}").json()
+                    projects.append(request)
+                    if len(request) != 40:
+                        break
+                    offset += 40
+            if not all:
+                for i in range(1, limit + 1):
+                    request = requests.get(
+                        f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit={limit}&offset={offset}").json()
+                    projects.append(request)
+            self.user_projects = projects
+        return self.user_projects
 
-    def get_following(self, all=False, limit=40, offset=0):
+    def projects_count(self):
+        if self.user_projects_count is None:
+            all_projects = self.projects(all=True)
+            count = 0
+            for i in all_projects:
+                count += len(i)
+            self.user_projects_count = count
+        return self.user_projects_count
+
+    def following(self, all=False, limit=20, offset=0):
         """
         Returns the list of the user following
         :param all: If you want all then set it to True
         :param limit: The limit of the users
         :param offset: The number of users to be skipped from the beginning
         """
-        following = []
-        if all:
-            offset = 0
-            while True:
+        if self.user_following is None:
+            following = []
+            if all:
+                offset = 0
+                while True:
+                    response = requests.get(
+                        f"https://api.scratch.mit.edu/users/{self.username}/following/?limit=40&offset={offset}").json()
+                    offset += 40
+                    following.append(response)
+                    if len(response) != 40:
+                        break
+            if not all:
                 response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/following/?limit=40&offset={offset}").json()
-                offset += 40
+                    f"https://api.scratch.mit.edu/users/{self.username}/following/?limit={limit}&offset={offset}").json()
                 following.append(response)
-                if len(response) != 40:
-                    break
-        if not all:
-            response = requests.get(
-                f"https://api.scratch.mit.edu/users/{self.username}/following/?limit={limit}&offset={offset}").json()
-            following.append(response)
-        return following
+            self.user_following = following
+        return self.user_following
 
-    def get_followers(self, all=False, limit=40, offset=0):
+    def followers(self, all=False, limit=20, offset=0):
         """
         Returns the list of the user followers
         :param all: If you want all then set it to True
         :param limit: The limit of the users
         :param offset: The number of users to be skipped from the beginning
         """
-        followers = []
-        if all:
-            offset = 0
-            while True:
+        if self.user_followers is None:
+            followers = []
+            if all:
+                offset = 0
+                while True:
+                    response = requests.get(
+                        f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit=40&offset={offset}").json()
+                    offset += 40
+                    followers.append(response)
+                    if len(response) != 40:
+                        break
+            if not all:
                 response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit=40&offset={offset}").json()
-                offset += 40
+                    f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit={limit}&offset={offset}").json()
                 followers.append(response)
-                if len(response) != 40:
-                    break
-        if not all:
-            response = requests.get(
-                f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit={limit}&offset={offset}").json()
-            followers.append(response)
-        return followers
+            self.user_followers = followers
+        return self.user_followers
 
-    def get_favourites(self, all=False, limit=40, offset=0):
+    def favourites(self, all=False, limit=20, offset=0):
         """
         Returns the list of the user favourites
         :param all: If you want all then set it to True
         :param limit: The limit of the projects
         :param offset: The number of projects to be skipped from the beginning
         """
-        favorites = []
-        if all:
-            offset = 0
-            while True:
+        if self.user_favourites is None:
+            favourites = []
+            if all:
+                offset = 0
+                while True:
+                    response = requests.get(
+                        f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit=40&offset={offset}").json()
+                    offset += 40
+                    favourites.append(response)
+                    if len(response) != 40:
+                        break
+            if not all:
                 response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit=40&offset={offset}").json()
-                offset += 40
-                favorites.append(response)
-                if len(response) != 40:
-                    break
-        if not all:
-            response = requests.get(
-                f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit={limit}&offset={offset}").json()
-            favorites.append(response)
-        return favorites
+                    f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit={limit}&offset={offset}").json()
+                favourites.append(response)
+            self.user_favourites = favourites
+        return self.user_favourites
 
-    def get_user_follower_history(self, segment="", range=30):
+    def user_follower_history(self, segment="", range=30):
         """
         Return the follower history of the user
         :param segment: The length of time between each segment, defaults to 1 day.
         :param range: Of how far back to get history, defaults to 30 days
         """
-        return json.loads(requests.get(
-            f"https://scratchdb.lefty.one/v3/user/graph/{self.username}/followers?segment={segment}&range={range}").text)
+        return requests.get(
+            f"https://scratchdb.lefty.one/v3/user/graph/{self.username}/followers?segment={segment}&range={range}").json()
 
     def post_comment(self, content, commentee_id="", parent_id=""):
         """
@@ -252,6 +334,14 @@ class User:
             data=json.dumps(data),
         )
 
+    def reply_comment(self, content, comment_id):
+        """
+        Reply a comment
+        :param content: The message
+        :param comment_id: The ID of the comment you want to reply
+        """
+        return self.post_comment(content=content, parent_id=comment_id)
+
     def report(self, field):
         """
         Report a user
@@ -265,36 +355,33 @@ class User:
                       data=json.dumps(data),
                       )
 
-    def get_all_data(self):
+    def all_data(self):
         """
         Returns all the data of the user
         """
         data = {
             'UserName': self.username,
-            'UserId': self.get_id(self.username),
-            'Messages Count': self.get_messages_count(),
-            'Join Date': self.get_joined_date(),
-            'Status': self.get_status(),
-            'Work': self.get_work(),
-            'Bio': self.get_bio(),
-            'Country': self.get_country(),
-            'Follower Count': self.get_follower_count(),
-            'Following Count': self.get_following_count(),
-            'Total Views': self.get_total_views(),
-            'Total Loves': self.get_total_loves(),
-            'Total Favourites': self.get_total_favourites(),
-            'Followers': self.get_followers(all=True),
-            'Following': self.get_following(all=True),
-            'Favourites': self.get_favourites(all=True),
-            'Projects': self.get_projects(all=True)
+            'UserId': self.id(),
+            'Messages Count': self.messages_count(),
+            'Join Date': self.joined_date(),
+            'Status': self.status(),
+            'Work': self.work(),
+            'Bio': self.bio(),
+            'Country': self.country(),
+            'Follower Count': self.followers_count(),
+            'Following Count': self.following_count(),
+            'Total Views': self.total_views(),
+            'Total Loves': self.total_loves_count(),
+            'Total Favourites': self.total_favourites_count(),
+            'Total Projects Count': self.projects_count()
         }
         return data
 
-    def get_comments(self, limit=5, page=1):
+    def comments(self, limit=5, page=1):
         """
         Get comments of the profile of the user
         :param limit: The limit
         :param page: The page
         """
-        return requests.get(f"https://scratch-profile-comments.sid72020123.repl.co/comments/?username={self.username}&limit={limit}&page={page}").json()
-
+        return requests.get(
+            f"https://scratch-profile-comments.sid72020123.repl.co/comments/?username={self.username}&limit={limit}&page={page}").json()
