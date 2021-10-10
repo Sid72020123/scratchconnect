@@ -1,4 +1,4 @@
-# scratchconnect v2.0
+# scratchconnect v2.0.1
 
 Python Library to connect Scratch API and much more.
 
@@ -346,3 +346,4 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 19/09/2021(v1.8) - Made the Studio Class Faster and Improved methods
 * 25/09/2021(v1.8.5) - Updated the Project and User classes
 * 02/10/2021(v2.0) - Updated the Cloud and Forum Class
+* 10/10/2021(v2.0.1) - Fixed some cloud stuff
