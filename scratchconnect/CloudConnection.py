@@ -67,6 +67,7 @@ class CloudConnection:
                          'Action': response[i]['verb'],
                          'Name': response[i]['name'],
                          'Value': response[i]['value'],
+                         'Timestamp': response[i]['timestamp']
                          })
         return data
 
@@ -124,9 +125,9 @@ class CloudConnection:
         if not str(value).isdigit():
             raise Exceptions.InvalidCloudValue(f"The Cloud Value should be a set of digits and not '{value}'!")
         try:
-            if len(str(value)) > 128:
+            if len(str(value)) > 256:
                 raise ValueError(
-                    "Scratch has Cloud Variable Limit of 128 Characters per variable. Try making the value shorter!")
+                    "Scratch has Cloud Variable Limit of 256 Characters per variable. Try making the value shorter!")
             if str(variable_name.strip())[0] != "☁":
                 n = f"☁ {variable_name.strip()}"
             else:
