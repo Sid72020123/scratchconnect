@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "2.0.1"
+__version__ = "2.1"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -10,7 +10,7 @@ Import Statement:
 Documentation(Tutorial):
     For documentation, go to {__documentation__}
 Required Libraries:
-    requests*, re*, json*, time*, websocket, websocket-client
+    requests*, re*, json*, time*, websocket-client
     * -> In-built
 History:
     19/06/2021(v0.0.0.1) - First made the library and updated it.
@@ -37,6 +37,7 @@ History:
     25/09/2021(v1.8.5) - Updated the Project and User classes
     02/10/2021(v2.0) - Updated the Cloud and Forum Class
     10/10/2021(v2.0.1) - Fixed some cloud stuff
+    11/10/2021(v2.1) - Added some features to Forum Class
 Credits:
     All code by Siddhesh Chavan.
 Information:

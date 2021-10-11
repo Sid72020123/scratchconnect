@@ -107,3 +107,10 @@ class Forum:
         self.headers['referer'] = f"https://scratch.mit.edu/discuss/topic/{self.id}/"
         return requests.post(f"https://scratch.mit.edu/discuss/subscription/topic/{self.id}/delete/",
                              headers=self.headers)
+
+    def posts(self, page=1):
+        """
+        Get the post in Forum Topic of a specified page. Images and some other stuff will not appear!
+        :param page: The page
+        """
+        return requests.get(f"https://scratch-forum.sid72020123.repl.co/forum/?topic={self.f_id}&page={page}").json()
