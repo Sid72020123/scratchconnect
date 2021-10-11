@@ -1,4 +1,4 @@
-# scratchconnect v2.0.1
+# scratchconnect v2.1
 
 Python Library to connect Scratch API and much more.
 
@@ -310,6 +310,7 @@ forum.time()  # Returns the activity of the forum
 forum.post_count()  # Returns the total post count of the forum
 forum.follow()  # Follow a Forum
 forum.unfollow()  # Unfollow a Forum
+forum.posts(page=1)  # Get the post in Forum Topic of a specified page. Images and some other stuff will not appear!
 ##########################################################################
 # IMPORTANT NOTE: To always get the updated data use the update_data() function
 ##########################################################################
@@ -347,3 +348,4 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 25/09/2021(v1.8.5) - Updated the Project and User classes
 * 02/10/2021(v2.0) - Updated the Cloud and Forum Class
 * 10/10/2021(v2.0.1) - Fixed some cloud stuff
+* 11/10/2021(v2.1) - Added some features to Forum Class
