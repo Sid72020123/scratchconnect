@@ -435,7 +435,7 @@ class ScratchConnect:
         Set the bio or 'About Me' of the profile
         :param content: The bio or the content.
         """
-        data = json.loads({"bio": content})
+        data = json.dumps({"bio": content})
         return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
                             data=data,
                             headers=self.headers,
