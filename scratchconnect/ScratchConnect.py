@@ -434,6 +434,7 @@ class ScratchConnect:
         """
         Set the bio or 'About Me' of the profile
         :param content: The bio or the content.
+        Thanks to QuantumCodes for helping me in the error!
         """
         data = json.dumps({"bio": content})
         return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
@@ -445,8 +446,9 @@ class ScratchConnect:
         """
         Set the status or 'What I am Working On' of the profile
         :param content: The work or the content.
+        Thanks to QuantumCodes for helping me in the error!
         """
-        data = {"status": content}
+        data = json.dumps({"status": content})
         return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
                             data=data,
                             headers=self.headers,
