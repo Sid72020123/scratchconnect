@@ -1,11 +1,14 @@
-# scratchconnect v2.1
+# scratchconnect v2.3
 
 Python Library to connect Scratch API and much more.
 
 This library can show the statistics of Users, Projects, Studios, Forums and also connect and set cloud variables of a
 project!
 
-This library needs a Scratch account. Visit the Scratch Website: [https://scratch.mit.edu/](https://scratch.mit.edu/)
+**This library needs a Scratch account. Visit the Scratch Website: [https://scratch.mit.edu/](https://scratch.mit.edu/)
+You also need to have Python Programming Language installed on your computer.**
+
+**You need basic knowledge of Python. Using this library without the knowledge can be risky.**
 
 ![https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
@@ -15,12 +18,41 @@ This library needs a Scratch account. Visit the Scratch Website: [https://scratc
 
 ### Installation
 
-To install this library, just type:
-```pip install scratchconnect```
+To install this library, just type ```pip install scratchconnect``` in the terminal (Command Prompt)
+
+**OR**
+
+Run this python Program
+
+```python
+import os
+
+os.system('pip install scratchconnect')
+```
+
+**If you still have troubles while installing then go
+to [this link](https://packaging.python.org/tutorials/installing-packages/)**
 
 ### Documentation
 
-Documentation coming soon.......
+Documentation coming soon...
+
+### Data Credits:
+
+These are the people who made the APIs so that this library can take data:
+
+* [Scratch API](https://github.com/LLK/scratch-rest-api) by the Scratch Team
+* [Scratch DB](https://scratchdb.lefty.one/) by [@DatOneLefty](https://scratch.mit.edu/users/DatOneLefty/) on Scratch
+* [Scratch User Comments API](https://github.com/Quantum-Codes/Scratch-Profile-Comments)
+  by [@Ankit_Anmol](https://scratch.mit.edu/users/Ankit_Anmol/)
+  and [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
+* [Simple Forum API](https://github.com/Sid72020123/Scratch-Forum)
+  by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
+
+```
+I thank all this people.
+- Owner (Sid72020123)
+```
 
 ### Creating a Simple Connection:
 
@@ -178,7 +210,7 @@ Project:
 import scratchconnect
 
 user = scratchconnect.ScratchConnect("Username", "Password")
-project = user.connect_project(project_id=1)
+project = user.connect_project(project_id=1)  # Connect a project.
 project.author()  # Returns the author of the project
 project.title()  # Returns the title of the project
 project.notes()  # Returns the notes(Notes or Credits) of the project
@@ -220,6 +252,21 @@ project.set_instruction()  # Set the instruction of the project
 project.update_data()  # Update the data
 ```
 
+#### Want to access and set the cloud variables of an unshared project?
+
+Use the Following Code:
+
+**Note: By accessing an unshared project, some data may not be accessible to this library so some data might not appear.
+You can get the scripts and connect cloud variables of an unshared project.**
+
+```python
+import scratchconnect
+
+user = scratchconnect.ScratchConnect("Username", "Password")
+project = user.connect_project(project_id=1,
+                               access_unshared=True)  # Use the 'access_unshared' parameter to access the unshared project.
+```
+
 ### Connect Cloud Variables of a Scratch Project:
 
 To connect the cloud variables of a Scratch Project use the `connect_cloud_variables()` function. Use the following
@@ -231,8 +278,8 @@ import scratchconnect
 user = scratchconnect.ScratchConnect("Username", "Password")
 project = user.connect_project(project_id=1)
 variables = project.connect_cloud_variables()
-variables.get_variable_data(limit=100, offset=0)  # Returns the cloud variable data
-variables.get_cloud_variable_value(variable_name="Name", limit=100)  # Returns the cloud variable value
+variables.variable_data(limit=100, offset=0)  # Returns the cloud variable data
+variables.cloud_variable_value(variable_name="Name", limit=100)  # Returns the cloud variable value
 # Program to set cloud variables:
 set = variables.set_cloud_variable(variable_name="Name", value=123)  # Set a Cloud Variable
 if set:
@@ -241,7 +288,7 @@ if set:
 
 ### Encoding/Decoding Cloud Variables:
 
-ScratchConnect v2.0 has some good features to encode/decode a cloud variable! See some examples below:
+ScratchConnect v2.0+ has some good features to encode/decode a cloud variable! See some examples below:
 
 **ScratchConnect has a case-sensitive encoding/decoding system. For example both 'A' and 'a' are encoded/decoded
 differently!**
@@ -317,6 +364,86 @@ forum.posts(page=1)  # Get the post in Forum Topic of a specified page. Images a
 forum.update_data()  # Update the data
 ```
 
+### Cloud Events
+
+**This new feature was suggested by [@Ankit_Anmol](https://scratch.mit.edu/users/Ankit_Anmol/) on Scratch**
+If you want to handle various Cloud Events on Scratch, use the following code:
+
+```python
+import scratchconnect
+
+login = scratchconnect.ScratchConnect("Username", "Password")
+project = login.connect_project(1)  # Connect the project
+
+variables = project.connect_cloud_variables()  # Connect the project's cloud variables
+
+event = variables.start_event(
+    update_time=1)  # Start a cloud event loop to check events. Use the 'update_time' parameter to wait for that number of seconds and then update the data.
+
+
+@variables.event.on('change')
+def do_something(**data):
+    print(data)  # Will print variable data of the event in dict format. You can access individual members too! Example:
+    print(data['user'])  # The user who changes the value
+    print(data['action'])  # The action with the variable
+    print(data['variable_name'])  # The name of the variable changed, created, etc.
+    print(data['value'])  # The value of the variable
+    print(data['timestamp'])  # The timestamp
+```
+
+**Want to check if only a variable's value if updated? See this example code:**
+
+```python
+import scratchconnect
+
+login = scratchconnect.ScratchConnect("Username", "Password")
+project = login.connect_project(1)  # Connect the project
+
+variables = project.connect_cloud_variables()
+event = variables.start_event(update_time=1)  # Start Event with the required time.
+
+
+@variables.event.on('change')
+def do_something(**data):
+    event_type = data['action']  # Will contain variable action of the event.
+    if event_type == 'set_var':
+        # Do something when a value is changed...
+        print(data['variable_name'], data['value'])  # Just print the data name and value.
+```
+
+### Cloud Storage(beta)
+
+This is a special feature in ScratchConnect which is used to make a cloud storage system. Some features are:
+
+* Create a variable
+* Set a variable
+* Get a variable
+* Delete a variable
+* Delete all variables
+* Wait for a given time
+* Simple Syntax
+
+**Note: This feature is still in development and may cause errors! Creating/Deleting variables is fast but
+Getting/Setting them is a little slow.**
+
+**First, you need to put a sprite in your project. Go to [this link](https://scratch.mit.edu/projects/606881698/) and click 'see inside'. There will be all the
+instructions.**
+
+To create a cloud storage in ScratchConnect use the code:
+
+```python
+import scratchconnect
+
+login = scratchconnect.ScratchConnect("Username", "Password")
+project = login.connect_project(1)  # Connect the project
+
+cloud_storage = project.create_cloud_storage(file_name="data", rewrite_file=False, edit_access=[
+    'Sid72020123'])  # Create a cloud storage. It will create a file in the specified location. Then there is 'edit_access' list which contains the users which have permission to edit(actually create and delete) the variables. Use the 'rewrite_file' argument if you want the file to be rw written again each time you write the program!
+
+cloud_storage.start_cloud_loop(update_time=1,
+                               print_requests=True)  # Start the Cloud Storage. Use the 'update_time' to wait for the specified time. Use the 'print_requests' to print the request info in the console/output screen.
+```
+
 ### Bug Reporting:
 
 All Bugs to be reported on my [Scratch Profile](https://scratch.mit.edu/users/Sid72020123/)
@@ -349,3 +476,12 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 02/10/2021(v2.0) - Updated the Cloud and Forum Class
 * 10/10/2021(v2.0.1) - Fixed some cloud stuff
 * 11/10/2021(v2.1) - Added some features to Forum Class
+* 24/10/2021(v2.1.1) - Started making the scStorage Class
+* 29/10/2021(v2.1.1.1) - Fixed set_bio() and set_work() and updated the scDataBase
+* 30/10/2021(v2.2.5) - Updated the scStorage
+* 31/10/2021(v2.2.7) - Updated the scStorage
+* 25/11/2021(v2.3) - Updated the scStorage and CloudConnection
+
+### Credits:
+
+**This library is made by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch**
