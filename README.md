@@ -1,4 +1,4 @@
-# scratchconnect v2.3
+# scratchconnect v2.4
 
 Python Library to connect Scratch API and much more.
 
@@ -278,15 +278,52 @@ import scratchconnect
 user = scratchconnect.ScratchConnect("Username", "Password")
 project = user.connect_project(project_id=1)
 variables = project.connect_cloud_variables()
-variables.variable_data(limit=100, offset=0)  # Returns the cloud variable data
-variables.cloud_variable_value(variable_name="Name", limit=100)  # Returns the cloud variable value
+variables.get_variable_data(limit=100, offset=0)  # Returns the cloud variable data
+variables.get_cloud_variable_value(variable_name="Name", limit=100)  # Returns the cloud variable value
 # Program to set cloud variables:
 set = variables.set_cloud_variable(variable_name="Name", value=123)  # Set a Cloud Variable
 if set:
     print("Cloud Variable Updated!")
 ```
 
+### Connect Cloud Variables of Turbowarp:
+
+To connect the cloud variables of a Turbowarp Project use the `connect_turbowarp_cloud()` function. Use the following
+program to connect the cloud variables of a Turbowarp Project:
+
+**Note: Turbowarp doesn't provide any features to get the data, etc. so you can't do some actions with Turbowarp as in
+Scratch**
+
+**Note: Use the ```acccess_unshared=True``` parameter of the ```connect_project()``` function to connect the Turbowarp
+Project even if it is unshared on Scratch!**
+
+```python
+import scratchconnect
+
+user = scratchconnect.ScratchConnect("Username", "Password")
+project = user.connect_project(project_id=1)  # Connect a Project
+tw_cloud = project.connect_turbowarp_cloud(
+    username="Username")  # Connect the Turbowarp cloud with an optional parameter to change the username!
+
+tw_cloud.set_cloud_variable(variable_name="Name", value=0)  # Set a Turbowarp variable
+
+tw_cloud.get_variable_data()  # Get the data of the previous value of the variable. NOT Current
+```
+
+### Error with Turbowarp Cloud?
+
+Sometimes there mat be error with the Turbowarp Cloud. Some Basic Errors are:
+
+**1. I can't change the Cloud Variable Value**
+
+If you can't change the Turbowarp Cloud Variable value using scratchconnect then first check if your code is correct. If
+the problem still exists try with this
+URL: ```https://turbowarp.org/<project ID>?cloud_host=wss://clouddata.turbowarp.org```. Replace the ```project ID```
+with your project ID.
+
 ### Encoding/Decoding Cloud Variables:
+
+#### In Scratch
 
 ScratchConnect v2.0+ has some good features to encode/decode a cloud variable! See some examples below:
 
@@ -295,7 +332,7 @@ differently!**
 
 Go to [this link](https://scratch.mit.edu/projects/578255313/) for the Scratch version of Encoder/Decoder
 
-## Encoding/Decoding a string:
+##### Encoding/Decoding a string:
 
 ```python
 import scratchconnect
@@ -316,7 +353,7 @@ print("Encoded: ", encoded_string)  # Print the results to check
 print("Decoded: ", decoded_string)  # Print the results to check
 ```
 
-## Encoding/Decoding a list:
+##### Encoding/Decoding a list:
 
 ```python
 import scratchconnect
@@ -337,6 +374,10 @@ decoded_string = variables.decode_list(variable_value)  # Decode a list
 print("Encoded: ", encoded_string)  # Print the results to check
 print("Decoded: ", decoded_string)  # Print the results to check
 ```
+
+#### In Turbowarp
+
+To encode/decode a string/list in Turbowarp, the syntax is same as to encode/decode in Scratch. See above
 
 ### Connect a Scratch Forum:
 
@@ -426,8 +467,8 @@ This is a special feature in ScratchConnect which is used to make a cloud storag
 **Note: This feature is still in development and may cause errors! Creating/Deleting variables is fast but
 Getting/Setting them is a little slow.**
 
-**First, you need to put a sprite in your project. Go to [this link](https://scratch.mit.edu/projects/606881698/) and click 'see inside'. There will be all the
-instructions.**
+**First, you need to put a sprite in your project. Go to [this link](https://scratch.mit.edu/projects/606881698/) and
+click 'see inside'. There will be all the instructions.**
 
 To create a cloud storage in ScratchConnect use the code:
 
@@ -443,6 +484,11 @@ cloud_storage = project.create_cloud_storage(file_name="data", rewrite_file=Fals
 cloud_storage.start_cloud_loop(update_time=1,
                                print_requests=True)  # Start the Cloud Storage. Use the 'update_time' to wait for the specified time. Use the 'print_requests' to print the request info in the console/output screen.
 ```
+
+### Projects made using ScratchConnect
+
+To see the projects made using ScratchConnect, go to the
+official [ScratchConnect Projects Studio](https://scratch.mit.edu/studios/30427944/)
 
 ### Bug Reporting:
 
@@ -481,7 +527,10 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 30/10/2021(v2.2.5) - Updated the scStorage
 * 31/10/2021(v2.2.7) - Updated the scStorage
 * 25/11/2021(v2.3) - Updated the scStorage and CloudConnection
+* 13/12/2021(v2.3.5) - Started making the TurbowarpCloudConnection feature and added some methods to it
+* 14/12/2021(v2.4) - Updated and fixed mistakes in docs
 
 ### Credits:
 
-**This library is made by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch**
+**This library is made by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch. And thanks to all
+contributors.**
