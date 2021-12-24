@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "2.3"
+__version__ = "2.4"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -12,7 +12,7 @@ Documentation(Tutorial):
 Required Libraries:
     requests*, re*, json*, time*, threading*, websocket-client
     * -> In-built
-    This library also uses pyEmmiter o handle cloud events in Python.
+    This library also uses pyEmmiter to handle cloud events in Python.
 History:
     19/06/2021(v0.0.0.1) - First made the library and updated it.
     20/06/2021(v0.1) - Added many features.
@@ -44,6 +44,8 @@ History:
     30/10/2021(v2.2.5) - Updated the scStorage
     31/10/2021(v2.2.7) - Updated the scStorage
     25/11/2021(v2.3) - Updated the scStorage and CloudConnection
+    13/12/2021(v2.3.5) - Started making the TurbowarpCloudConnection feature and added some methods to it
+    14/12/2021(v2.4) - Updated and fixed mistakes in docs
 Credits:
     All code by Siddhesh Chavan.
 Information:
