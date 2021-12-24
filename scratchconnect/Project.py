@@ -6,6 +6,7 @@ import requests
 
 from scratchconnect import Exceptions
 from scratchconnect import CloudConnection
+from scratchconnect import TurbowarpCloudConnection
 from scratchconnect import scCloudStorage
 
 _website = "scratch.mit.edu"
@@ -459,6 +460,15 @@ class Project:
         return CloudConnection.CloudConnection(project_id=self.project_id, client_username=self.client_username,
                                                csrf_token=self.csrf_token,
                                                session_id=self.session_id, token=self.token)
+
+    def connect_turbowarp_cloud(self, username=None):
+        """
+        Connect the cloud variables of the project
+        """
+        if username is None:
+            username = self.client_username
+        return TurbowarpCloudConnection.TurbowarpCloudConnection(project_id=self.project_id,
+                                                                 username=self.client_username)
 
     def create_cloud_storage(self, file_name="data", rewrite_file=True, edit_access=None):
         """
