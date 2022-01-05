@@ -16,6 +16,8 @@ You also need to have Python Programming Language installed on your computer.**
 [![Package Status](https://img.shields.io/pypi/status/scratchconnect.svg)](https://pypi.org/project/scratchconnect/)
 [![Downloads](https://static.pepy.tech/personalized-badge/scratchconnect?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/scratchconnect)
 
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Sid72020123/scratchconnect.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Sid72020123/scratchconnect/context:python)
+
 ### Installation
 
 To install this library, just type ```pip install scratchconnect``` in the terminal (Command Prompt)
