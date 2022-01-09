@@ -1,4 +1,4 @@
-# scratchconnect v2.4
+# scratchconnect v2.4.1
 
 Python Library to connect Scratch API and much more.
 
@@ -531,6 +531,7 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 25/11/2021(v2.3) - Updated the scStorage and CloudConnection
 * 13/12/2021(v2.3.5) - Started making the TurbowarpCloudConnection feature and added some methods to it
 * 14/12/2021(v2.4) - Updated and fixed mistakes in docs
+* 09/01/2022(v2.4.1) - Code Fixes
 
 ### Credits:
 
