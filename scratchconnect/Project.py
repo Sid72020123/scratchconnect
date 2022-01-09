@@ -468,7 +468,7 @@ class Project:
         if username is None:
             username = self.client_username
         return TurbowarpCloudConnection.TurbowarpCloudConnection(project_id=self.project_id,
-                                                                 username=self.client_username)
+                                                                 username=username)
 
     def create_cloud_storage(self, file_name="data", rewrite_file=True, edit_access=None):
         """

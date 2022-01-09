@@ -2,7 +2,6 @@
 The Forum File
 """
 import requests
-import json
 
 from scratchconnect import Exceptions
 

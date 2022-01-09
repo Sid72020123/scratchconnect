@@ -47,7 +47,7 @@ class CloudStorage:
     def _reset_request_var(self):
         try:
             self.cloud.set_cloud_variable(variable_name='Request', value=0)
-        except:
+        except:  # lgtm [py/catch-base-exception]
             time.sleep(1)
             self._connect_cloud()
 
@@ -55,14 +55,14 @@ class CloudStorage:
         try:
             self.cloud.set_cloud_variable(variable_name='Response Info',
                                           value=self.encoder.encode_list([status_code]))
-        except:
+        except:  # lgtm [py/catch-base-exception]
             time.sleep(1)
             self._connect_cloud()
 
     def _set_cloud_var(self, name, value):
         try:
             return self.cloud.set_cloud_variable(variable_name=name, value=value)
-        except:
+        except:  # lgtm [py/catch-base-exception]
             time.sleep(1)
             self._connect_cloud()
 

@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "2.4"
+__version__ = "2.4.1"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -46,6 +46,7 @@ History:
     25/11/2021(v2.3) - Updated the scStorage and CloudConnection
     13/12/2021(v2.3.5) - Started making the TurbowarpCloudConnection feature and added some methods to it
     14/12/2021(v2.4) - Updated and fixed mistakes in docs
+    09/01/2022(v2.4.1) - Code Fixes
 Credits:
     All code by Siddhesh Chavan.
 Information:
