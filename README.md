@@ -1,4 +1,4 @@
-# scratchconnect v2.4.1
+# scratchconnect v2.4.2
 
 Python Library to connect Scratch API and much more.
 
@@ -45,9 +45,8 @@ These are the people who made the APIs so that this library can take data:
 
 * [Scratch API](https://github.com/LLK/scratch-rest-api) by the Scratch Team
 * [Scratch DB](https://scratchdb.lefty.one/) by [@DatOneLefty](https://scratch.mit.edu/users/DatOneLefty/) on Scratch
-* [Scratch User Comments API](https://github.com/Quantum-Codes/Scratch-Profile-Comments)
-  by [@Ankit_Anmol](https://scratch.mit.edu/users/Ankit_Anmol/)
-  and [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
+* [Scratch Comments API](https://github.com/Sid72020123/Scratch-Comments-API)
+  by  [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
 * [Simple Forum API](https://github.com/Sid72020123/Scratch-Forum)
   by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
 
@@ -532,6 +531,7 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 13/12/2021(v2.3.5) - Started making the TurbowarpCloudConnection feature and added some methods to it
 * 14/12/2021(v2.4) - Updated and fixed mistakes in docs
 * 09/01/2022(v2.4.1) - Code Fixes
+* 25/01/2022(v2.4.2) - Added new Comment API
 
 ### Credits:
 
