@@ -384,4 +384,4 @@ class User:
         :param page: The page
         """
         return requests.get(
-            f"https://scratch-profile-comments.sid72020123.repl.co/comments/?username={self.username}&limit={limit}&page={page}").json()
+            f"https://scratch-comments-api.sid72020123.repl.co/user/?username={self.username}&limit={limit}&page={page}").json()
