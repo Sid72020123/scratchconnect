@@ -51,7 +51,7 @@ These are the people who made the APIs so that this library can take data:
   by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
 
 ```
-I thank all this people.
+I thank all these people.
 - Owner (Sid72020123)
 ```
 
