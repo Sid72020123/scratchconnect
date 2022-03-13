@@ -404,7 +404,7 @@ class Project:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
         with open(file, "rb") as f:
-            image = file.read()
+            image = f.read()
         return requests.post(f"https://scratch.mit.edu/internalapi/project/thumbnail/{self.project_id}/set/",
                              data=image,
                              headers=self.headers,
