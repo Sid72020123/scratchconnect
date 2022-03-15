@@ -29,8 +29,9 @@ class ScratchConnect:
         self._login()
         self.update_data()
         
-    def login_cookie(self, csrf):
+    def login_cookie(self, csrf, scratch-session):
         self.csrf_token = csrf
+        self.session_id = scratch-session
 
     def _login(self):
         
