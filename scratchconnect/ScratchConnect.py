@@ -28,11 +28,16 @@ class ScratchConnect:
 
         self._login()
         self.update_data()
+        
+    def login_cookie(self, csrf):
+        self.csrf_token = csrf
 
     def _login(self):
+        
         """
         Function to login(don't use this)
         """
+        
         global _user_link
         headers = {
             "x-csrftoken": "a",
