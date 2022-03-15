@@ -6,7 +6,7 @@ This library can show the statistics of Users, Projects, Studios, Forums and als
 project!
 
 **This library needs a Scratch account. Visit the Scratch Website: [https://scratch.mit.edu/](https://scratch.mit.edu/)
-You also need to have Python Programming Language installed on your computer.**
+You also need to have the Python programming language installed on your computer.**
 
 **You need basic knowledge of Python. Using this library without the knowledge can be risky.**
 
