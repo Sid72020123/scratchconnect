@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "2.4.2"
+__version__ = "2.5"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -10,7 +10,7 @@ Import Statement:
 Documentation(Tutorial):
     For documentation, go to {__documentation__}
 Required Libraries:
-    requests*, re*, json*, time*, threading*, websocket-client
+    requests*, re*, json*, time*, threading*, warnings*, websocket-client
     * -> In-built
     This library also uses pyEmmiter to handle cloud events in Python.
 History:
@@ -48,6 +48,7 @@ History:
     14/12/2021(v2.4) - Updated and fixed mistakes in docs
     09/01/2022(v2.4.1) - Code Fixes
     25/01/2022(v2.4.2) - Added new Comment API
+    16/03/2022(v2.5) - Fixed login and added cookie login feature
 Credits:
     All code by Siddhesh Chavan.
 Information:

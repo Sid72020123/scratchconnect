@@ -1,3 +1,8 @@
+"""
+The Exceptions File
+"""
+
+
 class InvalidInfo(Exception):
     """
     Raised when the username or password is invalid
@@ -45,6 +50,7 @@ class InvalidForumTopic(Exception):
     Raised when the forum topic is invalid
     """
     pass
+
 
 class ForbiddenLogin(Exception):
     """
