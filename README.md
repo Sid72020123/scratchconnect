@@ -1,4 +1,4 @@
-# scratchconnect v2.4.2
+# scratchconnect v2.5
 
 Python Library to connect Scratch API and much more.
 
@@ -486,6 +486,45 @@ cloud_storage.start_cloud_loop(update_time=1,
                                print_requests=True)  # Start the Cloud Storage. Use the 'update_time' to wait for the specified time. Use the 'print_requests' to print the request info in the console/output screen.
 ```
 
+### Cookie Login
+
+Sometimes, the Scratch API blocks the login from online IDEs like Replit, etc. To overcome the issue, ScratchConnect
+v2.5 or above has a feature to login directly with cookie. Example:
+
+```python
+import scratchconnect
+
+scratch_cookie = {
+    "Username": "USERNAME",
+    "SessionID": "SESSIONID",
+    "CSRFToken": "CSRFTOKEN"
+}  # set the cookie dictionary
+
+login = scratchconnect.ScratchConnect(cookie=scratch_cookie)  # Login with cookie
+```
+
+**Note: While running the above code, ScratchConnect will give a warning that some features might not work if the cookie
+values are wrong. It's not an ERROR, it's a WARNING**
+
+#### Advanced
+
+In case the login from username and password fails, ScratchConnect also has a feature to login with a cookie when the
+login with username and password fails! You just have to pass the username and password value and also the cookie in the
+ScratchConnect class. Also, you need to set the `auto_cookie_login` variable to `True`. Example Code:
+```python
+import scratchconnect
+
+scratch_cookie = {
+    "Username": "USERNAME",
+    "SessionID": "SESSIONID",
+    "CSRFToken": "CSRFTOKEN"
+}  # set the cookie dictionary
+
+login = scratchconnect.ScratchConnect(username="USERNAME", password="PASSWORD",
+                                      cookie=scratch_cookie,
+                                      auto_cookie_login=True)  # Login with cookie and enable the auto_cookie_login
+```
+
 ### Projects made using ScratchConnect
 
 To see the projects made using ScratchConnect, go to the
@@ -532,6 +571,7 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 14/12/2021(v2.4) - Updated and fixed mistakes in docs
 * 09/01/2022(v2.4.1) - Code Fixes
 * 25/01/2022(v2.4.2) - Added new Comment API
+* 16/03/2022(v2.5) - Fixed login and added cookie login feature
 
 ### Credits:
 
