@@ -44,6 +44,12 @@ class ScratchConnect:
         data = json.dumps({"username": self.username, "password": self.password})
         request = requests.post(f"{_login}", data=data, headers=headers)
         try:
+            request.json()
+        except Exception:
+            # Login did not fail, but Scratch is preventing login
+            if request.status_code == 403:
+                raise Exceptions.ForbiddenLogin("Scratch is not letting you login from this device.\nTry again later or from another device.")
+        try:
             self.session_id = re.search('"(.*)"', request.headers["Set-Cookie"]).group()
             self.token = request.json()[0]["token"]
         except AttributeError:

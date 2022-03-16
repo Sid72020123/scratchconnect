@@ -45,3 +45,8 @@ class InvalidForumTopic(Exception):
     Raised when the forum topic is invalid
     """
     pass
+
+class ForbiddenLogin(Exception):
+    """
+    Raised when Scratch sends a 403 Forbidden Status Code while logging in
+    """
