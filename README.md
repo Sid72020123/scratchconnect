@@ -6,7 +6,7 @@ This library can show the statistics of Users, Projects, Studios, Forums and als
 project!
 
 **This library needs a Scratch account. Visit the Scratch Website: [https://scratch.mit.edu/](https://scratch.mit.edu/)
-You also need to have Python Programming Language installed on your computer.**
+You also need to have the Python programming language installed on your computer.**
 
 **You need basic knowledge of Python. Using this library without the knowledge can be risky.**
 
@@ -24,7 +24,7 @@ To install this library, just type ```pip install scratchconnect``` in the termi
 
 **OR**
 
-Run this python Program
+Run this Python program
 
 ```python
 import os
@@ -69,7 +69,7 @@ It will give an error if the `username` or `password` is invalid.
 
 ### More Uses:
 
-##### Note:- The below code can be only used by the logged in Scratcher. To get the stats of other users see the User Connection Documentation
+##### Note: The below code can be only used by the logged in Scratcher. To get the stats of other users see the User Connection Documentation
 
 ```python
 import scratchconnect
@@ -453,7 +453,7 @@ def do_something(**data):
         print(data['variable_name'], data['value'])  # Just print the data name and value.
 ```
 
-### Cloud Storage(beta)
+### Cloud Storage (beta)
 
 This is a special feature in ScratchConnect which is used to make a cloud storage system. Some features are:
 
