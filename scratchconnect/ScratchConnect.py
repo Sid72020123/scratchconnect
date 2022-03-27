@@ -59,8 +59,13 @@ class ScratchConnect:
                     if auto_cookie_login is True:
                         self._cookie_login()
                     else:
-                        raise Exceptions.ForbiddenLogin(
-                            "Scratch is not letting you login from this device.\nTry again later or from another device.")
+                        raise Exceptions.ForbiddenLogin("""
+                        Scratch is not letting you login from this device.
+                        Try to do the following to fix this issue:
+                        - Try again later (10-15 minutes)
+                        - Use Cookie login - https://github.com/Sid72020123/scratchconnect#Cookie-Login
+                        - Try from another device (Scratch sometimes blocks login from Replit)
+                        """)
             try:
                 self.session_id = re.search('"(.*)"', request.headers["Set-Cookie"]).group()
                 self.token = request.json()[0]["token"]
