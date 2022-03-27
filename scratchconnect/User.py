@@ -385,3 +385,9 @@ class User:
         """
         return requests.get(
             f"https://scratch-comments-api.sid72020123.repl.co/user/?username={self.username}&limit={limit}&page={page}").json()
+
+    def ocular_data(self):
+        """
+        Get ocular data of the user
+        """
+        return requests.get(f"https://my-ocular.jeffalo.net/api/user/{self.username}").json()

@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "2.5"
+__version__ = "2.6"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -49,6 +49,7 @@ History:
     09/01/2022(v2.4.1) - Code Fixes
     25/01/2022(v2.4.2) - Added new Comment API
     16/03/2022(v2.5) - Fixed login and added cookie login feature
+    26/03/2022(v2.6) - Added some more APIs
 Credits:
     All code by Siddhesh Chavan.
 Information:

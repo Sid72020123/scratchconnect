@@ -60,12 +60,12 @@ class ScratchConnect:
                         self._cookie_login()
                     else:
                         raise Exceptions.ForbiddenLogin("""
-                        Scratch is not letting you login from this device.
-                        Try to do the following to fix this issue:
-                        - Try again later (10-15 minutes)
-                        - Use Cookie login - https://github.com/Sid72020123/scratchconnect#Cookie-Login
-                        - Try from another device (Scratch sometimes blocks login from Replit)
-                        """)
+                         Scratch is not letting you login from this device.
+                         Try to do the following to fix this issue:
+                         - Try again later (10-15 minutes)
+                         - Use Cookie login - https://github.com/Sid72020123/scratchconnect#Cookie-Login
+                         - Try from another device (Scratch sometimes blocks login from Replit)
+                         """)
             try:
                 self.session_id = re.search('"(.*)"', request.headers["Set-Cookie"]).group()
                 self.token = request.json()[0]["token"]
@@ -644,6 +644,21 @@ class ScratchConnect:
         """
         return requests.get(
             f"https://scratchdb.lefty.one/v3/user/graph/{self.username}/followers?segment={segment}&range={range}").json()
+
+    def ocular_data(self):
+        """
+        Get ocular data of the user
+        """
+        return requests.get(f"https://my-ocular.jeffalo.net/api/user/{self.username}").json()
+
+    def search_forum(self, q, order="relevance", page=0):
+        """
+        Search the forum
+        :param q: query
+        :param order: The order. Use values like "relevance", "newest", "oldest"
+        :param page: page
+        """
+        return requests.get(f"https://scratchdb.lefty.one/v3/forum/search?q={q}&o={order}&page={page}").json()
 
     def connect_user(self, username):
         """

@@ -113,3 +113,19 @@ class Forum:
         :param page: The page
         """
         return requests.get(f"https://scratch-forum.sid72020123.repl.co/forum/?topic={self.f_id}&page={page}").json()
+
+    def ocular_reactions(self, post_id):
+        """
+        Get the ocular reactions
+        :param post_id: The id of the post
+        """
+        return requests.get(f"https://my-ocular.jeffalo.net/api/reactions/{post_id}").json()
+
+    def topic_post_history(self, usernames="total", segment="1", range="30"):
+        """
+        Get the post history of the topic
+        :param usernames: Values like "total" -> Gives all the data of the users who posted in that topic, "detail" -> Gives individual user's data or you can also put any username
+        :param segment: The length of time between each segment, defaults to 1 day. Possible special cases include year(365) or month(30)
+        :param range: Range of how far back to get history, defaults to 30 days. Possible special cases include year(365) or month(30)
+        """
+        return requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/graph/{self.f_id}/{usernames}?segment={segment}&range={range}").json()
