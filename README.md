@@ -1,4 +1,4 @@
-# scratchconnect v2.5
+# scratchconnect v2.6
 
 Python Library to connect Scratch API and much more.
 
@@ -110,6 +110,8 @@ user.search_studios(mode="trending", search="*")  # Search the studios
 user.set_featured_project(project_id="1", label='featured_project')  # Set the 'Featured Project' of a Scratch Profile
 user.user_follower_history()  # Return the follower history of the user
 user.comments(limit=5, page=1)  # Get comments of the profile of the user
+user.ocular_data()  # Returns the ocular data of the user
+user.search_forum(q="Hi!", order="relevance", page=0)  # Search the forum
 ##########################################################################
 # IMPORTANT NOTE: To always get the updated data use the update_data() function
 ##########################################################################
@@ -149,6 +151,7 @@ user.report(field="")  # Report a user
 user.reply_comment(content="Hi!", comment_id=1)  # Reply a comment
 user.all_data()  # Returns all the data of the user
 user.comments(limit=5, page=1)  # Get comments of the profile of the user
+user.ocular_data()  # Returns the ocular data of the user
 ##########################################################################
 # IMPORTANT NOTE: To always get the updated data use the update_data() function
 ##########################################################################
@@ -400,6 +403,8 @@ forum.post_count()  # Returns the total post count of the forum
 forum.follow()  # Follow a Forum
 forum.unfollow()  # Unfollow a Forum
 forum.posts(page=1)  # Get the post in Forum Topic of a specified page. Images and some other stuff will not appear!
+forum.ocular_reactions(post_id=123)  # Get the ocular reactions of the post
+forum.topic_post_history(usernames="total", segment="1", range="30")  # Get the post history of the topic
 ##########################################################################
 # IMPORTANT NOTE: To always get the updated data use the update_data() function
 ##########################################################################
@@ -511,6 +516,7 @@ values are wrong. It's not an ERROR, it's a WARNING**
 In case the login from username and password fails, ScratchConnect also has a feature to login with a cookie when the
 login with username and password fails! You just have to pass the username and password value and also the cookie in the
 ScratchConnect class. Also, you need to set the `auto_cookie_login` variable to `True`. Example Code:
+
 ```python
 import scratchconnect
 
@@ -572,8 +578,23 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 09/01/2022(v2.4.1) - Code Fixes
 * 25/01/2022(v2.4.2) - Added new Comment API
 * 16/03/2022(v2.5) - Fixed login and added cookie login feature
+* 26/03/2022(v2.6) - Added some more APIs
 
 ### Credits:
 
 **This library is made by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch. And thanks to all
 contributors.**
+
+### Contributors:
+
+***The names of persons below are their Scratch Usernames.***
+
+| **Person**      | **Role**      | **Work**                                                       |
+|-----------------|---------------|----------------------------------------------------------------|
+| **Sid72020123** | *Owner*       | Made the library and most of its features                      |
+| **Ankit_Anmol** | *Contributor* | Fixed some things in the documentation and added some features |
+| **Chiroyce**    | *Contributor* | Added some features and cleaned up some code                   |
+| **god286**      | *Contributor* | Fixed mistakes in the documentation                            |
+
+*If I'm missing some people and their work in the contributors table, please contact Sid72020123 on Scratch*
+
