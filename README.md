@@ -12,11 +12,11 @@ You also need to have the Python programming language installed on your computer
 
 ![https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
-[![PyPI Latest Release](https://img.shields.io/pypi/v/scratchconnect.svg)](https://pypi.org/project/scratchconnect/)
-[![Package Status](https://img.shields.io/pypi/status/scratchconnect.svg)](https://pypi.org/project/scratchconnect/)
-[![Downloads](https://static.pepy.tech/personalized-badge/scratchconnect?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/scratchconnect)
-
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Sid72020123/scratchconnect.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Sid72020123/scratchconnect/context:python)
+![PyPI](https://img.shields.io/pypi/v/scratchconnect?style=for-the-badge)
+[![Package Status](https://img.shields.io/pypi/status/scratchconnect?style=for-the-badge)](https://pypi.org/project/scratchconnect/)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/scratchconnect?style=for-the-badge)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/sid72020123/scratchconnect?style=for-the-badge)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Sid72020123/scratchconnect.svg?logo=lgtm&logoWidth=18&style=for-the-badge)](https://lgtm.com/projects/g/Sid72020123/scratchconnect/context:python)
 
 ### Installation
 
@@ -595,6 +595,7 @@ contributors.**
 | **Ankit_Anmol** | *Contributor* | Fixed some things in the documentation and added some features |
 | **Chiroyce**    | *Contributor* | Added some features and cleaned up some code                   |
 | **god286**      | *Contributor* | Fixed mistakes in the documentation                            |
+| **mbrick2**      | *Contributor* | Fixed Badge Consistency                            |
 
 *If I'm missing some people and their work in the contributors table, please contact Sid72020123 on Scratch*
 
