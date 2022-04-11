@@ -595,7 +595,7 @@ contributors.**
 | **Ankit_Anmol** | *Contributor* | Fixed some things in the documentation and added some features |
 | **Chiroyce**    | *Contributor* | Added some features and cleaned up some code                   |
 | **god286**      | *Contributor* | Fixed mistakes in the documentation                            |
-| **mbrick2**      | *Contributor* | Fixed Badge Consistency                            |
+| **mbrick2**     | *Contributor* | Fixed Badge Consistency                                        |
 
 *If I'm missing some people and their work in the contributors table, please contact Sid72020123 on Scratch*
 
