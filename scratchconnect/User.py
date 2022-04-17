@@ -391,3 +391,8 @@ class User:
         Get ocular data of the user
         """
         return requests.get(f"https://my-ocular.jeffalo.net/api/user/{self.username}").json()
+    def aviate_data(self):
+        """
+        Get Aviate Status of the user
+        """
+        return requests.get(f"https://aviateapp.eu.org/api/{self.username}").json()['status']
