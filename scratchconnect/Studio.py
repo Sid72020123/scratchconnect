@@ -497,3 +497,23 @@ class Studio:
                     f"https://api.scratch.mit.edu/studios/{self.studio_id}/activity/?limit={limit}&offset={offset}").text))
             self.studio_activity = activity
         return activity
+    
+    def all_data(self):
+        """
+        Returns all the data of a Scratch Studio
+        """
+        data = {
+            'Studio ID': self.id(),
+            'Title': self.title(),
+            'Host ID': self.host_id(),
+            'Description': self.description(),
+            'Comments Count': self.stats()['comments'],
+            'Followers Count': self.stats()['followers'],
+            'Managers Count': self.stats()['managers'],
+            'Projects Count': self.stats()['projects'],
+            'Visibility': self.visibility(),
+            'Is Public?': self.is_public(),
+            'Is Open To All?': self.is_open_to_all(),
+            'Are Comments Allowed?': self.are_comments_allowed(),
+        }
+        return data

@@ -11,6 +11,8 @@ from scratchconnect import Project
 from scratchconnect import Studio
 from scratchconnect import User
 from scratchconnect import Forum
+from scratchconnect.scScratchTerminal import _terminal
+from scratchconnect.scChart import _chart
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -55,7 +57,7 @@ class ScratchConnect:
             try:
                 request.json()
             except Exception:
-                if request.status_code == 403: # *
+                if request.status_code == 403:  # *
                     if auto_cookie_login is True:
                         self._cookie_login()
                     else:
@@ -651,6 +653,13 @@ class ScratchConnect:
         """
         return requests.get(f"https://my-ocular.jeffalo.net/api/user/{self.username}").json()
 
+    def aviate_data(self, code=False):
+        """
+        Get Aviate Status of the user
+        :param code: True to get the status code
+        """
+        return requests.get(f"https://aviateapp.eu.org/api/{self.username}?code={str(code).lower()}").json()['status']
+
     def search_forum(self, q, order="relevance", page=0):
         """
         Search the forum
@@ -691,3 +700,15 @@ class ScratchConnect:
         """
         return Forum.Forum(id=forum_id, client_username=self.username, csrf_token=self.csrf_token,
                            session_id=self.session_id, token=self.token)
+
+    def create_new_terminal(self):
+        """
+        Create a new Terminal object
+        """
+        return _terminal(sc=self)
+
+    def create_new_chart(self):
+        """
+        Create a new Chart object
+        """
+        return _chart(sc=self)

@@ -56,3 +56,9 @@ class ForbiddenLogin(Exception):
     """
     Raised when Scratch sends a 403 Forbidden Status Code while logging in
     """
+
+
+class DependencyException(Exception):
+    """
+    Raised when the dependencies for ScratchConnect are not installed or found
+    """

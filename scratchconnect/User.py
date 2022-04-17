@@ -344,11 +344,11 @@ class User:
 
     def report(self, field):
         """
-        Report a user
+        Report an user
         :param field: The field or the reason of report.
         """
-        if self.username != self.client_username:
-            raise Exceptions.UnauthorizedAction("You are not allowed to do that")
+        if self.username == self.client_username:
+            raise Exceptions.UnauthorizedAction("You are not allowed to do that!")
         data = {"selected_field": field}
         requests.post(f"https://scratch.mit.edu/site-api/users/all/{self.username}/report/",
                       headers=self.headers,
@@ -391,8 +391,10 @@ class User:
         Get ocular data of the user
         """
         return requests.get(f"https://my-ocular.jeffalo.net/api/user/{self.username}").json()
-    def aviate_data(self):
+
+    def aviate_data(self, code=False):
         """
         Get Aviate Status of the user
+        :param code: True to get the status code
         """
-        return requests.get(f"https://aviateapp.eu.org/api/{self.username}").json()['status']
+        return requests.get(f"https://aviateapp.eu.org/api/{self.username}?code={str(code).lower()}").json()['status']

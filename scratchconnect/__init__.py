@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "2.6"
+__version__ = "3.0"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -13,6 +13,9 @@ Required Libraries:
     requests*, re*, json*, time*, threading*, warnings*, websocket-client
     * -> In-built
     This library also uses pyEmmiter to handle cloud events in Python.
+Optional Libraries:
+    pyhtmlchart - For Chart feature
+    rich - For Terminal feature
 History:
     19/06/2021(v0.0.0.1) - First made the library and updated it.
     20/06/2021(v0.1) - Added many features.
@@ -50,6 +53,10 @@ History:
     25/01/2022(v2.4.2) - Added new Comment API
     16/03/2022(v2.5) - Fixed login and added cookie login feature
     26/03/2022(v2.6) - Added some more APIs
+    27/03/2022(v2.6.3) - Added the Scratch Terminal Feature
+    28/03/2022(v2.7.5) - Updated the Scratch Terminal Feature and added the Chart Feature
+    29/03/2022(v2.8) - Updated the Charts Feature
+    16/04/2022(v3.0) - Bug fixes and improvements
 Credits:
     All code by Siddhesh Chavan.
 Information:

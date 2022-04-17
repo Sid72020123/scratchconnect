@@ -481,3 +481,27 @@ class Project:
                                            client_username=self.client_username,
                                            csrf_token=self.csrf_token,
                                            session_id=self.session_id, token=self.token, edit_access=edit_access)
+
+    def all_data(self):
+        """
+        Returns all the data of a Scratch Project
+        """
+        data = {
+            'Project ID': self.id(),
+            'Project Name': self.title(),
+            'Author': self.author()['username'],
+            'Are Comments Allowed?': self.are_comments_allowed(),
+            'Views': self.stats()['views'],
+            'Loves': self.stats()['loves'],
+            'Favourites': self.stats()['favorites'],
+            'Remixes': self.stats()['remixes'],
+            'Visibility': self.visibility(),
+            'Is public?': self.is_public(),
+            'Is published?': self.is_published(),
+            'Version': self.assets_info()['version'],
+            'Costumes': self.assets_info()['costumes'],
+            'Blocks': self.assets_info()['blocks'],
+            'Variables': self.assets_info()['variables'],
+            'Assets': self.assets_info()['assets']
+        }
+        return data
