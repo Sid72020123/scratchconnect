@@ -1,4 +1,4 @@
-# scratchconnect v2.6
+# scratchconnect v3.0
 
 Python Library to connect Scratch API and much more.
 
@@ -49,6 +49,8 @@ These are the people who made the APIs so that this library can take data:
   by  [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
 * [Simple Forum API](https://github.com/Sid72020123/Scratch-Forum)
   by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
+* [Ocular API](https://ocular.jeffalo.net/) by [Jeffalo](https://scratch.mit.edu/users/Jeffalo/) on Scratch
+* [Aviate API](https://aviateapp.eu.org/) by [NFlex23](https://scratch.mit.edu/users/NFlex23/) on Scratch
 
 ```
 I thank all these people.
@@ -58,6 +60,10 @@ I thank all these people.
 ### Creating a Simple Connection:
 
 Following is a simple program to make a simple connection:
+
+**Note: Don't put the username and password as it is when you host or share the code with others. While hosting, you can
+use environment variables and while sharing, you can remove the username and password values. This will help in keeping
+the password and other important things secured.**
 
 ```python
 import scratchconnect
@@ -111,6 +117,7 @@ user.set_featured_project(project_id="1", label='featured_project')  # Set the '
 user.user_follower_history()  # Return the follower history of the user
 user.comments(limit=5, page=1)  # Get comments of the profile of the user
 user.ocular_data()  # Returns the ocular data of the user
+user.aviate_data(code=False)  # Returns the Aviate Status of the user
 user.search_forum(q="Hi!", order="relevance", page=0)  # Search the forum
 ##########################################################################
 # IMPORTANT NOTE: To always get the updated data use the update_data() function
@@ -152,6 +159,7 @@ user.reply_comment(content="Hi!", comment_id=1)  # Reply a comment
 user.all_data()  # Returns all the data of the user
 user.comments(limit=5, page=1)  # Get comments of the profile of the user
 user.ocular_data()  # Returns the ocular data of the user
+user.aviate_data(code=False)  # Returns the Aviate Status of the user
 ##########################################################################
 # IMPORTANT NOTE: To always get the updated data use the update_data() function
 ##########################################################################
@@ -199,6 +207,7 @@ studio.comments(all=False, limit=40, offset=0)  # Get the comments of the studio
 studio.curators(all=False, limit=40, offset=0)  # Get the curators of the studio
 studio.managers(all=False, limit=40, offset=0)  # Get the managers of the studio
 studio.activity(all=False, limit=40, offset=0)  # Get the activity of the studio
+studio.all_data()  # Returns all the data of a Scratch Studio
 ##########################################################################
 # IMPORTANT NOTE: To always get the updated data use the update_data() function
 ##########################################################################
@@ -250,6 +259,7 @@ project.reply_comment(comment_id=1, content="Hi!")  # Reply a comment
 project.set_title()  # Set the title of the project
 project.set_description()  # Set the description of the project
 project.set_instruction()  # Set the instruction of the project
+project.all_data()  # Returns all the data of a Scratch Project
 ##########################################################################
 # IMPORTANT NOTE: To always get the updated data use the update_data() function
 ##########################################################################
@@ -496,6 +506,8 @@ cloud_storage.start_cloud_loop(update_time=1,
 Sometimes, the Scratch API blocks the login from online IDEs like Replit, etc. To overcome the issue, ScratchConnect
 v2.5 or above has a feature to login directly with cookie. Example:
 
+**Note: Keep this values secured and use environment variables wherever necessary.**
+
 ```python
 import scratchconnect
 
@@ -529,6 +541,149 @@ scratch_cookie = {
 login = scratchconnect.ScratchConnect(username="USERNAME", password="PASSWORD",
                                       cookie=scratch_cookie,
                                       auto_cookie_login=True)  # Login with cookie and enable the auto_cookie_login
+```
+
+### Terminal
+
+ScratchConnect v3.0+ has a feature called "Terminal" in which a user can get the data of Scratch User, Studio and
+Project in the Python console.
+
+To use this feature, you need to install additional dependencies required, by
+typing ```pip install scratchconnect[terminal]``` in the command prompt/terminal. Then, see the example code:
+
+```python
+import scratchconnect
+
+login = scratchconnect.ScratchConnect("Username", "Password")
+
+terminal = login.create_new_terminal()  # Create a new Terminal object
+terminal.start()  # Start the main terminal program
+```
+
+You can use many features in it. Just enter ```help``` to see the list of commands after the terminal starts.
+
+### Charts
+
+ScratchConnect v3.0+ has a feature called "Chart" in which a user can get the data of Scratch User, Studio and Project
+in graphical format.
+
+**Note: This feature uses the library ```pyhtmlchart``` to create graphs. Any other library can be used in later
+versions.**
+
+To use this feature, you need to install additional dependencies required, by
+typing ```pip install scratchconnect[chart]``` in the command prompt/terminal
+
+#### User Comparison Chart:
+
+See the example code:
+
+```python
+import scratchconnect
+
+login = scratchconnect.ScratchConnect("Username", "Password")
+
+chart = login.create_new_chart()  # Create a Chart object
+
+user_chart = chart.user_stats_chart(
+    usernames=["griffpatch", "Will_Wam", "ScratchCat"])  # Create users stats comparison chart
+
+user_table = chart.user_stats_table(
+    usernames=["griffpatch", "Will_Wam", "ScratchCat"])  # Create users stats comparison table
+
+user_chart.open()  # Open User chart
+user_table.open()  # Open User table
+```
+
+To include only some required data in a chart or table, use the ```include_data``` parameter of the chart or table
+function and pass the value as list to get the required data.
+Example: ```['Messages Count', 'Follower Count', 'Following Count']```
+
+You can also use any one or more options from the following list:
+
+```python
+['Username', 'Messages Count', 'Follower Count', 'Following Count', 'Total Loves',
+ 'Total Favourites', 'Total Projects Count']
+```
+
+#### Studio Comparison Chart:
+
+See the example code:
+
+```python
+import scratchconnect
+
+login = scratchconnect.ScratchConnect("Username", "Password")
+
+chart = login.create_new_chart()  # Create a Chart object
+
+studio_chart = chart.studio_stats_chart(
+    studio_ids=[100, 101, 102])  # Create studio stats comparison chart
+
+studio_table = chart.studio_stats_table(
+    studio_ids=[100, 101, 102])  # Create studio stats comparison table
+
+studio_chart.open()  # Open Studio chart
+studio_table.open()  # Open Studio table
+```
+
+To include only some required data in a chart or table, use the ```include_data``` parameter of the chart or table
+function and pass the value as list to get the required data.
+Example: ```['Comments Count', 'Followers Count', 'Managers Count']```
+
+You can also use any one or more options from the following list:
+
+```python
+['Studio ID', 'Comments Count', 'Followers Count', 'Managers Count', 'Projects Count']
+```
+
+#### Project Comparison Chart:
+
+See the example code:
+
+```python
+import scratchconnect
+
+login = scratchconnect.ScratchConnect("Username", "Password")
+
+chart = login.create_new_chart()  # Create a Chart object
+
+project_chart = chart.project_stats_chart(
+    project_ids=[104, 105, 106])  # Create project stats comparison chart
+
+project_table = chart.project_stats_table(
+    project_ids=[104, 105, 106])  # Create project stats comparison table
+
+project_chart.open()  # Open Project chart
+project_table.open()  # Open Project table
+```
+
+To include only some required data in a chart or table, use the ```include_data``` parameter of the chart or table
+function and pass the value as list to get the required data. Example: ```['Views', 'Loves', 'Favourites']```
+
+You can also use any one or more options from the following list:
+
+```python
+['Project ID', 'Views', 'Loves', 'Favourites', 'Remixes', 'Version', 'Costumes', 'Blocks',
+ 'Variables', 'Assets']
+```
+
+#### User Follower History Chart:
+
+See the example code:
+
+```python
+import scratchconnect
+
+login = scratchconnect.ScratchConnect("Username", "Password")
+
+chart = login.create_new_chart()  # Create a Chart object
+
+c = chart.user_followers_history_chart(username="griffpatch")  # Followers History Chart
+
+t = chart.user_followers_history_table(username="griffpatch")  # Followers History Table
+
+c.open()  # Open chart
+t.open()  # Open table
 ```
 
 ### Projects made using ScratchConnect
@@ -579,6 +734,10 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 25/01/2022(v2.4.2) - Added new Comment API
 * 16/03/2022(v2.5) - Fixed login and added cookie login feature
 * 26/03/2022(v2.6) - Added some more APIs
+* 27/03/2022(v2.6.3) - Added the Scratch Terminal Feature
+* 28/03/2022(v2.7.5) - Updated the Scratch Terminal Feature and added the Chart Feature
+* 29/03/2022(v2.8) - Updated the Charts Feature
+* 16/04/2022(v3.0) - Bug fixes and improvements
 
 ### Credits:
 
@@ -595,7 +754,7 @@ contributors.**
 | **Ankit_Anmol** | *Contributor* | Fixed some things in the documentation and added some features |
 | **Chiroyce**    | *Contributor* | Added some features and cleaned up some code                   |
 | **god286**      | *Contributor* | Fixed mistakes in the documentation                            |
-| **mbrick2**     | *Contributor* | Fixed Badge Consistency                                        |
+| **mbrick2**     | *Contributor* | Fixed Badge Consistency and added the Aviate status feature    |
 
 *If I'm missing some people and their work in the contributors table, please contact Sid72020123 on Scratch*
 
