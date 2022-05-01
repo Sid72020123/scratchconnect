@@ -3,12 +3,14 @@ The Cloud Variables File.
 Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Encode/Decode Engine!
 """
 import json
+from os import listxattr
 import requests
 import websocket
 import time
+import multiprocessing as mp
 from pyemitter import Emitter
-from threading import Thread
-
+import threading 
+Thread = threading.Thread
 from scratchconnect import Exceptions
 from scratchconnect.scEncoder import Encoder
 
@@ -53,8 +55,8 @@ class CloudConnection:
             "Content-Type": "application/json",
         }
         self._make_connection()
-        self.encoder = Encoder()
         self.event = Emitter()
+        self.encoder = Encoder()
 
     def get_variable_data(self, limit=100, offset=0):
         """
@@ -73,7 +75,6 @@ class CloudConnection:
                          'Timestamp': response[i]['timestamp']
                          })
         return data
-
     def get_cloud_variable_value(self, variable_name, limit=100):
         """
         Returns the cloud variable value
@@ -98,7 +99,15 @@ class CloudConnection:
         Don't use this
         """
         self._ws.send(json.dumps(packet) + "\n")
-
+    def _ping_task(self):
+        """
+        Don't use this
+        """
+        while True:
+            self._ws.ping()
+            time.sleep(1)
+            self._ws.pong()
+            time.sleep(4)
     def _make_connection(self):
         """
         Don't use this
@@ -118,6 +127,8 @@ class CloudConnection:
                 "project_id": str(self.project_id),
             }
         )
+        self.ping_task = Thread(target=self._ping_task, daemon=True)
+        self.ping_task.start()
 
     def set_cloud_variable(self, variable_name, value):
         """
@@ -146,7 +157,7 @@ class CloudConnection:
             }
             self._send_packet(packet)
             return True
-        except ConnectionAbortedError or BrokenPipeError:
+        except BrokenPipeError:
             self._make_connection()
             time.sleep(0.1)
             self.set_cloud_variable(variable_name, value)
@@ -182,22 +193,26 @@ class CloudConnection:
         """
         return self.encoder.decode_list(encoded_data)
 
-    def _event(self, up):
+    def _event(self):
         """
         This feature was requested by @Ankit_Anmol on Scratch
         """
-        data = ""
+        data = self._ws.recv()
+        data = data.split('\n')
+        listt = []
+        for x in data:
+            try:
+                listt = listt + [json.loads(x)]
+            except Exception:
+                pass
+        self.event.emit('start', data=listt)
         while True:
-            live_data = self.get_variable_data(limit=3)[0]
-            if data != live_data:
-                data = live_data
-                self.event.emit('change', user=data['User'], action=data['Action'],
-                                variable_name=data['Name'], value=data['Value'],
-                                timestamp=data['Timestamp'])
-            time.sleep(up)
+            data = json.loads(self._ws.recv())
+            if data["method"] == 'set':
+                self.event.emit('change', user=None, action=data['method'], variable_name=data["name"], value=data["value"], timestamp=None)
 
     def start_event(self, update_time=1):
         """
         This feature was requested by @Ankit_Anmol on Scratch
         """
-        Thread(target=self._event, args=(update_time,)).start()
+        Thread(target=self._event, args=()).start()
