@@ -3,14 +3,12 @@ The Cloud Variables File.
 Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Encode/Decode Engine!
 """
 import json
-from os import listxattr
 import requests
 import websocket
 import time
 import multiprocessing as mp
 from pyemitter import Emitter
-import threading 
-Thread = threading.Thread
+from threading import Thread
 from scratchconnect import Exceptions
 from scratchconnect.scEncoder import Encoder
 
@@ -55,8 +53,9 @@ class CloudConnection:
             "Content-Type": "application/json",
         }
         self._make_connection()
-        self.event = Emitter()
         self.encoder = Encoder()
+        self.event = Emitter()
+        
 
     def get_variable_data(self, limit=100, offset=0):
         """
