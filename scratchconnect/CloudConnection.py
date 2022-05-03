@@ -6,7 +6,6 @@ import json
 import requests
 import websocket
 import time
-import multiprocessing as mp
 from pyemitter import Emitter
 from threading import Thread
 from scratchconnect import Exceptions
