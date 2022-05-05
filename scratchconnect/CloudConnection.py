@@ -192,26 +192,22 @@ class CloudConnection:
         """
         return self.encoder.decode_list(encoded_data)
 
-    def _event(self):
+    def _event(self, up):
         """
         This feature was requested by @Ankit_Anmol on Scratch
         """
-        data = self._ws.recv()
-        data = data.split('\n')
-        listt = []
-        for x in data:
-            try:
-                listt = listt + [json.loads(x)]
-            except Exception:
-                pass
-        self.event.emit('start', data=listt)
+        data = ""
         while True:
-            data = json.loads(self._ws.recv())
-            if data["method"] == 'set':
-                self.event.emit('change', user=None, action=data['method'], variable_name=data["name"], value=data["value"], timestamp=None)
+            live_data = self.get_variable_data(limit=3)[0]
+            if data != live_data:
+                data = live_data
+                self.event.emit('change', user=data['User'], action=data['Action'],
+                                variable_name=data['Name'], value=data['Value'],
+                                timestamp=data['Timestamp'])
+            time.sleep(up)
 
     def start_event(self, update_time=1):
         """
         This feature was requested by @Ankit_Anmol on Scratch
         """
-        Thread(target=self._event, args=()).start()
+        Thread(target=self._event, args=(update_time,)).start()
