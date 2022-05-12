@@ -1,4 +1,4 @@
-# scratchconnect v3.0
+# scratchconnect v3.1
 
 Python Library to connect Scratch API and much more.
 
@@ -10,13 +10,13 @@ You also need to have the Python programming language installed on your computer
 
 **You need basic knowledge of Python. Using this library without the knowledge can be risky.**
 
-![https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white](https://img.shields.io/badge/Python-3776AB&logo=python&logoColor=white)
 
-![PyPI](https://img.shields.io/pypi/v/scratchconnect?style=for-the-badge)
-[![Package Status](https://img.shields.io/pypi/status/scratchconnect?style=for-the-badge)](https://pypi.org/project/scratchconnect/)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/scratchconnect?style=for-the-badge)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/sid72020123/scratchconnect?style=for-the-badge)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Sid72020123/scratchconnect.svg?logo=lgtm&logoWidth=18&style=for-the-badge)](https://lgtm.com/projects/g/Sid72020123/scratchconnect/context:python)
+![PyPI](https://img.shields.io/pypi/v/scratchconnect)
+[![Package Status](https://img.shields.io/pypi/status/scratchconnect)](https://pypi.org/project/scratchconnect/)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/scratchconnect)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/sid72020123/scratchconnect)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Sid72020123/scratchconnect.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Sid72020123/scratchconnect/context:python)
 
 ### Installation
 
@@ -75,7 +75,7 @@ It will give an error if the `username` or `password` is invalid.
 
 ### More Uses:
 
-##### Note: The below code can be only used by the logged in Scratcher. To get the stats of other users see the User Connection Documentation
+##### Note: Some of the functions below can be only used by the logged in Scratcher. To get the stats of other users see the User Connection Documentation
 
 ```python
 import scratchconnect
@@ -85,6 +85,8 @@ user.id()  # Returns the ID of the user
 user.thumbnail_url()  # Returns the thumbnail URL of a user
 user.messages_count()  # Returns the messages count of the user
 user.messages(all=False, limit=20, offset=0, filter="all")  # Returns the messages
+user.clear_messages()  # Clear your messages
+user.my_stuff_projects(order="all", page=1, sort_by="")  # Get/Sort mystuff projects
 user.work()  # Returns the 'What I am working on' of a Scratch profile
 user.bio()  # Returns the 'About me' of a Scratch profile
 user.status()  # Returns the status(Scratcher or New Scratcher) of a Scratch profile
@@ -495,7 +497,7 @@ login = scratchconnect.ScratchConnect("Username", "Password")
 project = login.connect_project(1)  # Connect the project
 
 cloud_storage = project.create_cloud_storage(file_name="data", rewrite_file=False, edit_access=[
-    'Sid72020123'])  # Create a cloud storage. It will create a file in the specified location. Then there is 'edit_access' list which contains the users which have permission to edit(actually create and delete) the variables. Use the 'rewrite_file' argument if you want the file to be rw written again each time you write the program!
+    'Sid72020123'])  # Create a cloud storage. It will create a file in the specified location. Then there is 'edit_access' list which contains the users which have permission to edit(actually create and delete) the variables. Use the 'rewrite_file' argument if you want the file to be re-written again each time you write the program!
 
 cloud_storage.start_cloud_loop(update_time=1,
                                print_requests=True)  # Start the Cloud Storage. Use the 'update_time' to wait for the specified time. Use the 'print_requests' to print the request info in the console/output screen.
@@ -542,6 +544,19 @@ login = scratchconnect.ScratchConnect(username="USERNAME", password="PASSWORD",
                                       cookie=scratch_cookie,
                                       auto_cookie_login=True)  # Login with cookie and enable the auto_cookie_login
 ```
+
+### Using ScratchConnect without login
+
+With ScratchConnect v3.1+, you can use it without login! Example code:
+
+```python
+import scratchconnect
+
+user = scratchconnect.ScratchConnect()  # Leave all the values empty to use this library without login!
+```
+
+**Note: If you login without a username and password, some features such as setting cloud variables, etc. may not work.
+It will give you a warning when you use this library without login!**
 
 ### Terminal
 
@@ -738,6 +753,10 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 28/03/2022(v2.7.5) - Updated the Scratch Terminal Feature and added the Chart Feature
 * 29/03/2022(v2.8) - Updated the Charts Feature
 * 16/04/2022(v3.0) - Bug fixes and improvements
+* 30/04/2022(v3.0.5) - Code fix
+* 01/05/2022(v3.0.8) - Code fix and new features
+* 07/05/2022(v3.0.9) - Code fix
+* 12/05/2022(v3.1) - Updated the CloudConnection Class
 
 ### Credits:
 
@@ -755,6 +774,7 @@ contributors.**
 | **Chiroyce**    | *Contributor* | Added some features and cleaned up some code                   |
 | **god286**      | *Contributor* | Fixed mistakes in the documentation                            |
 | **mbrick2**     | *Contributor* | Fixed Badge Consistency and added the Aviate status feature    |
+| **AidanER1**    | *Contributor* | Updated the CloudConnection class and fixed some bugs          |
 
 *If I'm missing some people and their work in the contributors table, please contact Sid72020123 on Scratch*
 
