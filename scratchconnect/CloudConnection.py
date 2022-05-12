@@ -8,7 +8,6 @@ import websocket
 import time
 from pyemitter import Emitter
 from threading import Thread
-
 from scratchconnect import Exceptions
 from scratchconnect.scEncoder import Encoder
 
@@ -55,6 +54,7 @@ class CloudConnection:
         self._make_connection()
         self.encoder = Encoder()
         self.event = Emitter()
+        
 
     def get_variable_data(self, limit=100, offset=0):
         """
@@ -73,7 +73,6 @@ class CloudConnection:
                          'Timestamp': response[i]['timestamp']
                          })
         return data
-
     def get_cloud_variable_value(self, variable_name, limit=100):
         """
         Returns the cloud variable value
@@ -98,7 +97,15 @@ class CloudConnection:
         Don't use this
         """
         self._ws.send(json.dumps(packet) + "\n")
-
+    def _ping_task(self):
+        """
+        Don't use this
+        """
+        while True:
+            self._ws.ping()
+            time.sleep(1)
+            self._ws.pong()
+            time.sleep(4)
     def _make_connection(self):
         """
         Don't use this
@@ -118,6 +125,8 @@ class CloudConnection:
                 "project_id": str(self.project_id),
             }
         )
+        self.ping_task = Thread(target=self._ping_task, daemon=True)
+        self.ping_task.start()
 
     def set_cloud_variable(self, variable_name, value):
         """
@@ -146,7 +155,7 @@ class CloudConnection:
             }
             self._send_packet(packet)
             return True
-        except ConnectionAbortedError or BrokenPipeError:
+        except BrokenPipeError:
             self._make_connection()
             time.sleep(0.1)
             self.set_cloud_variable(variable_name, value)
