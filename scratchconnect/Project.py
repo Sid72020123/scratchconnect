@@ -16,7 +16,7 @@ _project = f"https://{_api}/projects/"
 
 
 class Project:
-    def __init__(self, id, client_username, csrf_token, session_id, token, unshared):
+    def __init__(self, id, client_username, headers, unshared, logged_in, session_id):
         """
         The Project Class
         :param id: The project ID
@@ -24,21 +24,11 @@ class Project:
         self.access_unshared = unshared
         self.project_id = str(id)
         self.client_username = client_username
-        self.csrf_token = csrf_token
+        self.csrf_token = headers["x-csrftoken"]
         self.session_id = session_id
-        self.token = token
-        self.headers = {
-            "x-csrftoken": self.csrf_token,
-            "X-Token": self.token,
-            "x-requested-with": "XMLHttpRequest",
-            "Cookie": "scratchcsrftoken="
-                      + self.csrf_token
-                      + ";scratchlanguage=en;scratchsessionsid="
-                      + self.session_id
-                      + ";",
-            "referer": "https://scratch.mit.edu/projects/" + self.project_id + "/",
-        }
-
+        self.token = headers["X-Token"]
+        self.headers = headers
+        self._logged_in = logged_in
         self.json_headers = {
             "x-csrftoken": self.csrf_token,
             "X-Token": self.token,
@@ -75,7 +65,8 @@ class Project:
             if self.access_unshared:
                 pass
             else:
-                raise Exceptions.InvalidProject(f"The project with ID - '{self.project_id}' doesn't exist!")
+                raise Exceptions.InvalidProject(
+                    f"The project with ID - '{self.project_id}' doesn't exist or is unshared! To connect an unshared project using ScratchConnect, use the access_unshared parameter of the Project class.")
         if not self.access_unshared:
             self.project_author = data["author"]
             self.project_title = data["title"]
@@ -209,6 +200,8 @@ class Project:
         """
         Love a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.post(
             f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/loves/user/{self.client_username}",
             headers=self.headers,
@@ -218,6 +211,8 @@ class Project:
         """
         UnLove a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.delete(
             f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/loves/user/{self.client_username}",
             headers=self.headers,
@@ -227,6 +222,8 @@ class Project:
         """
         Favourite a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.post(
             f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/favorites/user/{self.client_username}",
             headers=self.headers,
@@ -236,6 +233,8 @@ class Project:
         """
         UnFavourite a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.delete(
             f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/favorites/user/{self.client_username}",
             headers=self.headers,
@@ -301,6 +300,8 @@ class Project:
         Post a comment
         :param content: The comment or the content
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         data = {
             "commentee_id": commentee_id,
             "content": content,
@@ -318,12 +319,16 @@ class Project:
         :param content: The content
         :param comment_id: The comment ID
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return self.post_comment(content=content, parent_id=comment_id)
 
     def toggle_commenting(self):
         """
         Toggle the commenting of a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         if self.author()['username'] != self.client_username:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
@@ -337,6 +342,8 @@ class Project:
         """
         Turn On the commenting of a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         if self.author()['username'] != self.client_username:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
@@ -350,6 +357,8 @@ class Project:
         """
         Turn Off the commenting of a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         if self.author()['username'] != self.client_username:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
@@ -365,6 +374,8 @@ class Project:
         :param category: The category
         :param reason: The reason
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         if self.author()['username'] == self.client_username:
             raise Exceptions.UnauthorizedAction("You can't report your own project!")
         if not image:
@@ -379,6 +390,8 @@ class Project:
         """
         Unshare a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         if self.author()['username'] != self.client_username:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
@@ -390,6 +403,8 @@ class Project:
         """
         Just view a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.post(
             f"https://api.scratch.mit.edu/users/{self.client_username}/projects/{self.project_id}/views/",
             headers=self.headers,
@@ -400,6 +415,8 @@ class Project:
         Set the thumbnail of a project
         :param file: The location of the file
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         if self.author()['username'] != self.client_username:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
@@ -415,6 +432,8 @@ class Project:
         Delete a comment
         :param comment_id: Comment ID
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.delete(
             f"https://api.scratch.mit.edu/proxy/comments/project/{self.project_id}/comment/{comment_id}",
             headers=self.headers,
@@ -425,6 +444,8 @@ class Project:
         Report a comment
         :param comment_id: Comment ID
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.delete(
             f"https://api.scratch.mit.edu/proxy/comments/project/{self.project_id}/comment/{comment_id}/report",
             headers=self.headers,
@@ -435,6 +456,8 @@ class Project:
         Set the title of the project
         :param title: The title
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         data = {'title': title}
         return requests.put(f"{_project}{self.project_id}", data=json.dumps(data), headers=self.json_headers).json()
 
@@ -443,6 +466,8 @@ class Project:
         Set the description of the project
         :param description: The description
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         data = {'description': description}
         return requests.put(f"{_project}{self.project_id}", data=json.dumps(data), headers=self.json_headers).json()
 
@@ -451,6 +476,8 @@ class Project:
         Set the instruction of the project
         :param instruction: The instruction
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         data = {'instructions': instruction}
         return requests.put(f"{_project}{self.project_id}", data=json.dumps(data), headers=self.json_headers).json()
 
@@ -458,6 +485,8 @@ class Project:
         """
         Connect the cloud variables of the project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return CloudConnection.CloudConnection(project_id=self.project_id, client_username=self.client_username,
                                                csrf_token=self.csrf_token,
                                                session_id=self.session_id, token=self.token)
@@ -475,6 +504,8 @@ class Project:
         """
         Create a Cloud Database in a project
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         if edit_access is None:
             edit_access = []
         return scCloudStorage.CloudStorage(file_name=file_name, rewrite_file=rewrite_file, project_id=self.project_id,

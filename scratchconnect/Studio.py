@@ -13,27 +13,15 @@ _api = f"https://api.{_website}"
 
 
 class Studio:
-    def __init__(self, id, client_username, csrf_token, session_id, token):
+    def __init__(self, id, client_username, headers, logged_in):
         """
         The Studio Class
         :param id: The ID of the studio
         """
         self.client_username = client_username
+        self._logged_in = logged_in
         self.studio_id = str(id)
-        self.csrf_token = csrf_token
-        self.session_id = session_id
-        self.token = token
-        self.headers = {
-            "x-csrftoken": self.csrf_token,
-            "X-Token": self.token,
-            "x-requested-with": "XMLHttpRequest",
-            "Cookie": "scratchcsrftoken="
-                      + self.csrf_token
-                      + ";scratchlanguage=en;scratchsessionsid="
-                      + self.session_id
-                      + ";",
-            "referer": "https://scratch.mit.edu/studios/" + self.studio_id + "/",
-        }
+        self.headers = headers
         self.update_data()
 
     def update_data(self):
@@ -188,6 +176,8 @@ class Studio:
         Add a project to a studio
         :param project_id: The project ID
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_project(project_id)
         headers = self.headers
         headers["referer"] = f"https://scratch.mit.edu/projects/{project_id}/"
@@ -200,6 +190,8 @@ class Studio:
         Remove a project from a studio
         :param project_id: The project ID
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_project(project_id)
         headers = self.headers
         headers["referer"] = f"https://scratch.mit.edu/projects/{project_id}/"
@@ -216,6 +208,8 @@ class Studio:
         """
         Open the studio to public
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.put(
             f"https://scratch.mit.edu/site-api/galleries/{self.studio_id}/mark/open/",
             headers=self.headers,
@@ -225,6 +219,8 @@ class Studio:
         """
         Close the studio to public
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.put(
             f"https://scratch.mit.edu/site-api/galleries/{self.studio_id}/mark/closed/",
             headers=self.headers,
@@ -234,6 +230,8 @@ class Studio:
         """
         Follow the studio
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.put(
             f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.studio_id}/add/?usernames={self.client_username}",
             headers=self.headers,
@@ -243,6 +241,8 @@ class Studio:
         """
         UnFollow the studio
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.put(
             f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.studio_id}/remove/?usernames={self.client_username}",
             headers=self.headers,
@@ -252,6 +252,8 @@ class Studio:
         """
         Toggle the commenting of the studio
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         headers = self.headers
         headers["referer"] = (
             f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"
@@ -265,6 +267,8 @@ class Studio:
         Post comment in the studio
         :param content: The comment
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         headers = self.headers
         headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"
                               )
@@ -284,6 +288,8 @@ class Studio:
         :param content: The content
         :param comment_id: The comment ID
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return self.post_comment(content=content, parent_id=comment_id)
 
     def delete_comment(self, comment_id):
@@ -291,6 +297,8 @@ class Studio:
         Delete comment in the studio
         :param comment_id: The comment ID
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         headers = self.headers
         headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/comments/")
         data = {"id": comment_id}
@@ -304,6 +312,8 @@ class Studio:
         Report comment in the studio
         :param comment_id: The comment ID
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         headers = self.headers
         headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/comments/")
         data = {"id": comment_id}
@@ -317,6 +327,8 @@ class Studio:
         Invite a user to the studio
         :param username: The Username
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_username(username)
         headers = self.headers
         headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/curators/")
@@ -329,6 +341,8 @@ class Studio:
         """
         Accept the curator invitation in a studio
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         headers = self.headers
         headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/curators/")
         return requests.put(
@@ -341,6 +355,8 @@ class Studio:
         Promote a user in the studio
         :param username: The Username
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_username(username)
         headers = self.headers
         headers["referer"] = (
@@ -356,6 +372,8 @@ class Studio:
         Set the description of a Studio
         :param content: The description or content
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         data = {"description": content}
         return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
                             headers=self.headers,
@@ -367,6 +385,8 @@ class Studio:
         Set the title of a Studio
         :param content: The title or content
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         data = {"title": content}
         return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
                             headers=self.headers,
@@ -497,7 +517,7 @@ class Studio:
                     f"https://api.scratch.mit.edu/studios/{self.studio_id}/activity/?limit={limit}&offset={offset}").text))
             self.studio_activity = activity
         return activity
-    
+
     def all_data(self):
         """
         Returns all the data of a Scratch Studio

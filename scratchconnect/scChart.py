@@ -11,5 +11,5 @@ def _chart(sc):
         from scChart import Chart
         return Chart(sc)
     except ModuleNotFoundError:
-        DependencyException(
+        raise DependencyException(
             "The dependencies required for the Chart feature to work were not found. Please install them using the command: 'pip install scratchconnect[chart]'")

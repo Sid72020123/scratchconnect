@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "3.0"
+__version__ = "3.1"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -12,7 +12,7 @@ Documentation(Tutorial):
 Required Libraries:
     requests*, re*, json*, time*, threading*, warnings*, websocket-client
     * -> In-built
-    This library also uses pyEmmiter to handle cloud events in Python.
+    This library also uses pymitter to handle cloud events in Python.
 Optional Libraries:
     pyhtmlchart - For Chart feature
     rich - For Terminal feature
@@ -56,12 +56,16 @@ History:
     27/03/2022(v2.6.3) - Added the Scratch Terminal Feature
     28/03/2022(v2.7.5) - Updated the Scratch Terminal Feature and added the Chart Feature
     29/03/2022(v2.8) - Updated the Charts Feature
-    16/04/2022(v3.0) - Bug fixes and improvements
+    16/04/2022(v3.0.1) - Bug fixes and improvements
+    30/04/2022(v3.0.5) - Code fix
+    01/05/2022(v3.0.8) - Code fix and new features
+    07/05/2022(v3.0.9) - Code fix
+    12/05/2022(v3.1) - Updated the CloudConnection Class
 Credits:
-    All code by Siddhesh Chavan.
+    All code by Siddhesh Chavan. Thanks to other contributors.
 Information:
     Module made by:- Siddhesh Chavan
-    Age:- 15 (as of 2021)
+    Age:- 15 (as of 2022)
     Email:- siddheshchavan2020@gmail.com
     YouTube Channel:- Siddhesh Chavan (Link: https://www.youtube.com/channel/UCWcSxfT-SbqAktvGAsrtadQ)
     Scratch Account:- @Sid72020123 (Link: https://scratch.mit.edu/users/Sid72020123/)

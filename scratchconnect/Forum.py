@@ -11,28 +11,16 @@ _api = f"https://api.{_website}"
 
 
 class Forum:
-    def __init__(self, id, client_username, csrf_token, session_id, token):
+    def __init__(self, id, client_username, headers, logged_in):
         """
         The Main Forum Class
         :param id: The id of the forum
         """
         self.f_id = str(id)
         self.client_username = client_username
+        self.headers = headers
+        self._logged_in = logged_in
         self.update_data()
-        self.csrf_token = csrf_token
-        self.session_id = session_id
-        self.token = token
-        self.headers = {
-            "x-csrftoken": self.csrf_token,
-            "X-Token": self.token,
-            "x-requested-with": "XMLHttpRequest",
-            "Cookie": "scratchcsrftoken="
-                      + self.csrf_token
-                      + ";scratchlanguage=en;scratchsessionsid="
-                      + self.session_id
-                      + ";",
-            "referer": "https://scratch.mit.edu/discuss/topic/" + self.f_id + "/",
-        }
 
     def update_data(self):
         """
@@ -95,6 +83,8 @@ class Forum:
         """
         Follow a Forum
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self.headers['referer'] = f"https://scratch.mit.edu/discuss/topic/{self.id}/"
         return requests.post(f"https://scratch.mit.edu/discuss/subscription/topic/{self.id}/add/",
                              headers=self.headers)
@@ -103,6 +93,8 @@ class Forum:
         """
         Unfollow a Forum
         """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self.headers['referer'] = f"https://scratch.mit.edu/discuss/topic/{self.id}/"
         return requests.post(f"https://scratch.mit.edu/discuss/subscription/topic/{self.id}/delete/",
                              headers=self.headers)
@@ -128,4 +120,5 @@ class Forum:
         :param segment: The length of time between each segment, defaults to 1 day. Possible special cases include year(365) or month(30)
         :param range: Range of how far back to get history, defaults to 30 days. Possible special cases include year(365) or month(30)
         """
-        return requests.get(f"https://scratchdb.lefty.one/v3/forum/topic/graph/{self.f_id}/{usernames}?segment={segment}&range={range}").json()
+        return requests.get(
+            f"https://scratchdb.lefty.one/v3/forum/topic/graph/{self.f_id}/{usernames}?segment={segment}&range={range}").json()
