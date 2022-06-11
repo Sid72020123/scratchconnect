@@ -4,11 +4,12 @@ Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Encode/Decode 
 """
 import ssl  # Used if the Certificate is expired specially in Windows 10 machine
 import json
-import time
 import websocket
+from ssl import SSLEOFError, SSLError
 
 from scratchconnect import Exceptions
 from scratchconnect.scEncoder import Encoder
+from scratchconnect.scCloudEvents import CloudEvents
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -18,10 +19,12 @@ _api = f"api.{_website}"
 class TurbowarpCloudConnection:
     def __init__(self, project_id, username):
         """
-        Main class to connect cloud variables
+        Main class to connect turbowarp cloud variables
         """
         self.project_id = project_id
         self.username = username
+        self._cloud_d = None
+        self._event = CloudEvents("Turbowarp", self)
         self._make_connection()
         self.encoder = Encoder()
 
@@ -46,12 +49,20 @@ class TurbowarpCloudConnection:
                 "project_id": str(self.project_id),
             }
         )
+        self._event.emit('connect')
 
     def get_variable_data(self):
         """
         Returns the cloud variable data
         """
-        data = json.loads(self._ws.recv())
+        self.set_cloud_variable("@sc_temp", "123")
+        data = []
+        for d in self._cloud_d.split("\n"):
+            one = json.loads(d)
+            if one["name"] != "☁ @sc_temp":
+                data.append(one)
+        if len(data) == 0:
+            return None
         return data
 
     def set_cloud_variable(self, variable_name, value):
@@ -67,7 +78,7 @@ class TurbowarpCloudConnection:
         try:
             if len(str(value)) > 256:
                 raise ValueError(
-                    "Scratch has Cloud Variable Limit of 256 Characters per variable. Try making the value shorter!")
+                    "Turbowarp has Cloud Variable Limit of 256 Characters per variable. Try making the value shorter!")
             if str(variable_name.strip())[0] != "☁":
                 n = f"☁ {variable_name.strip()}"
             else:
@@ -80,11 +91,11 @@ class TurbowarpCloudConnection:
                 "project_id": str(self.project_id),
             }
             self._send_packet(packet)
+            self._cloud_d = self._ws.recv()
             return True
-        except ConnectionAbortedError or BrokenPipeError:
+        except (ConnectionAbortedError, BrokenPipeError, SSLEOFError, SSLError):
+            self._event.emit('disconnect')
             self._make_connection()
-            time.sleep(0.1)
-            self.set_cloud_variable(variable_name, value)
             return False
 
     def encode(self, text):
@@ -116,3 +127,9 @@ class TurbowarpCloudConnection:
         :param encoded_data: The data to be decoded
         """
         return self.encoder.decode_list(encoded_data)
+
+    def create_cloud_event(self):
+        """
+        Create a Cloud Event
+        """
+        return self._event

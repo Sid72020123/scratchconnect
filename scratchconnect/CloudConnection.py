@@ -7,11 +7,11 @@ import requests
 from ssl import SSLEOFError, SSLError
 import websocket
 import time
-from pymitter import EventEmitter
 from threading import Thread
 
 from scratchconnect import Exceptions
 from scratchconnect.scEncoder import Encoder
+from scratchconnect.scCloudEvents import CloudEvents
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -53,7 +53,7 @@ class CloudConnection:
             "accept": "application/json",
             "Content-Type": "application/json",
         }
-        self.event = EventEmitter()
+        self._event = CloudEvents("Scratch", self)
         self.encoder = Encoder()
         self._make_connection()
         self._start_ping_thread()
@@ -115,7 +115,6 @@ class CloudConnection:
         """
         Don't use this
         """
-        print("Pinging Thread Started!")
         self.ping_task = Thread(target=self._ping_task, daemon=True)
         self.ping_task.start()
 
@@ -138,6 +137,7 @@ class CloudConnection:
                 "project_id": str(self.project_id),
             }
         )
+        self._event.emit('connect')
 
     def set_cloud_variable(self, variable_name, value):
         """
@@ -167,6 +167,7 @@ class CloudConnection:
             self._send_packet(packet)
             return True
         except (ConnectionAbortedError, BrokenPipeError, SSLEOFError, SSLError):
+            self._event.emit('disconnect')
             self._make_connection()
             return False
 
@@ -200,23 +201,8 @@ class CloudConnection:
         """
         return self.encoder.decode_list(encoded_data)
 
-    def _event(self, up):
+    def create_cloud_event(self):
         """
-        This feature was requested by @Ankit_Anmol on Scratch
+        Create a Cloud Event
         """
-        data = ""
-        while True:
-            live_data = self.get_variable_data(limit=3)[0]
-            if data != live_data:
-                data = live_data
-                self.event.emit('change', user=data['User'], action=data['Action'],
-                                variable_name=data['Name'], value=data['Value'],
-                                timestamp=data['Timestamp'])
-            time.sleep(up)
-
-    def start_event(self, update_time=1):
-        """
-        This feature was requested by @Ankit_Anmol on Scratch
-        """
-        self._make_connection()
-        Thread(target=self._event, args=(update_time,)).start()
+        return self._event

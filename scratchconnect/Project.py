@@ -500,9 +500,9 @@ class Project:
         return TurbowarpCloudConnection.TurbowarpCloudConnection(project_id=self.project_id,
                                                                  username=username)
 
-    def create_cloud_storage(self, file_name="data", rewrite_file=True, edit_access=None):
+    def create_cloud_storage(self, file_name="data", rewrite_file=True, edit_access=None, all_access=False):
         """
-        Create a Cloud Database in a project
+        Create a Cloud Database/Storage in a project
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
@@ -511,7 +511,7 @@ class Project:
         return scCloudStorage.CloudStorage(file_name=file_name, rewrite_file=rewrite_file, project_id=self.project_id,
                                            client_username=self.client_username,
                                            csrf_token=self.csrf_token,
-                                           session_id=self.session_id, token=self.token, edit_access=edit_access)
+                                           session_id=self.session_id, token=self.token, edit_access=edit_access, all_access=all_access)
 
     def all_data(self):
         """

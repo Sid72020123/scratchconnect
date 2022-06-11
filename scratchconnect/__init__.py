@@ -1,9 +1,9 @@
 __name__ = "scratchconnect"
-__version__ = "3.1"
+__version__ = "3.4"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
-scratchconnect is a Python Library to connect Scratch API and much more.
+ScratchConnect is a Python Library to connect Scratch API and much more.
 This library can show the statistics of Users, Projects, Studios, Forums and also connect and set cloud variables of a project!
 Import Statement:
     import scratchconnect
@@ -12,26 +12,25 @@ Documentation(Tutorial):
 Required Libraries:
     requests*, re*, json*, time*, threading*, warnings*, websocket-client
     * -> In-built
-    This library also uses pymitter to handle cloud events in Python.
 Optional Libraries:
     pyhtmlchart - For Chart feature
     rich - For Terminal feature
 History:
-    19/06/2021(v0.0.0.1) - First made the library and updated it.
-    20/06/2021(v0.1) - Added many features.
-    21/06/2021(v0.1.9) - Bug fixes.
-    26/06/2021(v0.2.0) - Made Improvements and added new features.
-    27/06/2021(v0.2.6) - Bug Fixes and update and made the 'Studio' class.
-    03/07/2021(v0.4.5) - Added many functions and made the 'Project' class.
-    04/07/2021(v0.5.0) - Update.
-    05/07/2021(v0.5.1) - Updated the messages function.
-    06/07/2021(v0.6.0) - Updated CloudConnection.
-    08/07/2021(v0.7.5) - Updated CloudConnection.
-    10/07/2021(v0.7.5) - Updated CloudConnection, made the Forum class and added DocString.
-    13/07/2021(v0.9.7) - Added DocString.
-    14/07/2021(v0.9.0) - Bug Fixes.
-    15/07/2021(v1.0) - First Release!
-    18/07/2021(V1.1) - Made the 'studio.get_projects()'.
+    19/06/2021(v0.0.0.1) - First made the library and updated it
+    20/06/2021(v0.1) - Added many features
+    21/06/2021(v0.1.9) - Bug fixes
+    26/06/2021(v0.2.0) - Made Improvements and added new features
+    27/06/2021(v0.2.6) - Bug Fixes and update and made the 'Studio' class
+    03/07/2021(v0.4.5) - Added many functions and made the 'Project' class
+    04/07/2021(v0.5.0) - Update
+    05/07/2021(v0.5.1) - Updated the messages function
+    06/07/2021(v0.6.0) - Updated CloudConnection
+    08/07/2021(v0.7.5) - Updated CloudConnection
+    10/07/2021(v0.7.5) - Updated CloudConnection, made the Forum class and added DocString
+    13/07/2021(v0.9.7) - Added DocString
+    14/07/2021(v0.9.0) - Bug Fixes
+    15/07/2021(v1.0) - First Release
+    18/07/2021(V1.1) - Made the 'studio.get_projects()'
     19/07/2021(v1.2) - Made the get comments, curators, managers of the studio
     13/08/2021(v1.3) - Added the get comments function
     14/08/2021(v1.4) - Updated the get messages function
@@ -61,6 +60,10 @@ History:
     01/05/2022(v3.0.8) - Code fix and new features
     07/05/2022(v3.0.9) - Code fix
     12/05/2022(v3.1) - Updated the CloudConnection Class
+    04/06/2022(v3.2) - Updated the ScratchConnect, CloudStorage, etc. Class
+    05/06/2022(v3.3) - Updated the CloudEvents Class, etc
+    08/06/2022(v3.3.5) - Added colored messages, etc
+    11/06/2022(v3.4) - Updated and made the CloudStorage Feature faster
 Credits:
     All code by Siddhesh Chavan. Thanks to other contributors.
 Information:
@@ -72,7 +75,8 @@ Information:
     My self-made Website: https://Sid72020123.github.io/
 """
 
+print_name = "ScratchConnect"
+print(f"[1m[33m{print_name}[32m[3m v{__version__}[37m -[36m {__documentation__}[0m")
+
 from scratchconnect.ScratchConnect import ScratchConnect
 from scratchconnect import Exceptions
-
-print(f"{__name__} v{__version__} - {__documentation__}")

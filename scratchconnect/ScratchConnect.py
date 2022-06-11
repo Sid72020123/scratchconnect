@@ -30,6 +30,7 @@ class ScratchConnect(UserCommon):
         self.username = username
         self.password = password
         self.cookie = cookie
+        self.session = None
         self.auto_cookie_login = auto_cookie_login
 
         if self.username is not None and self.password is not None:
@@ -59,8 +60,8 @@ class ScratchConnect(UserCommon):
                           + ";",
                 "referer": "https://scratch.mit.edu",
             }
-            Warnings.LoginWarning(
-                'Login with Username/Password and Cookie Failed! Continuing without login...')
+            Warnings.warn(
+                "[1m[33mScratchConnect: [31mLogin with Username/Password and Cookie Failed! Continuing without login...[0m")
         super().__init__(self.username,
                          self.headers)  # Get other properties and methods from the parent(UserCommon) class
         self.update_data()
@@ -87,31 +88,21 @@ class ScratchConnect(UserCommon):
                     if auto_cookie_login is True:
                         self._cookie_login()
                     else:
-                        raise Exceptions.ForbiddenLogin("""
-                         Scratch is not letting you login from this device.
-                         Try to do the following to fix this issue:
-                         - Try again later (10-15 minutes)
-                         - Use Cookie login - https://github.com/Sid72020123/scratchconnect#Cookie-Login
-                         - Try from another device (Scratch sometimes blocks login from Replit)
-                         """)
+                        Warnings.warn(
+                            """[33m[1mScratchConnect: [31mScratch is not letting you login from this device.\n[35mTry to do the following to fix this issue:\n[36m- Try again later (10-15 minutes)\n[36m- Use Cookie login - [4mhttps://github.com/Sid72020123/scratchconnect#Cookie-Login[0m\n[36m[1m- Try from another device (Scratch sometimes blocks login from Replit)[0m""")
             try:
                 self.session_id = re.search('"(.*)"', request.headers["Set-Cookie"]).group()
-                self.token = request.json()[0]["token"]
+                self._get_token()
             except AttributeError:
                 if auto_cookie_login is True:
                     self._cookie_login()
                 else:
                     raise Exceptions.InvalidInfo('Invalid Username or Password!')
-            headers = {
-                "x-requested-with": "XMLHttpRequest",
-                "Cookie": "scratchlanguage=en;permissions=%7B%7D;",
-                "referer": "https://scratch.mit.edu",
-            }
-            request = requests.get("https://scratch.mit.edu/csrf_token/", headers=headers)
-            self.csrf_token = re.search("scratchcsrftoken=(.*?);", request.headers["Set-Cookie"]).group(1)
+            self._get_csrf_token()
             _user_link = f"https://{_api}/users/{self.username}/"
         else:
             self._cookie_login()
+
         self.headers = {
             "x-csrftoken": self.csrf_token,
             "X-Token": self.token,
@@ -124,16 +115,46 @@ class ScratchConnect(UserCommon):
             "referer": "https://scratch.mit.edu",
         }
 
+    def _get_csrf_token(self):
+        headers = {
+            "x-requested-with": "XMLHttpRequest",
+            "Cookie": "scratchlanguage=en;permissions=%7B%7D;",
+            "referer": "https://scratch.mit.edu",
+        }
+        request = requests.get("https://scratch.mit.edu/csrf_token/", headers=headers)
+        self.csrf_token = re.search("scratchcsrftoken=(.*?);", request.headers["Set-Cookie"]).group(1)
+
+    def _get_token(self):
+        response = requests.post("https://scratch.mit.edu/session", headers={
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
+            "x-csrftoken": "a",
+            "x-requested-with": "XMLHttpRequest",
+            "referer": "https://scratch.mit.edu",
+        }, cookies={"scratchsessionsid": self.session_id, "scratchcsrftoken": "a", "scratchlanguage": "en"}).json()
+        self.token = response['user']['token']
+        self.session = response
+        if self.session["user"]["banned"]:
+            raise Exceptions.UnauthorizedAction(
+                "You are banned on Scratch! You cannot login from ScratchConnect unless you are unbanned! This error is raised because ScratchConnect won't allow the banned users to login and something inappropriate!")
+
     def _cookie_login(self):
+        if self.cookie is None:
+            raise Exceptions.InvalidInfo("Cookie Not Provided!")
         try:
             self.username = self.cookie["Username"]
-            self.token = ""
-            self.csrf_token = self.cookie["CSRFToken"]
             self.session_id = self.cookie["SessionID"]
-            Warnings.CookieLoginWarning(
-                'You are logging in with cookie. Some features might not work if the cookie values are wrong!')
         except KeyError:
             raise Exceptions.InvalidInfo("Required Cookie Headers are missing!")
+        try:
+            self._get_token()
+            self._get_csrf_token()
+            Warnings.warn(
+                "[1m[33mScratchConnect: [31mYou are logging in with cookie. Some features might not work if the cookie values are wrong![0m")
+        except KeyError:
+            Warnings.warn(
+                "[1m[33mScratchConnect: [31mCookie Login Failed because the cookie values may be wrong![0m")
+            self.csrf_token = ""
+            self.token = ""
 
     def check(self, username):
         try:
