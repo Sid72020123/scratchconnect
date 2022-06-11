@@ -1,4 +1,4 @@
-# scratchconnect v3.1
+# scratchconnect v3.4
 
 Python Library to connect Scratch API and much more.
 
@@ -49,8 +49,8 @@ These are the people who made the APIs so that this library can take data:
   by  [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
 * [Simple Forum API](https://github.com/Sid72020123/Scratch-Forum)
   by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch
-* [Ocular API](https://ocular.jeffalo.net/) by [Jeffalo](https://scratch.mit.edu/users/Jeffalo/) on Scratch
-* [Aviate API](https://aviateapp.eu.org/) by [NFlex23](https://scratch.mit.edu/users/NFlex23/) on Scratch
+* [Ocular API](https://ocular.jeffalo.net/) by [@Jeffalo](https://scratch.mit.edu/users/Jeffalo/) on Scratch
+* [Aviate API](https://aviateapp.eu.org/) by [@NFlex23](https://scratch.mit.edu/users/NFlex23/) on Scratch
 
 ```
 I thank all these people.
@@ -425,52 +425,57 @@ forum.update_data()  # Update the data
 
 ### Cloud Events
 
-**This new feature was suggested by [@Ankit_Anmol](https://scratch.mit.edu/users/Ankit_Anmol/) on Scratch**
 If you want to handle various Cloud Events on Scratch, use the following code:
 
-```python
-import scratchconnect
-
-login = scratchconnect.ScratchConnect("Username", "Password")
-project = login.connect_project(1)  # Connect the project
-
-variables = project.connect_cloud_variables()  # Connect the project's cloud variables
-
-event = variables.start_event(
-    update_time=1)  # Start a cloud event loop to check events. Use the 'update_time' parameter to wait for that number of seconds and then update the data.
-
-
-@variables.event.on('change')
-def do_something(**data):
-    print(data)  # Will print variable data of the event in dict format. You can access individual members too! Example:
-    print(data['user'])  # The user who changes the value
-    print(data['action'])  # The action with the variable
-    print(data['variable_name'])  # The name of the variable changed, created, etc.
-    print(data['value'])  # The value of the variable
-    print(data['timestamp'])  # The timestamp
-```
-
-**Want to check if only a variable's value if updated? See this example code:**
+#### In Scratch:
 
 ```python
 import scratchconnect
 
 login = scratchconnect.ScratchConnect("Username", "Password")
+
 project = login.connect_project(1)  # Connect the project
 
-variables = project.connect_cloud_variables()
-event = variables.start_event(update_time=1)  # Start Event with the required time.
+cloud = project.connect_cloud_variables()  # Connect the project's cloud
+
+event = cloud.create_cloud_event()  # Create a cloud event
 
 
-@variables.event.on('change')
-def do_something(**data):
-    event_type = data['action']  # Will contain variable action of the event.
-    if event_type == 'set_var':
-        # Do something when a value is changed...
-        print(data['variable_name'], data['value'])  # Just print the data name and value.
+@event.on("connect")
+def connect():
+    print("Connected Cloud!")
+
+
+@event.on("set")
+def set(data):
+    print("SET: ", data)
+
+
+@event.on("create")
+def create(data):
+    print("CREATE: ", data)
+
+
+@event.on("delete")
+def delete(data):
+    print("DELETE: ", data)
+
+
+@event.on("disconnect")
+def disconnect():
+    print("Disconnected from Cloud!")
+
+
+event.start(update_time=1)  # Start the event with update time
+
+# To Stop a Cloud Event, use the event.stop() function
 ```
 
-### Cloud Storage (beta)
+#### In Turbowarp:
+
+Use the same method as in Scratch but this time connect the cloud of a project on Turbowarp
+
+### Cloud Storage
 
 This is a special feature in ScratchConnect which is used to make a cloud storage system. Some features are:
 
@@ -482,8 +487,7 @@ This is a special feature in ScratchConnect which is used to make a cloud storag
 * Wait for a given time
 * Simple Syntax
 
-**Note: This feature is still in development and may cause errors! Creating/Deleting variables is fast but
-Getting/Setting them is a little slow.**
+**Note: Maximum of 1024 characters can be set as a value to a variable. You can create any number of variables!**
 
 **First, you need to put a sprite in your project. Go to [this link](https://scratch.mit.edu/projects/606881698/) and
 click 'see inside'. There will be all the instructions.**
@@ -497,7 +501,8 @@ login = scratchconnect.ScratchConnect("Username", "Password")
 project = login.connect_project(1)  # Connect the project
 
 cloud_storage = project.create_cloud_storage(file_name="data", rewrite_file=False, edit_access=[
-    'Sid72020123'])  # Create a cloud storage. It will create a file in the specified location. Then there is 'edit_access' list which contains the users which have permission to edit(actually create and delete) the variables. Use the 'rewrite_file' argument if you want the file to be re-written again each time you write the program!
+    'Sid72020123'],
+                                             all_access=False)  # Create a cloud storage. It will create a file in the specified location. Then there is 'edit_access' list which contains the users which have permission to edit(actually create and delete) the variables. Use the 'rewrite_file' argument if you want the file to be re-written again each time you write the program! You can set the 'all_access' to True if you want to give all the access to all users!
 
 cloud_storage.start_cloud_loop(update_time=1,
                                print_requests=True)  # Start the Cloud Storage. Use the 'update_time' to wait for the specified time. Use the 'print_requests' to print the request info in the console/output screen.
@@ -514,9 +519,8 @@ v2.5 or above has a feature to login directly with cookie. Example:
 import scratchconnect
 
 scratch_cookie = {
-    "Username": "USERNAME",
-    "SessionID": "SESSIONID",
-    "CSRFToken": "CSRFTOKEN"
+    "Username": "Your username",
+    "SessionID": "Your SessionID",
 }  # set the cookie dictionary
 
 login = scratchconnect.ScratchConnect(cookie=scratch_cookie)  # Login with cookie
@@ -535,9 +539,8 @@ ScratchConnect class. Also, you need to set the `auto_cookie_login` variable to 
 import scratchconnect
 
 scratch_cookie = {
-    "Username": "USERNAME",
-    "SessionID": "SESSIONID",
-    "CSRFToken": "CSRFTOKEN"
+    "Username": "Your username",
+    "SessionID": "Your SessionID",
 }  # set the cookie dictionary
 
 login = scratchconnect.ScratchConnect(username="USERNAME", password="PASSWORD",
@@ -757,6 +760,10 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 01/05/2022(v3.0.8) - Code fix and new features
 * 07/05/2022(v3.0.9) - Code fix
 * 12/05/2022(v3.1) - Updated the CloudConnection Class
+* 04/06/2022(v3.2) - Updated the ScratchConnect, CloudStorage, etc. Class
+* 05/06/2022(v3.3) - Updated the CloudEvents Class, etc
+* 08/06/2022(v3.3.5) - Added colored messages, etc
+* 11/06/2022(v3.4) - Updated and made the CloudStorage Feature faster
 
 ### Credits:
 
