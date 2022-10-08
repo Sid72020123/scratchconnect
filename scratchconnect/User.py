@@ -5,6 +5,7 @@ import requests
 import json
 
 from scratchconnect.UserCommon import UserCommon
+from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect import Exceptions
 
 _website = "scratch.mit.edu"
@@ -13,17 +14,19 @@ _api = f"https://api.{_website}"
 
 
 class User(UserCommon):
-    def __init__(self, username, client_username, headers, logged_in):
+    def __init__(self, username, client_username, headers, logged_in, online_ide):
         """
         The User Class to connect a Scratch user.
         :param username: The username
         """
-        super().__init__(username, headers)  # Get other properties and methods from the parent(UserCommon) class
+        super().__init__(username, headers, online_ide)  # Get other properties and methods from the parent(UserCommon) class
         self.username = username
         self.client_username = client_username
         self._logged_in = logged_in
         self._user_link = f"{_api}/users/{self.username}"
         self.headers = headers
+        if online_ide:
+            _change_request_url()
         self.update_data()
 
     def post_comment(self, content, commentee_id="", parent_id=""):

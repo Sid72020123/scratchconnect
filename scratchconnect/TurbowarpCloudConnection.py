@@ -65,13 +65,20 @@ class TurbowarpCloudConnection:
             return None
         return data
 
+    def get_cloud_variable_value(self, variable_name, limit):
+        value = []
+        data = self.get_variable_data()
+        for d in data:
+            if d["name"] == f"☁ {variable_name}":
+                value.append(d["value"])
+        return value[0:limit]
+
     def set_cloud_variable(self, variable_name, value):
         """
         Set a cloud variable
         :param variable_name: Variable name
         :param value: Variable value
         """
-
         if str(value).isdigit() and value == '':
             raise Exceptions.InvalidCloudValue(f"The Cloud Value should be a set of digits and not '{value}'!")
 

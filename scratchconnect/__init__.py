@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "3.4"
+__version__ = "3.9.9"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -10,7 +10,7 @@ Import Statement:
 Documentation(Tutorial):
     For documentation, go to {__documentation__}
 Required Libraries:
-    requests*, re*, json*, time*, threading*, warnings*, websocket-client
+    requests*, re*, json*, time*, traceback*, threading*, urllib*, PIL*, websocket-client
     * -> In-built
 Optional Libraries:
     pyhtmlchart - For Chart feature
@@ -64,6 +64,21 @@ History:
     05/06/2022(v3.3) - Updated the CloudEvents Class, etc
     08/06/2022(v3.3.5) - Added colored messages, etc
     11/06/2022(v3.4) - Updated and made the CloudStorage Feature faster
+    05/08/2022(v3.4.1) - Planed and added some features of Online IDE login
+    06/08/2022(v3.4.2) - Added the OnlineIDE feature to all the Scratch API based classes
+    08/08/2022(v3.4.5) - Planned the Cloud Requests feature
+    09/08/2022(v3.5) - Added some features to the Cloud Requests Class
+    13/08/2022(v3.5.1) - Added some methods to the TurbowarpCloudConnection and CloudRequests classes and updated them
+    14/08/2022(v3.5.6) - Updated the Cloud Requests Class
+    15/08/2022(v3.6.0) - Updated the Cloud Requests Class
+    16/08/2022(v3.6.0) - Updated the Cloud Requests Class and added some logs to the class
+    20/08/2022(v3.7) - Added more logs to the Requests Class
+    21/08/2022(v3.8) - Made the scImage Class
+    27/08/2022(v3.9) - Reduced the size of encoded Image
+    30/08/2022(v3.9.5) - Bug fixes and Improvements
+    24/09/2022(v3.9.6) - Bug fixes and Improvements
+    25/09/2022(v3.9.7) - Bug fixes and Improvements
+    26/09/2022(v3.9.9) - Fixed many bugs in scCloudRequests
 Credits:
     All code by Siddhesh Chavan. Thanks to other contributors.
 Information:

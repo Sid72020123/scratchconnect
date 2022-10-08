@@ -145,7 +145,6 @@ class CloudConnection:
         :param variable_name: Variable name
         :param value: Variable value
         """
-
         if str(value).isdigit() and value == '':
             raise Exceptions.InvalidCloudValue(f"The Cloud Value should be a set of digits and not '{value}'!")
 

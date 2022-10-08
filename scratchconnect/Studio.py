@@ -5,6 +5,7 @@ import requests
 import json
 
 import scratchconnect.ScratchConnect
+from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect import Exceptions
 
 _website = "scratch.mit.edu"
@@ -13,7 +14,7 @@ _api = f"https://api.{_website}"
 
 
 class Studio:
-    def __init__(self, id, client_username, headers, logged_in):
+    def __init__(self, id, client_username, headers, logged_in, online_ide):
         """
         The Studio Class
         :param id: The ID of the studio
@@ -22,6 +23,8 @@ class Studio:
         self._logged_in = logged_in
         self.studio_id = str(id)
         self.headers = headers
+        if online_ide:
+            _change_request_url()
         self.update_data()
 
     def update_data(self):
@@ -42,7 +45,7 @@ class Studio:
         self.studio_managers = None
         self.studio_activity = None
 
-        data = requests.get(f"{_api}/studios/{self.studio_id}/").json()
+        data = requests.get(f"{_api}/studios/{self.studio_id}").json()
         try:
             self.studio_id = data["id"]
         except KeyError:
