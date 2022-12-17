@@ -789,7 +789,7 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 ### Credits:
 
 **This library is made by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch. Also, thanks to all
-contributors. This project was not possible without them.**
+contributors.**
 
 ### Contributors:
 
