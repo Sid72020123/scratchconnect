@@ -1,4 +1,4 @@
-# scratchconnect v3.4
+# ScratchConnect v4.0.0
 
 Python Library to connect Scratch API and much more.
 
@@ -10,13 +10,12 @@ You also need to have the Python programming language installed on your computer
 
 **You need basic knowledge of Python. Using this library without the knowledge can be risky.**
 
-![https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white](https://img.shields.io/badge/Python-3776AB&logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue&color=black)
 
 ![PyPI](https://img.shields.io/pypi/v/scratchconnect)
 [![Package Status](https://img.shields.io/pypi/status/scratchconnect)](https://pypi.org/project/scratchconnect/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/scratchconnect)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/sid72020123/scratchconnect)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Sid72020123/scratchconnect.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Sid72020123/scratchconnect/context:python)
 
 ### Installation
 
@@ -37,7 +36,7 @@ to [this link](https://packaging.python.org/tutorials/installing-packages/)**
 
 ### Documentation
 
-Documentation coming soon...
+Documentation is taking a bit longer to make. It will be ready soon...
 
 ### Data Credits:
 
@@ -477,6 +476,8 @@ Use the same method as in Scratch but this time connect the cloud of a project o
 
 ### Cloud Storage
 
+**IMPORTANT NOTE: This feature is going to be discontinued in ScratchConect v5.0! Please use the new alternative feature: Cloud Requests.**
+
 This is a special feature in ScratchConnect which is used to make a cloud storage system. Some features are:
 
 * Create a variable
@@ -512,6 +513,9 @@ cloud_storage.start_cloud_loop(update_time=1,
 
 Sometimes, the Scratch API blocks the login from online IDEs like Replit, etc. To overcome the issue, ScratchConnect
 v2.5 or above has a feature to login directly with cookie. Example:
+
+**How to get a cookie?**
+You can get your cookie values by logging in with ScratchConnect locally on your computer and use the login object as ```print(login.session_id)``` to get the required cookie value. Copy the value and store it in environment variable if you are using an online IDE like Replit!
 
 **Note: Keep this values secured and use environment variables wherever necessary.**
 
@@ -764,24 +768,43 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 05/06/2022(v3.3) - Updated the CloudEvents Class, etc
 * 08/06/2022(v3.3.5) - Added colored messages, etc
 * 11/06/2022(v3.4) - Updated and made the CloudStorage Feature faster
+* 05/08/2022(v3.4.1) - Planed and added some features of Online IDE login
+* 06/08/2022(v3.4.2) - Added the OnlineIDE feature to all the Scratch API based classes
+* 08/08/2022(v3.4.5) - Planned the Cloud Requests feature
+* 09/08/2022(v3.5) - Added some features to the Cloud Requests Class
+* 13/08/2022(v3.5.1) - Added some methods to the TurbowarpCloudConnection and CloudRequests classes and updated them
+* 14/08/2022(v3.5.6) - Updated the Cloud Requests Class
+* 15/08/2022(v3.6.0) - Updated the Cloud Requests Class
+* 16/08/2022(v3.6.0) - Updated the Cloud Requests Class and added some logs to the class
+* 20/08/2022(v3.7) - Added more logs to the Requests Class
+* 21/08/2022(v3.8) - Made the scImage Class
+* 27/08/2022(v3.9) - Reduced the size of encoded Image
+* 30/08/2022(v3.9.5) - Bug fixes and Improvements
+* 24/09/2022(v3.9.6) - Bug fixes and Improvements
+* 25/09/2022(v3.9.7) - Bug fixes and Improvements
+* 26/09/2022(v3.9.9) - Fixed many bugs in scCloudRequests
+* 14/12/2022(v4.0.0) - Fixed the arguments bug in the Cloud Requests feature
+* 15/12/2000(v4.0.0) - Bug fixes and improvements in the Cloud Requests feature
 
 ### Credits:
 
-**This library is made by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch. And thanks to all
-contributors.**
+**This library is made by [@Sid72020123](https://scratch.mit.edu/users/Sid72020123/) on Scratch. Also, thanks to all
+contributors. This project was not possible without them.**
 
 ### Contributors:
 
 ***The names of persons below are their Scratch Usernames.***
 
-| **Person**      | **Role**      | **Work**                                                       |
-|-----------------|---------------|----------------------------------------------------------------|
-| **Sid72020123** | *Owner*       | Made the library and most of its features                      |
-| **Ankit_Anmol** | *Contributor* | Fixed some things in the documentation and added some features |
-| **Chiroyce**    | *Contributor* | Added some features and cleaned up some code                   |
-| **god286**      | *Contributor* | Fixed mistakes in the documentation                            |
-| **mbrick2**     | *Contributor* | Fixed Badge Consistency and added the Aviate status feature    |
-| **AidanER1**    | *Contributor* | Updated the CloudConnection class and fixed some bugs          |
+| **Person**      | **Role**      | **Contribution**                                                                      |
+|-----------------|---------------|----------------------------------------------------------------------------------     |
+| **Sid72020123** | *Owner*       | Made the library and most of its features                                             |
+| **Ankit_Anmol** | *Contributor* | Fixed some things in the documentation and added some features                        |
+| **Chiroyce**    | *Contributor* | Added some features and cleaned up some code                                          |
+| **god286**      | *Contributor* | Fixed mistakes in the documentation                                                   |
+| **mbrick2**     | *Contributor* | Fixed Badge Consistency and added the Aviate status feature                           |
+| **AidanER1**    | *Contributor* | Updated the CloudConnection class and fixed some bugs                                 |
+| **Senievol**    | *Idea*        | Gave the trick to make the encoded image data length much lower in Cloud Requests     |
+| **awesome-llama**| *Idea*       | Gave the trick to make the encoded image data length much lower in Cloud Requests     |
 
 *If I'm missing some people and their work in the contributors table, please contact Sid72020123 on Scratch*
 
