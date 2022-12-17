@@ -1,6 +1,7 @@
 """
 Main File to Connect all the Scratch API and the Scratch DB
 """
+
 import requests
 import json
 import re
@@ -12,8 +13,10 @@ from scratchconnect import Project
 from scratchconnect import Studio
 from scratchconnect import User
 from scratchconnect import Forum
+from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect.scScratchTerminal import _terminal
 from scratchconnect.scChart import _chart
+from scratchconnect.scImage import Image
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -21,7 +24,7 @@ _api = f"api.{_website}"
 
 
 class ScratchConnect(UserCommon):
-    def __init__(self, username=None, password=None, cookie=None, auto_cookie_login=False):
+    def __init__(self, username=None, password=None, cookie=None, auto_cookie_login=False, online_ide_cookie=None):
         """
         Class to make a connection to Scratch
         :param username: The username of a Scratch Profile
@@ -31,13 +34,20 @@ class ScratchConnect(UserCommon):
         self.password = password
         self.cookie = cookie
         self.session = None
+        self._online_ide = False
         self.auto_cookie_login = auto_cookie_login
+        self.online_ide_cookie = online_ide_cookie
 
         if self.username is not None and self.password is not None:
             self._login(cookie=False, auto_cookie_login=self.auto_cookie_login)
             self._logged_in = True
         elif self.cookie is not None:
             self._login(cookie=True, auto_cookie_login=self.auto_cookie_login)
+            self._logged_in = True
+        elif self.online_ide_cookie is not None:
+            _change_request_url()
+            self._online_ide = True
+            self._login(online_ide=True)
             self._logged_in = True
         else:
             self.headers = {
@@ -63,15 +73,16 @@ class ScratchConnect(UserCommon):
             Warnings.warn(
                 "[1m[33mScratchConnect: [31mLogin with Username/Password and Cookie Failed! Continuing without login...[0m")
         super().__init__(self.username,
-                         self.headers)  # Get other properties and methods from the parent(UserCommon) class
+                         self.headers,
+                         self._online_ide)  # Get other properties and methods from the parent(UserCommon) class
         self.update_data()
 
-    def _login(self, cookie=False, auto_cookie_login=False):
+    def _login(self, cookie=False, auto_cookie_login=False, online_ide=False):
         """
         Function to login(don't use this)
         """
         global _user_link
-        if cookie is False:
+        if cookie is False and online_ide is False:
             headers = {
                 "x-csrftoken": "a",
                 "x-requested-with": "XMLHttpRequest",
@@ -100,8 +111,10 @@ class ScratchConnect(UserCommon):
                     raise Exceptions.InvalidInfo('Invalid Username or Password!')
             self._get_csrf_token()
             _user_link = f"https://{_api}/users/{self.username}/"
-        else:
+        elif cookie is not False:
             self._cookie_login()
+        elif online_ide is not False:
+            self._online_ide_login()
 
         self.headers = {
             "x-csrftoken": self.csrf_token,
@@ -135,7 +148,7 @@ class ScratchConnect(UserCommon):
         self.session = response
         if self.session["user"]["banned"]:
             raise Exceptions.UnauthorizedAction(
-                "You are banned on Scratch! You cannot login from ScratchConnect unless you are unbanned! This error is raised because ScratchConnect won't allow the banned users to login and something inappropriate!")
+                "You are banned on Scratch! You cannot login from ScratchConnect unless you are unbanned! This error is raised because ScratchConnect won't allow the banned users to login and do something inappropriate!")
 
     def _cookie_login(self):
         if self.cookie is None:
@@ -153,6 +166,25 @@ class ScratchConnect(UserCommon):
         except KeyError:
             Warnings.warn(
                 "[1m[33mScratchConnect: [31mCookie Login Failed because the cookie values may be wrong![0m")
+            self.csrf_token = ""
+            self.token = ""
+
+    def _online_ide_login(self):
+        if self.online_ide_cookie is None:
+            raise Exceptions.InvalidInfo("Cookie Info Not Provided!")
+        try:
+            self.username = self.online_ide_cookie["Username"]
+            self.session_id = self.online_ide_cookie["SessionID"]
+        except KeyError:
+            raise Exceptions.InvalidInfo("Required Cookie Headers are missing!")
+        try:
+            self._get_token()
+            self._get_csrf_token()
+            Warnings.warn(
+                "[1m[33mScratchConnect: [31mYou are logging in on Replit or some other online IDE. Some features might not work if the cookie values are wrong or it may be slow! Also, you can't do any social interactions![0m")
+        except (KeyError, TypeError, ValueError):
+            Warnings.warn(
+                "[1m[33mScratchConnect: [31mFetching token or csrf_token failed! You can still continue but social interactions won't work![0m")
             self.csrf_token = ""
             self.token = ""
 
@@ -434,7 +466,7 @@ class ScratchConnect(UserCommon):
         :param username: A valid Username
         """
         return User.User(username=username, client_username=self.username, headers=self.headers,
-                         logged_in=self._logged_in)
+                         logged_in=self._logged_in, online_ide=self._online_ide)
 
     def connect_studio(self, studio_id):
         """
@@ -442,7 +474,7 @@ class ScratchConnect(UserCommon):
         :param studio_id: A valid studio ID
         """
         return Studio.Studio(id=studio_id, client_username=self.username, headers=self.headers,
-                             logged_in=self._logged_in)
+                             logged_in=self._logged_in, online_ide=self._online_ide)
 
     def connect_project(self, project_id, access_unshared=False):
         """
@@ -451,14 +483,16 @@ class ScratchConnect(UserCommon):
         :param access_unshared: Set to True if you want to connect an unshared project
         """
         return Project.Project(id=project_id, client_username=self.username, headers=self.headers,
-                               logged_in=self._logged_in, unshared=access_unshared, session_id=self.session_id)
+                               logged_in=self._logged_in, unshared=access_unshared, session_id=self.session_id,
+                               online_ide=self._online_ide)
 
     def connect_forum_topic(self, forum_id):
         """
         Connect a Scratch Forum Topic
         :param forum_id: A valid forum topic ID
         """
-        return Forum.Forum(id=forum_id, client_username=self.username, headers=self.headers, logged_in=self._logged_in)
+        return Forum.Forum(id=forum_id, client_username=self.username, headers=self.headers, logged_in=self._logged_in,
+                           online_ide=self._online_ide)
 
     def create_new_terminal(self):
         """
@@ -471,3 +505,9 @@ class ScratchConnect(UserCommon):
         Create a new Chart object
         """
         return _chart(sc=self)
+
+    def create_new_image(self):
+        """
+        Create a new scImage object
+        """
+        return Image(online_ide=self._online_ide)

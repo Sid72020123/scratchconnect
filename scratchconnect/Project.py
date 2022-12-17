@@ -4,10 +4,12 @@ The Project File
 import json
 import requests
 
-from scratchconnect import Exceptions
+from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect import CloudConnection
 from scratchconnect import TurbowarpCloudConnection
 from scratchconnect import scCloudStorage
+from scratchconnect import scCloudRequests
+from scratchconnect import Exceptions
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -16,7 +18,7 @@ _project = f"https://{_api}/projects/"
 
 
 class Project:
-    def __init__(self, id, client_username, headers, unshared, logged_in, session_id):
+    def __init__(self, id, client_username, headers, unshared, logged_in, session_id, online_ide):
         """
         The Project Class
         :param id: The project ID
@@ -42,6 +44,8 @@ class Project:
             "accept": "application/json",
             "Content-Type": "application/json",
         }
+        if online_ide:
+            _change_request_url()
         self.update_data()
 
     def update_data(self):
@@ -57,8 +61,9 @@ class Project:
         self.project_is_public = None
         self.project_is_published = None
         self.project_thubmnail_url = None
+        self.project_token = None
 
-        data = requests.get(f"https://api.scratch.mit.edu/projects/{self.project_id}/").json()
+        data = requests.get(f"https://api.scratch.mit.edu/projects/{self.project_id}").json()
         try:
             self.project_id = data["id"]
         except KeyError:
@@ -80,6 +85,7 @@ class Project:
             self.project_is_public = data["public"] == True
             self.project_is_published = data["is_published"] == True
             self.project_thubmnail_url = data["images"]
+            self.project_token = data["project_token"]
 
     def id(self):
         """
@@ -194,7 +200,7 @@ class Project:
         """
         Returns the scripts of a project
         """
-        return requests.get(f"https://projects.scratch.mit.edu/{self.project_id}/").json()
+        return requests.get(f"https://projects.scratch.mit.edu/{self.project_id}?token={self.project_token}").json()
 
     def love(self):
         """
@@ -511,7 +517,20 @@ class Project:
         return scCloudStorage.CloudStorage(file_name=file_name, rewrite_file=rewrite_file, project_id=self.project_id,
                                            client_username=self.client_username,
                                            csrf_token=self.csrf_token,
-                                           session_id=self.session_id, token=self.token, edit_access=edit_access, all_access=all_access)
+                                           session_id=self.session_id, token=self.token, edit_access=edit_access,
+                                           all_access=all_access)
+
+    def create_cloud_requests(self, handle_all_errors=True, print_logs=True):
+        """
+        Create a Cloud Database/Storage in a project
+        """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
+        return scCloudRequests.CloudRequests(project_id=self.project_id,
+                                             client_username=self.client_username,
+                                             csrf_token=self.csrf_token,
+                                             session_id=self.session_id, token=self.token,
+                                             handle_all_errors=handle_all_errors, print_logs=print_logs)
 
     def all_data(self):
         """
