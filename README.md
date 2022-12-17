@@ -708,6 +708,9 @@ c.open()  # Open chart
 t.open()  # Open table
 ```
 
+### Using ScratchConnect in online IDEs like Replit
+...
+
 ### Projects made using ScratchConnect
 
 To see the projects made using ScratchConnect, go to the
