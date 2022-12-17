@@ -711,12 +711,22 @@ t.open()  # Open table
 ### Using ScratchConnect in online IDEs like Replit
 
 Using the ScratchConnect version ```4.0.0+```, you can use this library even on some online IDEs like Replit!
+
 But to keep your profile data safe, this supports only ```GET``` requests and no cookie headers are passed to the proxy (which this feature uses).
-You cannot perform any actions other than ```GET```, i.e., follow a user, post a comment, etc. 
+You cannot perform any actions other than ```GET```, i.e., follow a user, post a comment, etc.
+
 But cloud variables work as it is a websocket connection.
 
-To use ScratchConnect in online IDEs like Replit, you need to get your session ID (see #Cookie-Login) and the code like:
+**Remember to use environment variables if you are using this ...**
+To use ScratchConnect in online IDEs like Replit, you need to get your session ID (see Cookie-Login section above) and the code like:
 ```python
+import scratchconnect
+
+session_id = "<your session id here>"
+cookie = {
+   "Username": "<your username>",
+   "SessionID": session_id
+}
 ``` 
 In progress...
 
