@@ -739,7 +739,7 @@ login = scratchconnect.ScratchConnect(online_ide_cookie=cookie) # Pass the cooki
 This feature was first released in version ```4.0.0``` of the ScratchConnect Python Library.
 Using this, you will be able to send any amount of data to-and-from your Python program and any Scratch Project.
 
-The docs to use this feature are [here](https://github.com/Sid72020123/scratchconnect/CLOUD_REQUESTS.md)
+The docs to use this feature are [here](https://github.com/Sid72020123/scratchconnect/blob/main/CLOUD_REQUESTS.md)
 
 ### Projects made using ScratchConnect
 
