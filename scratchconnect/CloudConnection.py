@@ -170,13 +170,13 @@ class CloudConnection:
             self._make_connection()
             return False
 
-    def encode(self, text):
+    def encode(self, text, default=" "):
         """
         Encode a text. For example: A -> 1
         Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Engine!
         :param text: The text to encode
         """
-        return self.encoder.encode(text)
+        return self.encoder.encode(text, default=default)
 
     def decode(self, encoded_text):
         """
@@ -186,12 +186,12 @@ class CloudConnection:
         """
         return self.encoder.decode(encoded_text)
 
-    def encode_list(self, data):
+    def encode_list(self, data, default=" "):
         """
         Encode a Python List
         :param data: The list
         """
-        return self.encoder.encode_list(data)
+        return self.encoder.encode_list(data, default=default)
 
     def decode_list(self, encoded_data):
         """

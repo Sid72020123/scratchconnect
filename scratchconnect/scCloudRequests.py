@@ -20,7 +20,7 @@ SUCCESS = 1
 
 class CloudRequests:
     def __init__(self, project_id, client_username, csrf_token, session_id, token, handle_all_errors,
-                 print_logs):
+                 print_logs, default=" "):
         print(f"[33m[1mScratchConnect [36mCloudRequests [37m- [35mv{VERSION}[3m[0m")
         self.t = None
         self.run_thread = False
@@ -28,6 +28,7 @@ class CloudRequests:
         self._request_functions = {}
         self._event_functions = {}
         self.print_logs = print_logs
+        self.default = default
         self.cloud = CloudConnection(project_id=project_id,
                                      client_username=client_username,
                                      csrf_token=csrf_token,
@@ -35,7 +36,6 @@ class CloudRequests:
         self._response_info_prev_value = self.cloud.get_cloud_variable_value("Response_Info", 10)[0]
         self._REQUESTS = []
         self._request = {}
-        self.emit("connect", t="event")
 
     def request(self, req_name):
         """
@@ -252,15 +252,15 @@ class CloudRequests:
                         if type(return_value) is list:
                             data = return_value
                             rv = "List"
-                            encoded_value = self.cloud.encode_list(data)
+                            encoded_value = self.cloud.encode_list(data, default=self.default)
                         elif type(return_value) is dict:
                             data = list(return_value.values())
                             rv = "List"
-                            encoded_value = self.cloud.encode_list(data)
+                            encoded_value = self.cloud.encode_list(data, default=self.default)
                         elif (type(return_value) is str) or (return_value is None):
                             data = str(return_value)
                             rv = "String"
-                            encoded_value = self.cloud.encode(data)
+                            encoded_value = self.cloud.encode(data, default=self.default)
                         elif type(return_value) is int:
                             data = return_value
                             rv = "Int"
@@ -359,6 +359,12 @@ class CloudRequests:
             result.append("")
         return result
 
+    def get_request_info(self):
+        """
+        Get the request info
+        """
+        return self._request
+
     def start(self, update_time=1):
         """
         Start the events loop
@@ -367,6 +373,7 @@ class CloudRequests:
         self.run_thread = True
         self.t = Thread(target=self._event, args=(update_time,))
         self.t.start()
+        self.emit("connect", t="event")
 
     def stop(self):
         """
