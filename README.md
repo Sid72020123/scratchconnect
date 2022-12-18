@@ -717,7 +717,8 @@ You cannot perform any actions other than ```GET```, i.e., follow a user, post a
 
 But cloud variables work as it is a websocket connection.
 
-**Remember to use environment variables if you are using this ...**
+**Remember to use environment variables to store your session ID if you are using this on an online IDE like Replit...**
+
 To use ScratchConnect in online IDEs like Replit, you need to get your session ID (see Cookie-Login section above) and the code like:
 ```python
 import scratchconnect
@@ -727,8 +728,11 @@ cookie = {
    "Username": "<your username>",
    "SessionID": session_id
 }
-``` 
-In progress...
+
+login = scratchconnect.ScratchConnect(online_ide_cookie=cookie) # Pass the cookie variable as a parameter to the ScratchConnect class
+
+# Your code here...
+```
 
 ### Projects made using ScratchConnect
 
