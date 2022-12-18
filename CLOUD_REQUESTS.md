@@ -140,6 +140,7 @@ And done! Run the script of your Scratch project and all the response data will 
 Scratch Code:
 
 
+
 ## Cloud Events:
 This feature also has Cloud Events. See example:
 ```python
