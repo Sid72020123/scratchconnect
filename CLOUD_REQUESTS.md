@@ -139,11 +139,35 @@ And done! Run the script of your Scratch project and all the response data will 
 
 Scratch Code:
 
+![image](https://user-images.githubusercontent.com/70252606/208308315-ede9f7cd-fafa-4020-9583-b6e466fe2b21.png)
 
 
 ## Cloud Events:
 This feature also has Cloud Events. See example:
 ```python
+import scratchconnect
+
+user = scratchconnect.ScratchConnect(username="Username", password="Password")
+project = user.connect_project("<your project id here>")
+
+cloud_requests = project.create_cloud_requests(handle_all_errors=True, print_logs=True)
+
+@cloud_requests.event("connect")  # Do something when the cloud requests is connected
+def connected():
+    print("Connected Cloud Requests!")
+
+
+@cloud_requests.event("new_request")  # Do something when a new request is made
+def new_request():
+    print("New Request!", cloud_requests.get_request_info())
+
+
+@cloud_requests.event("error")  # Do something when there was an error
+def error():
+    print("Error!")
+
+
+cloud_requests.start()
 ```
 
 ## Thank you!
