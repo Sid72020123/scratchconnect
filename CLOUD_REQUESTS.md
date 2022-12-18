@@ -14,7 +14,7 @@ I was inspired to make this feature from @TimMcCool's scratchattch Python librar
 * This feature can handle many requests being sent at the same time using a queue system
 * It has a built-in way to encode and send images to the Scratch Project!
 * Other than ```str``` and ```int``` return data types, it also supports ```list``` and ```dict```(only the dictionary values are sent to the project). ```int``` values are not encoded which reduces the response time
-* It also have an events feature
+* It also has an events feature
 * And more...
 
 **This feature also needs a Scratch script/code to make it work. The Scratch script can be found [here](https://scratch.mit.edu/projects/720252660/)**
