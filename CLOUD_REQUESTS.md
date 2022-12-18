@@ -49,6 +49,7 @@ cloud_requests = project.create_cloud_requests(handle_all_errors=True, print_log
 ### Simple Ping - Pong:
 
 **Python:**
+
 ```python
 import scratchconnect
 
@@ -81,6 +82,7 @@ After the request is complete, you will see the data being received in the proje
 ### Sending Simple stats of a user:
 
 **Python**
+
 ```python
 import scratchconnect
 
@@ -110,12 +112,32 @@ Scratch code:
 ### Sending PFP of any user to the project:
 
 **Python**
+
 ```python
+import scratchconnect
+
+user = scratchconnect.ScratchConnect(username="Username", password="Password")
+project = user.connect_project("<your project id here>")
+
+cloud_requests = project.create_cloud_requests(handle_all_errors=True, print_logs=True)
+
+image = user.create_new_image()  # Create a new scImage object
+
+
+@cloud_requests.request("user-pfp")
+def get_user_pfp(username,
+                 size=50):  # You can also add any number of arguments to your function! And default values too!
+    image.get_user_image(query=username, size=size)
+    return image  # Directly return the image class as a response
+
+
+cloud_requests.start()
 ```
+And done! Run the script of your Scratch project and all the response data will be stored in the "IMAGE" list on Scratch.
 
 **Scratch**
 
-
+Scratch Code:
 
 
 ## Cloud Events:
