@@ -1,6 +1,7 @@
 """
 The ScratchConnect Cloud Events Class
 """
+
 import time
 from threading import Thread
 
@@ -23,6 +24,10 @@ class CloudEvents:
         self.run = False
 
     def on(self, e_type):
+        """
+        Decorator
+        """
+
         def wrapper(func):
             if e_type not in list(self._event_functions.keys()):
                 raise TypeError(
@@ -33,6 +38,9 @@ class CloudEvents:
         return wrapper
 
     def emit(self, e_type, **data):
+        """
+        Don't use this!
+        """
         func = self._event_functions[e_type]
         if func is not None:
             if e_type in ['connect', 'disconnect']:
@@ -41,6 +49,9 @@ class CloudEvents:
                 func(data)
 
     def _event(self, up):
+        """
+        Don't use this!
+        """
         data = ""
         while self.run:
             live_data = self.cloud_object.get_variable_data()[0]
@@ -68,10 +79,17 @@ class CloudEvents:
             time.sleep(up)
 
     def start(self, update_time=1):
+        """
+        Start the events loop
+        :param update_time: The update time
+        """
         self.cloud_object._make_connection()
         self.run = True
         self.t = Thread(target=self._event, args=(update_time,))
         self.t.start()
 
     def stop(self):
+        """
+        Stop the events loop
+        """
         self.run = False

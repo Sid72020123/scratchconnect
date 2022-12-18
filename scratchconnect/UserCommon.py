@@ -2,8 +2,10 @@
 This File contains the functions used commonly by the ScratchConnect.py/ScratchConnect and User.py/User class
 """
 
+import json
 import requests
 
+from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect import Exceptions
 
 _website = "scratch.mit.edu"
@@ -12,7 +14,7 @@ _api = f"https://api.{_website}"
 
 
 class UserCommon:
-    def __init__(self, username, headers):
+    def __init__(self, username, headers, online_ide):
         """
         The User Class to connect a Scratch user.
         :param username: The username
@@ -20,6 +22,8 @@ class UserCommon:
         self.username = username
         self._user_link = f"{_api}/users/{self.username}"
         self.headers = headers
+        if online_ide:
+            _change_request_url()
         self.update_data()
 
     def update_data(self):
@@ -61,13 +65,16 @@ class UserCommon:
         """
         Update the stored Data (DON'T USE)
         """
-        data = requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").json()
-        self.user_status = data["status"]
-        self.user_followers_count = data["statistics"]["followers"]
-        self.user_following_count = data["statistics"]["following"]
-        self.user_total_views = data["statistics"]["views"]
-        self.user_total_loves = data["statistics"]["loves"]
-        self.user_total_faves = data["statistics"]["favorites"]
+        try:
+            data = requests.get(f"https://scratchdb.lefty.one/v3/user/info/{self.username}").json()
+            self.user_status = data["status"]
+            self.user_followers_count = data["statistics"]["followers"]
+            self.user_following_count = data["statistics"]["following"]
+            self.user_total_views = data["statistics"]["views"]
+            self.user_total_loves = data["statistics"]["loves"]
+            self.user_total_faves = data["statistics"]["favorites"]
+        except json.decoder.JSONDecodeError:
+            pass
 
     def id(self):
         """

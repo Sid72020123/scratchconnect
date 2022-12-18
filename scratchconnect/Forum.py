@@ -3,6 +3,7 @@ The Forum File
 """
 import requests
 
+from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect import Exceptions
 
 _website = "scratch.mit.edu"
@@ -11,7 +12,7 @@ _api = f"https://api.{_website}"
 
 
 class Forum:
-    def __init__(self, id, client_username, headers, logged_in):
+    def __init__(self, id, client_username, headers, logged_in, online_ide):
         """
         The Main Forum Class
         :param id: The id of the forum
@@ -20,6 +21,8 @@ class Forum:
         self.client_username = client_username
         self.headers = headers
         self._logged_in = logged_in
+        if online_ide:
+            _change_request_url()
         self.update_data()
 
     def update_data(self):

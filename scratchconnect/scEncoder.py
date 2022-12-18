@@ -15,14 +15,19 @@ class Encoder:
     def __init__(self):
         pass
 
-    def encode(self, text):
+    def encode(self, text, default=" "):
         text = str(text)
         number = ""
         for i in range(0, len(text)):
-            char = text[i]
-            index = str(ALL_CHARS.index(char) + 1)
-            if int(index) < 10:
-                index = '0' + index
+            try:
+                char = text[i]
+                index = str(ALL_CHARS.index(char) + 1)
+                if int(index) < 10:
+                    index = '0' + index
+            except ValueError:
+                index = str(ALL_CHARS.index(default) + 1)
+                if int(index) < 10:
+                    index = '0' + index
             number += index
         return number
 
@@ -36,13 +41,13 @@ class Encoder:
             i += 2
         return text
 
-    def encode_list(self, data):
+    def encode_list(self, data, default=" "):
         if type(data) != list:
             raise TypeError(
                 "To encode a list, the data should be in list form. To encode a text use the encode() function")
         encoded = ""
         for i in data:
-            encoded += f"{self.encode(i)}00"
+            encoded += f"{self.encode(i, default=default)}00"
         return encoded
 
     def decode_list(self, encoded_list_data):

@@ -23,6 +23,7 @@ _DOESNT_EXIST = 4
 class CloudStorage:
     def __init__(self, file_name, rewrite_file, project_id, client_username, csrf_token, session_id, token,
                  edit_access, all_access):
+        print("[33m[1mScratchConnect [31mNote: The Cloud Storage feature is going to be removed in ScratchConnect v5.0! Please use the new alternative feature - Cloud Requests[0m")
         self.project_id = project_id
         self.client_username = client_username
         self.csrf_token = csrf_token
