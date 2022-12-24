@@ -1,4 +1,4 @@
-# ScratchConnect v4.0.0
+# ScratchConnect v4.0.1
 
 Python Library to connect Scratch API and much more.
 
@@ -817,7 +817,8 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 25/09/2022(v3.9.7) - Bug fixes and Improvements
 * 26/09/2022(v3.9.9) - Fixed many bugs in scCloudRequests
 * 14/12/2022(v4.0.0) - Fixed the arguments bug in the Cloud Requests feature
-* 15/12/2000(v4.0.0) - Bug fixes and improvements in the Cloud Requests feature
+* 15/12/2022(v4.0.0) - Bug fixes and improvements in the Cloud Requests feature
+* 24/12/2022(v4.0.1) - Bug Fixes
 
 ### Credits:
 
