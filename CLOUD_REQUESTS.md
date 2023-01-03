@@ -19,6 +19,8 @@ I was inspired to make this feature from @TimMcCool's scratchattach Python libra
 
 **This feature also needs a Scratch script/code to make it work. The Scratch script can be found [here](https://scratch.mit.edu/projects/720252660/)**
 
+Download that project on your computer and then later upload it on the Scratch Website.
+
 In that Scratch Project, click "See Inside" and scroll to the extreme top-left to read the instructions. Please read them while using that...
 
 ## Setup:
