@@ -2,7 +2,7 @@
 
 This new feature was first released in version ```4.0.0``` of the ScratchConnect Python Library!
 
-I was inspired to make this feature from @TimMcCool's scratchattch Python library.
+I was inspired to make this feature from @TimMcCool's scratchattach Python library.
 
 **Using this feature, you will be able to send data to-and-from the Scratch project and your Python program.**
 
