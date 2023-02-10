@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "4.0.1"
+__version__ = "4.5"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -82,15 +82,9 @@ History:
     14/12/2022(v4.0.0) - Fixed the arguments bug in the Cloud Requests feature
     15/12/2022(v4.0.0) - Bug fixes and improvements in the Cloud Requests feature
     24/12/2022(v4.1) - Bug Fixes
+    10/02/2023(v4.5) - Updated the CloudReuqests feature and made it faster
 Credits:
-    All code by Siddhesh Chavan. Thanks to other contributors.
-Information:
-    Module made by:- Siddhesh Chavan
-    Age:- 15 (as of 2022)
-    Email:- siddheshchavan2020@gmail.com
-    YouTube Channel:- Siddhesh Chavan (Link: https://www.youtube.com/channel/UCWcSxfT-SbqAktvGAsrtadQ)
-    Scratch Account:- @Sid72020123 (Link: https://scratch.mit.edu/users/Sid72020123/)
-    My self-made Website: https://Sid72020123.github.io/
+    View all the contributors: https://github.com/Sid72020123/scratchconnect#contributors
 """
 
 print_name = "ScratchConnect"
