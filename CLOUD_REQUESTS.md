@@ -1,4 +1,4 @@
-# ScratchConnect Cloud Requests v1.0 (beta)
+# ScratchConnect Cloud Requests v2.0 (stable)
 
 This new feature was first released in version ```4.0.0``` of the ScratchConnect Python Library!
 
@@ -8,7 +8,7 @@ I was inspired to make this feature from @TimMcCool's scratchattach Python libra
 
 **Features:**
 * Send any length of data without any data loss! (Tested in a good internet connection)
-* Supports any number of arguments sent from the Scratch Project
+* Send arguments faster...
 * You can send any number of data length (or almost unlimited characters of data) to the Scratch Project in much less time!
 * This feature is more fast compared to the Cloud Storage feature of this library
 * This feature can handle many requests being sent at the same time using a queue system
@@ -17,11 +17,11 @@ I was inspired to make this feature from @TimMcCool's scratchattach Python libra
 * It also has an events feature
 * And more...
 
-**This feature also needs a Scratch script/code to make it work. The Scratch script can be found [here](https://scratch.mit.edu/projects/720252660/)**
+**This feature also needs a Scratch script/code to make it work. The Scratch script can be found [here](https://scratch.mit.edu/projects/801780213/)**
 
 Download that project on your computer and then later upload it on the Scratch Website.
 
-In that Scratch Project, click "See Inside" and scroll to the extreme top-left to read the instructions. Please read them while using that...
+In that Scratch Project, click "See Inside" and scroll to the extreme top-left to read the instructions. Please read them first before using the code...
 
 ## Setup:
 You have to make a setup using your Python program, like:

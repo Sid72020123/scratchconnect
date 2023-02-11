@@ -11,7 +11,7 @@ from scratchconnect import Warnings
 from scratchconnect.CloudConnection import CloudConnection
 from scratchconnect.scImage import Image
 
-VERSION = "1.0 (beta)"
+VERSION = "2.0 (stable)"
 RESPONSE_VARIABLES = [f"Response_{i}" for i in range(1, 9)]
 cloud_variable_length_limit = 256
 FAIL = 0
@@ -29,11 +29,11 @@ class CloudRequests:
         self._event_functions = {}
         self.print_logs = print_logs
         self.default = default
+        self.max_tries = 3
         self.cloud = CloudConnection(project_id=project_id,
                                      client_username=client_username,
                                      csrf_token=csrf_token,
                                      session_id=session_id, token=token)
-        self._response_info_prev_value = self.cloud.get_cloud_variable_value("Response_Info", 10)[0]
         self._REQUESTS = []
         self._request = {}
 
@@ -133,46 +133,18 @@ class CloudRequests:
             i = i + 1
         return data
 
-    def _wait_for_ri_value_change(self):
-        """
-        Don't use this!
-        """
-        max_tries = 30
-        tries = 0
-        while True:
-            current_value = self._get_response_info()
-            if current_value != self._response_info_prev_value:
-                self._response_info_prev_value = current_value
-                return True
-            tries += 1
-            if tries >= max_tries:
-                return False
-            time.sleep(0.1)
-
-    def _get_all_response_vars_value(self, max_length):
-        """
-        Don't use this!
-        """
+    def _get_args(self, data_length):
         value = ""
-        data = self.cloud.get_variable_data(limit=1000)
+        data = self.cloud.get_variable_data(limit=100)
         variables = [f"Response_{i}" for i in range(1, 9)]
         for var in variables:
             for i in data:
                 if i["Name"].replace("☁ ", "") == var:
                     value += i["Value"]
                     break
-            if len(value) >= max_length:
+            if len(value) >= data_length:
                 break
         return value
-        # variables = [f"Response_{i}" for i in range(1, 9)]
-        # value = ""
-        # for var in variables:
-        #     v = self.cloud.get_cloud_variable_value(var, 50)[0]
-        #     value += v
-        #     print(var, " -> ", v)
-        #     if len(value) >= max_length:
-        #         break
-        # return value
 
     def get_request_data(self):
         """
@@ -189,8 +161,9 @@ class CloudRequests:
                 self.get_request()
                 if self._request_value != "":
                     args = ""
-                    n = 0
+                    n = 1
                     time.sleep(0.1)
+                    success = True
                     while True:
                         try:
                             self._REQUESTS = self.cloud.decode_list(self._request_value)
@@ -204,28 +177,32 @@ class CloudRequests:
                                       f"[33m[1mScratchConnect [36mCloudRequests: [3m[38;2;255;255;255mNew Request: [37mID - [35m{req_id} [37mName - [35m{req_name}[0m")
                             if ri[0] == req_id:
                                 _raw_d = ""
-                                current_length = 0
                                 data_length = int(ri[1])
                                 self._set_cloud_variable("Response_Info", 1)
-                                self._response_info_prev_value = "1"
-                                while (data_length != current_length) or (data_length < current_length):
-                                    if self._wait_for_ri_value_change():
-                                        ri = self.cloud.decode_list(self._response_info_prev_value)
-                                        if ri[0] == req_id and ri[1] == "Success":
-                                            try:
-                                                time.sleep(0.1)
-                                                _raw_d += self._get_all_response_vars_value(max_length=int(ri[2]))
-                                                current_length = len(_raw_d)
-                                                if (current_length == data_length) or (data_length < current_length):
-                                                    self._set_cloud_variable("Response_Info", 1)
-                                                    self._response_info_prev_value = "1"
-                                                    time.sleep(0.1)
-                                                    break
-                                            except IndexError:
-                                                _raw_d += ""
-                                            time.sleep(0.1)
-                                            self._set_cloud_variable("Response_Info", 1)
-                                            self._response_info_prev_value = "1"
+                                tries = 1
+                                while True:
+                                    try:
+                                        if self.cloud.decode(self.cloud.get_cloud_variable_value("Response_Info", 10)[
+                                                                 0]) == "Success" or tries > self.max_tries + 2:
+                                            break
+                                    except:
+                                        pass
+                                    tries += 1
+                                    time.sleep(0.1)
+                                if tries == self.max_tries + 2:
+                                    Warnings.warn(
+                                        f"[1m[33mScratchConnect [36mCloudRequests: [37mRequest ID - {req_id}: [31mClosing the request as the server didn't received a response form the Project! Maybe the project was stopped or closed![0m")
+                                    self.emit("error", t="event")
+                                    break
+                                _raw_d = self._get_args(data_length=data_length) if data_length > 0 else ""
+                                if len(_raw_d) != data_length:
+                                    Warnings.warn(
+                                        f"[1m[33mScratchConnect [36mCloudRequests: [37mRequest ID - {req_id}: [31mError getting the request argument(s). Maybe the argument(s) were too long! Request will be closed![0m")
+                                    self.emit("error", t="event")
+                                    self._set_response_info(req_id, FAIL)
+                                    self._done_request()
+                                    success = False
+                                    break
                                 args = self.cloud.decode_list(_raw_d)
                                 self._request["Arguments"] = args
                                 time.sleep(0.1)
@@ -238,11 +215,13 @@ class CloudRequests:
                         except (ValueError, IndexError) as E:
                             self.get_request()
                         n += 1
-                        if n >= 3:
+                        if n == self.max_tries:
                             self._done_request()
                             break
                         time.sleep(0.1)
-                    if n >= 3:
+                    if not success:
+                        continue
+                    if n == self.max_tries:
                         continue
                     self.emit("new_request", t="event")
                     if req_name in self._request_functions.keys():
@@ -299,14 +278,14 @@ class CloudRequests:
                                     wait += 1
                                     if int(self._get_response_info()) == 1:
                                         break
-                                    if wait >= 15:
+                                    if wait == self.max_tries:
                                         success = False
                                         Warnings.warn(
                                             f"[1m[33mScratchConnect [36mCloudRequests: [37mRequest ID - {req_id}: [31mClosing the request as the server didn't received a response form the Project! Maybe the project was stopped or closed![0m")
                                         self.emit("error", t="event")
                                         break
                                     time.sleep(0.1)
-                            if wait >= 15:
+                            if wait == self.max_tries:
                                 break
                             time.sleep(0.1)
                         if success:
