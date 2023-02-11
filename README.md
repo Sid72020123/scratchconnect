@@ -1,4 +1,4 @@
-# ScratchConnect v4.0.1
+# ScratchConnect v4.5
 
 Python Library to connect Scratch API and much more.
 
@@ -739,7 +739,7 @@ login = scratchconnect.ScratchConnect(online_ide_cookie=cookie) # Pass the cooki
 This feature was first released in version ```4.0.0``` of the ScratchConnect Python Library.
 Using this, you will be able to send any amount of data to-and-from your Python program and any Scratch Project.
 
-The docs to use this feature are [here](https://github.com/Sid72020123/scratchconnect/blob/main/CLOUD_REQUESTS.md)
+The docs to use this feature are [here](https://github.com/Sid72020123/scratchconnect/CLOUD_REQUESTS.md)
 
 ### Projects made using ScratchConnect
 
@@ -818,7 +818,9 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 26/09/2022(v3.9.9) - Fixed many bugs in scCloudRequests
 * 14/12/2022(v4.0.0) - Fixed the arguments bug in the Cloud Requests feature
 * 15/12/2022(v4.0.0) - Bug fixes and improvements in the Cloud Requests feature
-* 24/12/2022(v4.0.1) - Bug Fixes
+* 24/15/2022(v4.1) - Bug fixes
+* 10/02/2023(v4.5) - Updated the CloudRequests feature and made it faster
+* 11/02/2023(v4.5) - First stable release of the Cloud Requests feature
 
 ### Credits:
 
