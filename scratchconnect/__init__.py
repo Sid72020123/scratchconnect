@@ -82,7 +82,8 @@ History:
     14/12/2022(v4.0.0) - Fixed the arguments bug in the Cloud Requests feature
     15/12/2022(v4.0.0) - Bug fixes and improvements in the Cloud Requests feature
     24/12/2022(v4.1) - Bug Fixes
-    10/02/2023(v4.5) - Updated the CloudReuqests feature and made it faster
+    10/02/2023(v4.5) - Updated the CloudRequests feature and made it faster
+    11/02/2023(v4.5) - First stable release of the Cloud Requests feature
 Credits:
     View all the contributors: https://github.com/Sid72020123/scratchconnect#contributors
 """

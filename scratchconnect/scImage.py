@@ -25,7 +25,7 @@ class Image:
         decimal = str((r * 256 * 256) + (g * 256) + b)
         code = ("0" * (8 - len(decimal))) + str(decimal)
         return code
-    
+
     def download_image(self, url, name):
         """
         Download the image
@@ -39,6 +39,22 @@ class Image:
         except:
             self.image_success = False
 
+    def resize_image(self, size, name, maintain_aspect_ratio=True):
+        """
+        Resize the given image
+        :param size: The size (in tuple format)
+        :param name: The new name of the image you want to save
+        :param maintain_aspect_ratio: Set it to "True" if you want to maintain the aspect ratio of the image while resizing
+        """
+        image = pyImage.open(f"{self.name}.png")
+        if maintain_aspect_ratio:
+            image.thumbnail(size)
+            image.save(f"{name}.png")
+        else:
+            new_image = image.resize(size)
+            new_image.save(f"{name}.png")
+        self.name = name
+
     def get_user_image(self, query, size=32, name="scImage"):
         """
         Get the image of a user on Scratch
@@ -46,16 +62,14 @@ class Image:
         user_id = requests.get(f"{_scratch_api}users/{query}").json()["id"]
         url = f"https://cdn2.scratch.mit.edu/get_image/user/{user_id}_{size}x{size}.png?v="
         self.download_image(url, name)
-            
-    
+
     def get_studio_image(self, studio_id, name="scImage"):
         """
         Get the image of a studio on Scratch
         """
         url = f"https://uploads.scratch.mit.edu/get_image/gallery/{studio_id}_170x100.png"
         self.download_image(url, name)
-        
-    
+
     def get_project_image(self, project_id, size=32, name="scImage"):
         """
         Get the image of a project on Scratch
