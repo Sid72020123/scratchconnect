@@ -327,7 +327,7 @@ tw_cloud.get_variable_data()  # Get the data of the previous value of the variab
 
 ### Error with Turbowarp Cloud?
 
-Sometimes there mat be error with the Turbowarp Cloud. Some Basic Errors are:
+Sometimes there may be an error with the Turbowarp Cloud. Some Basic Errors are:
 
 **1. I can't change the Cloud Variable Value**
 
