@@ -297,7 +297,6 @@ class CloudRequests:
                     self._done_request()
                 time.sleep(up)
             except Exception as E:
-                print(E)
                 if E == "KeyBoardInterrupt":
                     self.run_thread = False
                 Warnings.warn(f"[1m[33mScratchConnect: [37mError in Cloud Requests: [31m{E}:[0m")
