@@ -10,7 +10,7 @@ classifiers = [
 
 setup(
     name="scratchconnect",
-    version="4.5.1",
+    version="4.5.2",
     description="Python Library to connect Scratch API and much more. This library can show the statistics of Users, Projects, Studios, Forums and also connect and set cloud variables of a project!",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
