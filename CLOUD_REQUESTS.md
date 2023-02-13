@@ -1,4 +1,4 @@
-# ScratchConnect Cloud Requests v2.0 (stable)
+# ScratchConnect Cloud Requests
 
 This new feature was first released in version ```4.0.0``` of the ScratchConnect Python Library!
 
