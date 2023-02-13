@@ -1,5 +1,5 @@
 __name__ = "scratchconnect"
-__version__ = "4.5"
+__version__ = "4.5.1"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
@@ -84,6 +84,7 @@ History:
     24/12/2022(v4.1) - Bug Fixes
     10/02/2023(v4.5) - Updated the CloudRequests feature and made it faster
     11/02/2023(v4.5) - First stable release of the Cloud Requests feature
+    13/02/2023(v4.5.1) - Bug fixes
 Credits:
     View all the contributors: https://github.com/Sid72020123/scratchconnect#contributors
 """

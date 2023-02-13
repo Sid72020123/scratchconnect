@@ -11,7 +11,7 @@ from scratchconnect import Warnings
 from scratchconnect.CloudConnection import CloudConnection
 from scratchconnect.scImage import Image
 
-VERSION = "2.0 (stable)"
+VERSION = "2.1 (stable)"
 RESPONSE_VARIABLES = [f"Response_{i}" for i in range(1, 9)]
 cloud_variable_length_limit = 256
 FAIL = 0
@@ -27,6 +27,7 @@ class CloudRequests:
         self.handle_all_errors = handle_all_errors
         self._request_functions = {}
         self._event_functions = {}
+        self._request_value = ""
         self.print_logs = print_logs
         self.default = default
         self.max_tries = 3
@@ -79,11 +80,14 @@ class CloudRequests:
         """
         Don't use this!
         """
-        self.get_request()
-        self._REQUESTS = self.cloud.decode_list(self._request_value)
-        self._REQUESTS.pop(0)
-        self._set_cloud_variable("Request", self.cloud.encode_list(self._REQUESTS))
-        time.sleep(1)
+        try:
+            self.get_request()
+            self._REQUESTS = self.cloud.decode_list(self._request_value)
+            self._REQUESTS.pop(0)
+            self._set_cloud_variable("Request", self.cloud.encode_list(self._REQUESTS))
+            time.sleep(1)
+        except (KeyError, IndexError, ValueError, TypeError):
+            pass
 
     def _set_cloud_variable(self, n, v):
         """
@@ -146,12 +150,6 @@ class CloudRequests:
                 break
         return value
 
-    def get_request_data(self):
-        """
-        Don't use this!
-        """
-        return self._request
-
     def _event(self, up):
         """
         Don't use this!
@@ -185,7 +183,7 @@ class CloudRequests:
                                         if self.cloud.decode(self.cloud.get_cloud_variable_value("Response_Info", 10)[
                                                                  0]) == "Success" or tries > self.max_tries + 2:
                                             break
-                                    except:
+                                    except (KeyError, IndexError, ValueError):
                                         pass
                                     tries += 1
                                     time.sleep(0.1)
@@ -212,7 +210,7 @@ class CloudRequests:
                                 break
                             else:
                                 break
-                        except (ValueError, IndexError) as E:
+                        except (ValueError, IndexError):
                             self.get_request()
                         n += 1
                         if n == self.max_tries:
@@ -299,6 +297,7 @@ class CloudRequests:
                     self._done_request()
                 time.sleep(up)
             except Exception as E:
+                print(E)
                 if E == "KeyBoardInterrupt":
                     self.run_thread = False
                 Warnings.warn(f"[1m[33mScratchConnect: [37mError in Cloud Requests: [31m{E}:[0m")
