@@ -1,4 +1,4 @@
-# ScratchConnect v4.5
+# ScratchConnect v4.5.1
 
 Python Library to connect Scratch API and much more.
 
