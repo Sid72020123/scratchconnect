@@ -13,8 +13,7 @@ headers = {"Library": "ScratchConnect.py"}
 def _get(url, params=None, **kwargs):
     if urlparse(url).netloc in ["api.scratch.mit.edu", "scratch.mit.edu", "cdn2.scratch.mit.edu"]:
         url = "https://sc-proxy.deta.dev/get/" + url
-    
-    kwargs["headers"] = headers
+        kwargs["headers"] = headers
     return request("get", url, params=params, **kwargs)
 
 
