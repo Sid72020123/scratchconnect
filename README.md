@@ -821,6 +821,7 @@ or [Github](https://github.com/Sid72020123/scratchconnect/issues)
 * 24/15/2022(v4.1) - Bug fixes
 * 10/02/2023(v4.5) - Updated the CloudRequests feature and made it faster
 * 11/02/2023(v4.5) - First stable release of the Cloud Requests feature
+* 13/02/2023(v4.5.1) - Bug fixes
 
 ### Credits:
 
@@ -841,6 +842,7 @@ contributors.**
 | **AidanER1**    | *Contributor* | Updated the CloudConnection class and fixed some bugs                                 |
 | **Senievol**    | *Idea*        | Gave the trick to make the encoded image data length much lower in Cloud Requests     |
 | **awesome-llama**| *Idea*       | Gave the trick to make the encoded image data length much lower in Cloud Requests     |
+| **PPPDUD**      | *Contributor* | Fixed mistakes in the documentation                                                   |
 
 *If I'm missing some people and their work in the contributors table, please contact Sid72020123 on Scratch*
 
