@@ -30,10 +30,11 @@ class ScratchConnect(UserCommon):
         :param username: The username of a Scratch Profile
         :param password: The password of a Scratch Profile
         """
+        self.session = requests.Session()  # The main Session object
         self.username = username
         self.password = password
         self.cookie = cookie
-        self.session = None
+        self.scratch_session = None
         self._online_ide = False
         self.auto_cookie_login = auto_cookie_login
         self.online_ide_cookie = online_ide_cookie
@@ -50,28 +51,18 @@ class ScratchConnect(UserCommon):
             self._login(online_ide=True)
             self._logged_in = True
         else:
-            self.headers = {
-                "x-csrftoken": "a",
-                "x-requested-with": "XMLHttpRequest",
-                "Cookie": "scratchcsrftoken=a;scratchlanguage=en;",
-                "referer": "https://scratch.mit.edu",
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"
-            }
             self._logged_in = False
             self.session_id = ""
             self.headers = {
                 "x-csrftoken": "",
                 "X-Token": "",
                 "x-requested-with": "XMLHttpRequest",
-                "Cookie": "scratchcsrftoken="
-                          + ""
-                          + ";scratchlanguage=en;scratchsessionsid="
-                          + ""
-                          + ";",
+                "Cookie": "scratchcsrftoken=" + "" + ";scratchlanguage=en;scratchsessionsid=" + "" + ";",
                 "referer": "https://scratch.mit.edu",
             }
             Warnings.warn(
                 "[1m[33mScratchConnect: [31mLogin with Username/Password and Cookie Failed! Continuing without login...[0m")
+        self.session.headers.update(self.headers)  # Update the session headers
         super().__init__(self.username,
                          self.headers,
                          self._online_ide)  # Get other properties and methods from the parent(UserCommon) class
@@ -120,11 +111,7 @@ class ScratchConnect(UserCommon):
             "x-csrftoken": self.csrf_token,
             "X-Token": self.token,
             "x-requested-with": "XMLHttpRequest",
-            "Cookie": "scratchcsrftoken="
-                      + self.csrf_token
-                      + ";scratchlanguage=en;scratchsessionsid="
-                      + self.session_id
-                      + ";",
+            "Cookie": f"scratchcsrftoken={self.csrf_token};scratchlanguage=en;scratchsessionsid={self.session_id};",
             "referer": "https://scratch.mit.edu",
         }
 
@@ -145,8 +132,8 @@ class ScratchConnect(UserCommon):
             "referer": "https://scratch.mit.edu",
         }, cookies={"scratchsessionsid": self.session_id, "scratchcsrftoken": "a", "scratchlanguage": "en"}).json()
         self.token = response['user']['token']
-        self.session = response
-        if self.session["user"]["banned"]:
+        self.scratch_session = response
+        if self.scratch_session["user"]["banned"]:
             raise Exceptions.UnauthorizedAction(
                 "You are banned on Scratch! You cannot login from ScratchConnect unless you are unbanned! This error is raised because ScratchConnect won't allow the banned users to login and do something inappropriate!")
 
@@ -162,10 +149,10 @@ class ScratchConnect(UserCommon):
             self._get_token()
             self._get_csrf_token()
             Warnings.warn(
-                "[1m[33mScratchConnect: [31mYou are logging in with cookie. Some features might not work if the cookie values are wrong![0m")
+                "[1m[33mScratchConnect Warning: [31mYou are logging in with cookie. Some features might not work if the cookie values are wrong![0m")
         except KeyError:
             Warnings.warn(
-                "[1m[33mScratchConnect: [31mCookie Login Failed because the cookie values may be wrong![0m")
+                "[1m[33mScratchConnect Warning: [31mCookie Login Failed because the cookie values may be wrong![0m")
             self.csrf_token = ""
             self.token = ""
 
@@ -181,16 +168,16 @@ class ScratchConnect(UserCommon):
             self._get_token()
             self._get_csrf_token()
             Warnings.warn(
-                "[1m[33mScratchConnect: [31mYou are logging in on Replit or some other online IDE. Some features might not work if the cookie values are wrong or it may be slow! Also, you can't do any social interactions![0m")
+                "[1m[33mScratchConnect Warning: [31mYou are logging in on Replit or some other online IDE. Some features might not work if the cookie values are wrong or it may be slow! Also, you can't do any social interactions![0m")
         except (KeyError, TypeError, ValueError):
             Warnings.warn(
-                "[1m[33mScratchConnect: [31mFetching token or csrf_token failed! You can still continue but social interactions won't work![0m")
+                "[1m[33mScratchConnect Warning: [31mFetching token or csrf_token failed! You can still continue but social interactions won't work![0m")
             self.csrf_token = ""
             self.token = ""
 
     def check(self, username):
         try:
-            requests.get(f"https://{_api}/users/{username}").json()["id"]
+            self.session.get(f"https://{_api}/users/{username}").json()["id"]
         except KeyError:
             raise Exceptions.InvalidUser(f"Username '{username}' doesn't exist!")
 
@@ -205,35 +192,23 @@ class ScratchConnect(UserCommon):
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        headers = {
-            "x-csrftoken": self.csrf_token,
-            "X-Token": self.token,
-            "x-requested-with": "XMLHttpRequest",
-            "Cookie": "scratchcsrftoken="
-                      + self.csrf_token
-                      + ";scratchlanguage=en;scratchsessionsid="
-                      + self.session_id
-                      + ";",
-            "referer": "https://scratch.mit.edu",
-        }
+
         if self.user_messages is None:
             messages = []
             if all:
                 offset = 0
                 while True:
-                    request = requests.get(
-                        f"https://api.scratch.mit.edu/users/{self.username}/messages/?limit=40&offset={offset}&filter={filter}",
-                        headers=headers).json()
-                    messages.append(request)
-                    if len(request) != 40:
+                    response = self.session.get(
+                        f"https://api.scratch.mit.edu/users/{self.username}/messages/?limit=40&offset={offset}&filter={filter}").json()
+                    messages.append(response)
+                    if len(response) != 40:
                         break
                     offset += 40
             if not all:
                 for i in range(1, limit + 1):
-                    request = requests.get(
-                        f"https://api.scratch.mit.edu/users/{self.username}/messages/?limit={limit}&offset={offset}&filter={filter}",
-                        headers=headers).json()
-                    messages.append(request)
+                    response = self.session.get(
+                        f"https://api.scratch.mit.edu/users/{self.username}/messages/?limit={limit}&offset={offset}&filter={filter}").json()
+                    messages.append(response)
             self.user_messages = messages
         return self.user_messages
 
@@ -243,7 +218,7 @@ class ScratchConnect(UserCommon):
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.post(f"https://scratch.mit.edu/site-api/messages/messages-clear/", headers=self.headers).text
+        return self.session.post(f"https://scratch.mit.edu/site-api/messages/messages-clear/").text
 
     def my_stuff_projects(self, order="all", page=1, sort_by=""):
         """
@@ -254,20 +229,14 @@ class ScratchConnect(UserCommon):
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.get(
-            f"https://scratch.mit.edu/site-api/projects/{order}/?page={page}&ascsort=&descsort={sort_by}",
-            headers=self.headers).json()
+        return self.session.get(
+            f"https://scratch.mit.edu/site-api/projects/{order}/?page={page}&ascsort=&descsort={sort_by}").json()
 
     def toggle_commenting(self):
         """
         Toggle the commenting of the profile
         """
-        return requests.post(
-            "https://scratch.mit.edu/site-api/comments/user/"
-            + self.username
-            + "/toggle-comments/",
-            headers=self.headers,
-        )
+        return self.session.post(f"https://scratch.mit.edu/site-api/comments/user/{self.username}/toggle-comments/")
 
     def follow_user(self, username):
         """
@@ -277,13 +246,8 @@ class ScratchConnect(UserCommon):
         self.check(username)
         if username == self.username:
             raise Exceptions.UnauthorizedAction(f"You can't follow yourself!")
-        return requests.put(
-            "https://scratch.mit.edu/site-api/users/followers/"
-            + username
-            + "/add/?usernames="
-            + self.username,
-            headers=self.headers,
-        )
+        return self.session.put(
+            f"https://scratch.mit.edu/site-api/users/followers/{username}/add/?usernames={self.username}")
 
     def unfollow_user(self, username):
         """
@@ -293,13 +257,8 @@ class ScratchConnect(UserCommon):
         self.check(username)
         if username == self.username:
             raise Exceptions.UnauthorizedAction(f"You can't unfollow yourself!")
-        return requests.put(
-            "https://scratch.mit.edu/site-api/users/followers/"
-            + username
-            + "/remove/?usernames="
-            + self.username,
-            headers=self.headers,
-        )
+        return self.session.put(
+            f"https://scratch.mit.edu/site-api/users/followers/{username}/remove/?usernames={self.username}")
 
     def set_bio(self, content):
         """
@@ -308,10 +267,7 @@ class ScratchConnect(UserCommon):
         Thanks to QuantumCodes for helping me in the error!
         """
         data = json.dumps({"bio": content})
-        return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
-                            data=data,
-                            headers=self.headers,
-                            )
+        return self.session.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/", data=data)
 
     def set_work(self, content):
         """
@@ -320,17 +276,14 @@ class ScratchConnect(UserCommon):
         Thanks to QuantumCodes for helping me in the error!
         """
         data = json.dumps({"status": content})
-        return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
-                            data=data,
-                            headers=self.headers,
-                            )
+        return self.session.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/", data=data)
 
     def _check_project(self, project_id):
         """
         Don't use this function
         """
         try:
-            json.loads(requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").text)["id"]
+            self.session.get(f"https://api.scratch.mit.edu/projects/{project_id}/").json()["id"]
         except KeyError:
             raise Exceptions.InvalidProject(f"The project with ID - '{project_id}' doesn't exist!")
 
@@ -342,27 +295,26 @@ class ScratchConnect(UserCommon):
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.get(
-            f"https://api.scratch.mit.edu/users/{self.username}/following/users/activity?limit={limit}&offset={offset}",
-            headers=self.headers).json()
+        return self.session.get(
+            f"https://api.scratch.mit.edu/users/{self.username}/following/users/activity?limit={limit}&offset={offset}").json()
 
     def site_health(self):
         """
         Returns the health of the Scratch Website.
         """
-        return requests.get("https://api.scratch.mit.edu/health").json()
+        return self.session.get("https://api.scratch.mit.edu/health").json()
 
     def site_news(self):
         """
         Returns the news of the Scratch Website.
         """
-        return requests.get("https://api.scratch.mit.edu/news").json()
+        return self.session.get("https://api.scratch.mit.edu/news").json()
 
     def site_front_page_projects(self):
         """
         Returns the front page projects of the Scratch Website.
         """
-        return requests.get("https://api.scratch.mit.edu/proxy/featured").json()
+        return self.session.get("https://api.scratch.mit.edu/proxy/featured").json()
 
     def explore_projects(self, mode="trending", query="*"):
         """
@@ -370,12 +322,7 @@ class ScratchConnect(UserCommon):
         :param mode: The mode such as 'popular' or 'trending'
         :param query: The query
         """
-        return requests.get(
-            "https://api.scratch.mit.edu/explore/projects/?mode="
-            + mode
-            + "&q="
-            + query
-        ).json()
+        return self.session.get(f"https://api.scratch.mit.edu/explore/projects/?mode={mode}&q={query}").json()
 
     def explore_studios(self, mode="trending", query="*"):
         """
@@ -383,12 +330,7 @@ class ScratchConnect(UserCommon):
         :param mode: The mode such as 'popular' or 'trending'
         :param query: The query
         """
-        return json.loads(requests.get(
-            "https://api.scratch.mit.edu/explore/studios/?mode="
-            + mode
-            + "&q="
-            + query
-        ).text)
+        return self.session.get(f"https://api.scratch.mit.edu/explore/studios/?mode={mode}&q={query}").json()
 
     def search_projects(self, mode="trending", search="*"):
         """
@@ -396,12 +338,7 @@ class ScratchConnect(UserCommon):
         :param mode: The mode such as 'popular' or 'trending'
         :param query: The query
         """
-        return json.loads(requests.get(
-            "https://api.scratch.mit.edu/search/projects/?mode="
-            + mode
-            + "&q="
-            + search
-        ).text)
+        return self.session.get(f"https://api.scratch.mit.edu/search/projects/?mode={mode}&q={search}").json()
 
     def search_studios(self, mode="trending", search="*"):
         """
@@ -409,12 +346,7 @@ class ScratchConnect(UserCommon):
         :param mode: The mode such as 'popular' or 'trending'
         :param query: The query
         """
-        return json.loads(requests.get(
-            "https://api.scratch.mit.edu/search/studios/?mode="
-            + mode
-            + "&q="
-            + search
-        ).text)
+        return self.session.get(f"https://api.scratch.mit.edu/search/studios/?mode={mode}&q={search}").json()
 
     def set_featured_project(self, project_id, label='featured_project'):
         """
@@ -431,7 +363,7 @@ class ScratchConnect(UserCommon):
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_project(project_id)
-        if not requests.get(f"https://api.scratch.mit.edu/projects/{project_id}/").json()["author"][
+        if not self.session.get(f"https://api.scratch.mit.edu/projects/{project_id}/").json()["author"][
                    "username"] == self.username:
             raise Exceptions.UnauthorizedAction(
                 f"The project with ID - '{project_id}' cannot be set because the owner of that project is not '{self.username}'!")
@@ -446,10 +378,8 @@ class ScratchConnect(UserCommon):
             }
         )[label]
         data = {"featured_project": project_id, "featured_project_label": _label}
-        return requests.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
-                            data=json.dumps(data),
-                            headers=self.headers,
-                            ).json()
+        return self.session.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
+                                data=json.dumps(data)).json()
 
     def search_forum(self, q, order="relevance", page=0):
         """

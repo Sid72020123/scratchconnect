@@ -1,0 +1,7 @@
+.idea
+test.py
+password.txt
+session_id.txt
+scratchconnect/__pycache__
+scChart/__pycache__
+scScratchTerminal/__pycache__
