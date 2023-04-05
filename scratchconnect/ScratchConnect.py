@@ -24,7 +24,8 @@ _api = f"api.{_website}"
 
 
 class ScratchConnect(UserCommon):
-    def __init__(self, username=None, password=None, cookie=None, auto_cookie_login=False, online_ide_cookie=None):
+    def __init__(self, username: str = None, password: str = None, cookie: dict = None, auto_cookie_login: bool = False,
+                 online_ide_cookie: dict = None):
         """
         Class to make a connection to Scratch
         :param username: The username of a Scratch Profile
@@ -63,8 +64,7 @@ class ScratchConnect(UserCommon):
             Warnings.warn(
                 "[1m[33mScratchConnect: [31mLogin with Username/Password and Cookie Failed! Continuing without login...[0m")
         self.session.headers.update(self.headers)  # Update the session headers
-        super().__init__(self.username,
-                         self.headers,
+        super().__init__(self.username, self.session,
                          self._online_ide)  # Get other properties and methods from the parent(UserCommon) class
         self.update_data()
 

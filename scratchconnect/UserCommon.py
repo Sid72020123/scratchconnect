@@ -9,19 +9,18 @@ from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect import Exceptions
 
 _website = "scratch.mit.edu"
-_login = f"https://{_website}/login/"
 _api = f"https://api.{_website}"
 
 
 class UserCommon:
-    def __init__(self, username, headers, online_ide):
+    def __init__(self, username, session, online_ide):
         """
         The User Class to connect a Scratch user.
         :param username: The username
         """
         self.username = username
+        self.session = session
         self._user_link = f"{_api}/users/{self.username}"
-        self.headers = headers
         if online_ide:
             _change_request_url()
         self.update_data()
@@ -50,7 +49,7 @@ class UserCommon:
         self.user_projects_count = None
         self.user_projects_count = None
 
-        data = requests.get(f"{self._user_link}").json()
+        data = self.session.get(f"{self._user_link}").json()
         try:
             self.user_id = data["id"]
         except KeyError:
@@ -98,8 +97,8 @@ class UserCommon:
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"}
         if self.user_messages_count is None:
             self.user_messages_count = \
-                requests.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count",
-                             headers=headers).json()[
+                self.session.get(f"https://api.scratch.mit.edu/users/{self.username}/messages/count",
+                                 headers=headers).json()[
                     "count"]
         return self.user_messages_count
 
@@ -188,7 +187,8 @@ class UserCommon:
         Returns the featured project data of the Scratch profile
         """
         if self.user_featured_data is None:
-            self.user_featured_data = requests.get(f"https://scratch.mit.edu/site-api/users/all/{self.username}").json()
+            self.user_featured_data = self.session.get(
+                f"https://scratch.mit.edu/site-api/users/all/{self.username}").json()
         return self.user_featured_data
 
     def projects(self, all=False, limit=20, offset=0):
@@ -203,16 +203,16 @@ class UserCommon:
             if all:
                 offset = 0
                 while True:
-                    request = requests.get(
-                        f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit=40&offset={offset}").json()
+                    request = self.session.get(
+                        f"{_api}/users/{self.username}/projects/?limit=40&offset={offset}").json()
                     projects.append(request)
                     if len(request) != 40:
                         break
                     offset += 40
             if not all:
                 for i in range(1, limit + 1):
-                    request = requests.get(
-                        f"https://api.scratch.mit.edu/users/{self.username}/projects/?limit={limit}&offset={offset}").json()
+                    request = self.session.get(
+                        f"{_api}/users/{self.username}/projects/?limit={limit}&offset={offset}").json()
                     projects.append(request)
             self.user_projects = projects
         return self.user_projects
@@ -238,15 +238,15 @@ class UserCommon:
             if all:
                 offset = 0
                 while True:
-                    response = requests.get(
-                        f"https://api.scratch.mit.edu/users/{self.username}/following/?limit=40&offset={offset}").json()
+                    response = self.session.get(
+                        f"{_api}/users/{self.username}/following/?limit=40&offset={offset}").json()
                     offset += 40
                     following.append(response)
                     if len(response) != 40:
                         break
             if not all:
-                response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/following/?limit={limit}&offset={offset}").json()
+                response = self.session.get(
+                    f"{_api}/users/{self.username}/following/?limit={limit}&offset={offset}").json()
                 following.append(response)
             self.user_following = following
         return self.user_following
@@ -263,15 +263,15 @@ class UserCommon:
             if all:
                 offset = 0
                 while True:
-                    response = requests.get(
-                        f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit=40&offset={offset}").json()
+                    response = self.session.get(
+                        f"{_api}/users/{self.username}/followers/?limit=40&offset={offset}").json()
                     offset += 40
                     followers.append(response)
                     if len(response) != 40:
                         break
             if not all:
-                response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/followers/?limit={limit}&offset={offset}").json()
+                response = self.session.get(
+                    f"{_api}/users/{self.username}/followers/?limit={limit}&offset={offset}").json()
                 followers.append(response)
             self.user_followers = followers
         return self.user_followers
@@ -288,15 +288,15 @@ class UserCommon:
             if all:
                 offset = 0
                 while True:
-                    response = requests.get(
-                        f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit=40&offset={offset}").json()
+                    response = self.session.get(
+                        f"{_api}/users/{self.username}/favorites/?limit=40&offset={offset}").json()
                     offset += 40
                     favourites.append(response)
                     if len(response) != 40:
                         break
             if not all:
-                response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.username}/favorites/?limit={limit}&offset={offset}").json()
+                response = self.session.get(
+                    f"{_api}/users/{self.username}/favorites/?limit={limit}&offset={offset}").json()
                 favourites.append(response)
             self.user_favourites = favourites
         return self.user_favourites
@@ -351,5 +351,6 @@ class UserCommon:
         :param limit: The limit
         :param page: The page
         """
+        # TODO: Change the comments API
         return requests.get(
             f"https://scratch-comments-api.sid72020123.repl.co/user/?username={self.username}&limit={limit}&page={page}").json()
