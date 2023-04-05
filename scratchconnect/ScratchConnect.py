@@ -3,6 +3,7 @@ Main File to Connect all the Scratch API and the Scratch DB
 """
 
 import requests
+from requests.models import Response
 import json
 import re
 
@@ -175,13 +176,13 @@ class ScratchConnect(UserCommon):
             self.csrf_token = ""
             self.token = ""
 
-    def check(self, username):
+    def check(self, username) -> None:
         try:
             self.session.get(f"https://{_api}/users/{username}").json()["id"]
         except KeyError:
             raise Exceptions.InvalidUser(f"Username '{username}' doesn't exist!")
 
-    def messages(self, all=False, limit=20, offset=0, filter="all"):
+    def messages(self, all: bool = False, limit: int = 20, offset: int = 0, filter: str = "all") -> dict:
         """
         Get the list of messages
         :param all: True if you want all the messages
@@ -212,7 +213,7 @@ class ScratchConnect(UserCommon):
             self.user_messages = messages
         return self.user_messages
 
-    def clear_messages(self):
+    def clear_messages(self) -> Response:
         """
         Clear the messages
         """
@@ -220,7 +221,7 @@ class ScratchConnect(UserCommon):
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return self.session.post(f"https://scratch.mit.edu/site-api/messages/messages-clear/").text
 
-    def my_stuff_projects(self, order="all", page=1, sort_by=""):
+    def my_stuff_projects(self, order: str = "all", page: int = 1, sort_by: str = "") -> dict:
         """
         Get the projects in the MyStuff section of the logged in user
         :param order: the order
@@ -232,13 +233,13 @@ class ScratchConnect(UserCommon):
         return self.session.get(
             f"https://scratch.mit.edu/site-api/projects/{order}/?page={page}&ascsort=&descsort={sort_by}").json()
 
-    def toggle_commenting(self):
+    def toggle_commenting(self) -> Response:
         """
         Toggle the commenting of the profile
         """
         return self.session.post(f"https://scratch.mit.edu/site-api/comments/user/{self.username}/toggle-comments/")
 
-    def follow_user(self, username):
+    def follow_user(self, username: str) -> Response:
         """
         Follow a user
         :param username: The username
@@ -249,7 +250,7 @@ class ScratchConnect(UserCommon):
         return self.session.put(
             f"https://scratch.mit.edu/site-api/users/followers/{username}/add/?usernames={self.username}")
 
-    def unfollow_user(self, username):
+    def unfollow_user(self, username: str) -> Response:
         """
         UnFollow a user
         :param username: The username
@@ -260,7 +261,7 @@ class ScratchConnect(UserCommon):
         return self.session.put(
             f"https://scratch.mit.edu/site-api/users/followers/{username}/remove/?usernames={self.username}")
 
-    def set_bio(self, content):
+    def set_bio(self, content: str) -> Response:
         """
         Set the bio or 'About Me' of the profile
         :param content: The bio or the content.
@@ -269,7 +270,7 @@ class ScratchConnect(UserCommon):
         data = json.dumps({"bio": content})
         return self.session.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/", data=data)
 
-    def set_work(self, content):
+    def set_work(self, content: str) -> Response:
         """
         Set the status or 'What I am Working On' of the profile
         :param content: The work or the content.
@@ -278,7 +279,7 @@ class ScratchConnect(UserCommon):
         data = json.dumps({"status": content})
         return self.session.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/", data=data)
 
-    def _check_project(self, project_id):
+    def _check_project(self, project_id: int) -> None:
         """
         Don't use this function
         """
@@ -287,7 +288,7 @@ class ScratchConnect(UserCommon):
         except KeyError:
             raise Exceptions.InvalidProject(f"The project with ID - '{project_id}' doesn't exist!")
 
-    def feed(self, limit=40, offset=0):
+    def feed(self, limit: int = 40, offset: int = 0) -> dict:
         """
         Returns the "What's Happening" section of the front page
         :param limit: the limit; max: 40
@@ -298,25 +299,25 @@ class ScratchConnect(UserCommon):
         return self.session.get(
             f"https://api.scratch.mit.edu/users/{self.username}/following/users/activity?limit={limit}&offset={offset}").json()
 
-    def site_health(self):
+    def site_health(self) -> dict:
         """
         Returns the health of the Scratch Website.
         """
         return self.session.get("https://api.scratch.mit.edu/health").json()
 
-    def site_news(self):
+    def site_news(self) -> dict:
         """
         Returns the news of the Scratch Website.
         """
         return self.session.get("https://api.scratch.mit.edu/news").json()
 
-    def site_front_page_projects(self):
+    def site_front_page_projects(self) -> dict:
         """
         Returns the front page projects of the Scratch Website.
         """
         return self.session.get("https://api.scratch.mit.edu/proxy/featured").json()
 
-    def explore_projects(self, mode="trending", query="*"):
+    def explore_projects(self, mode: str = "trending", query: str = "*") -> dict:
         """
         Explore the projects
         :param mode: The mode such as 'popular' or 'trending'
@@ -324,7 +325,7 @@ class ScratchConnect(UserCommon):
         """
         return self.session.get(f"https://api.scratch.mit.edu/explore/projects/?mode={mode}&q={query}").json()
 
-    def explore_studios(self, mode="trending", query="*"):
+    def explore_studios(self, mode: str = "trending", query: str = "*") -> dict:
         """
         Explore the studios
         :param mode: The mode such as 'popular' or 'trending'
@@ -332,7 +333,7 @@ class ScratchConnect(UserCommon):
         """
         return self.session.get(f"https://api.scratch.mit.edu/explore/studios/?mode={mode}&q={query}").json()
 
-    def search_projects(self, mode="trending", search="*"):
+    def search_projects(self, mode: str = "trending", search: str = "*") -> dict:
         """
         Search the projects
         :param mode: The mode such as 'popular' or 'trending'
@@ -340,7 +341,7 @@ class ScratchConnect(UserCommon):
         """
         return self.session.get(f"https://api.scratch.mit.edu/search/projects/?mode={mode}&q={search}").json()
 
-    def search_studios(self, mode="trending", search="*"):
+    def search_studios(self, mode: str = "trending", search: str = "*") -> dict:
         """
         Search the studios
         :param mode: The mode such as 'popular' or 'trending'
@@ -348,7 +349,7 @@ class ScratchConnect(UserCommon):
         """
         return self.session.get(f"https://api.scratch.mit.edu/search/studios/?mode={mode}&q={search}").json()
 
-    def set_featured_project(self, project_id, label='featured_project'):
+    def set_featured_project(self, project_id: int, label: str = "featured_project") -> dict:
         """
         Set the 'Featured Project' of a Scratch Profile
         :param project_id: The project id
@@ -381,7 +382,7 @@ class ScratchConnect(UserCommon):
         return self.session.put(f"https://scratch.mit.edu/site-api/users/all/{self.username}/",
                                 data=json.dumps(data)).json()
 
-    def search_forum(self, q, order="relevance", page=0):
+    def search_forum(self, q: str, order: str = "relevance", page: int = 0) -> dict:
         """
         Search the forum
         :param q: query
@@ -390,20 +391,20 @@ class ScratchConnect(UserCommon):
         """
         return requests.get(f"https://scratchdb.lefty.one/v3/forum/search?q={q}&o={order}&page={page}").json()
 
-    def connect_user(self, username):
+    def connect_user(self, username: str) -> User.User:
         """
         Connect a Scratch User
         :param username: A valid Username
         """
-        return User.User(username=username, client_username=self.username, headers=self.headers,
+        return User.User(username=username, client_username=self.username, session=self.session,
                          logged_in=self._logged_in, online_ide=self._online_ide)
 
-    def connect_studio(self, studio_id):
+    def connect_studio(self, studio_id: int) -> Studio.Studio:
         """
         Connect a Scratch Studio
         :param studio_id: A valid studio ID
         """
-        return Studio.Studio(id=studio_id, client_username=self.username, headers=self.headers,
+        return Studio.Studio(id=studio_id, client_username=self.username, session=self.session,
                              logged_in=self._logged_in, online_ide=self._online_ide)
 
     def connect_project(self, project_id, access_unshared=False):
