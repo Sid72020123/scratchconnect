@@ -83,7 +83,7 @@ class UserCommon:
             self.update_data()
         return self.user_id
 
-    def thumbnail_url(self) -> str:
+    def thumbnail_url(self) -> dict:
         """Return the thumbnail URL of a user"""
         if self.user_thumbnail_url is None:
             self.update_data()
@@ -351,6 +351,5 @@ class UserCommon:
         :param limit: The limit
         :param page: The page
         """
-        # TODO: Change the comments API
         return requests.get(
-            f"https://scratch-comments-api.sid72020123.repl.co/user/?username={self.username}&limit={limit}&page={page}").json()
+            f"https://apis.scratchconnect.eu.org/comments/user/?username={self.username}&limit={limit}&page={page}").json()

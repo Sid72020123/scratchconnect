@@ -63,7 +63,7 @@ class ScratchConnect(UserCommon):
                 "referer": "https://scratch.mit.edu",
             }
             Warnings.warn(
-                "[1m[33mScratchConnect: [31mLogin with Username/Password and Cookie Failed! Continuing without login...[0m")
+                "[1m[33mScratchConnect Warning: [31mLogin with Username/Password and Cookie Failed! Continuing without login...[0m")
         self.session.headers.update(self.headers)  # Update the session headers
         super().__init__(self.username, self.session,
                          self._online_ide)  # Get other properties and methods from the parent(UserCommon) class
@@ -407,13 +407,13 @@ class ScratchConnect(UserCommon):
         return Studio.Studio(id=studio_id, client_username=self.username, session=self.session,
                              logged_in=self._logged_in, online_ide=self._online_ide)
 
-    def connect_project(self, project_id, access_unshared=False):
+    def connect_project(self, project_id: int, access_unshared: bool = False) -> Project.Project:
         """
         Connect a Scratch Project
         :param project_id: A valid project ID
         :param access_unshared: Set to True if you want to connect an unshared project
         """
-        return Project.Project(id=project_id, client_username=self.username, headers=self.headers,
+        return Project.Project(id=project_id, client_username=self.username, session=self.session,
                                logged_in=self._logged_in, unshared=access_unshared, session_id=self.session_id,
                                online_ide=self._online_ide)
 

@@ -1,6 +1,8 @@
+# This feature is deprecated since the v5.0 of the library. Please use the new alternative Cloud Requests feature instead.
+
 """
 The Cloud Storage File.
-"""
+
 import time
 import json
 import string
@@ -250,3 +252,4 @@ class CloudStorage:
         if len(text) > 0:
             divide.append(text)
         return divide
+"""

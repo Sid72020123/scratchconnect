@@ -341,9 +341,9 @@ class Studio:
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        data = {"description": content}
+        data = json.dumps({"description": content})
         return self.session.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
-                                data=json.dumps(data)).json()
+                                data=data).json()
 
     def set_title(self, content: str) -> dict:
         """
@@ -352,9 +352,9 @@ class Studio:
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        data = {"title": content}
+        data = json.dumps({"title": content})
         return self.session.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
-                                data=json.dumps(data)).json()
+                                data=data).json()
 
     def projects(self, all: bool = False, limit: int = 20, offset: int = 0) -> list:
         """

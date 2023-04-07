@@ -20,7 +20,7 @@ SUCCESS = 1
 
 class CloudRequests:
     def __init__(self, project_id, client_username, csrf_token, session_id, token, handle_all_errors,
-                 print_logs, default=" "):
+                 print_logs, online_ide, session, default=" "):
         print(f"[33m[1mScratchConnect [36mCloudRequests [37m- [35mv{VERSION}[3m[0m")
         self.t = None
         self.run_thread = False
@@ -31,10 +31,9 @@ class CloudRequests:
         self.print_logs = print_logs
         self.default = default
         self.max_tries = 3
-        self.cloud = CloudConnection(project_id=project_id,
-                                     client_username=client_username,
-                                     csrf_token=csrf_token,
-                                     session_id=session_id, token=token)
+        self.session = session
+        self.cloud = CloudConnection(project_id=project_id, client_username=client_username, csrf_token=csrf_token,
+                                     session_id=session_id, token=token, online_ide=online_ide, session=self.session)
         self._REQUESTS = []
         self._request = {}
 

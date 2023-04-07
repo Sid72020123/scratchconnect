@@ -7,10 +7,10 @@ from urllib.parse import urlparse
 import requests
 from requests import request
 
-headers = {"Library": "ScratchConnect.py"}
+headers = {"library": "ScratchConnect.py"}
 scratch_endpoints = ["api.scratch.mit.edu", "scratch.mit.edu", "cdn2.scratch.mit.edu"]
-# TODO: Change the proxy URL and remove the print statements
-proxy_url = "https://sc-proxy.deta.dev/get/"
+# TODO: Remove the print statements
+proxy_url = "https://apis.scratchconnect.eu.org/proxy/get?url="
 
 
 def _get(url, params=None, **kwargs):

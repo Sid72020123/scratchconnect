@@ -23,7 +23,7 @@ class CloudEvents:
         }
         self.run = False
 
-    def on(self, e_type):
+    def on(self, e_type: str) -> None:
         """
         Decorator
         """
@@ -78,7 +78,7 @@ class CloudEvents:
                               variable_name=data['name'], value=data['value'])
             time.sleep(up)
 
-    def start(self, update_time=1):
+    def start(self, update_time: int = 1) -> None:
         """
         Start the events loop
         :param update_time: The update time
@@ -88,7 +88,7 @@ class CloudEvents:
         self.t = Thread(target=self._event, args=(update_time,))
         self.t.start()
 
-    def stop(self):
+    def stop(self) -> None:
         """
         Stop the events loop
         """
