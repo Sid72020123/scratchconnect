@@ -422,22 +422,23 @@ class ScratchConnect(UserCommon):
         Connect a Scratch Forum Topic
         :param forum_id: A valid forum topic ID
         """
+        # TODO: Add type hinting and update the forum API
         return Forum.Forum(id=forum_id, client_username=self.username, headers=self.headers, logged_in=self._logged_in,
                            online_ide=self._online_ide)
 
-    def create_new_terminal(self):
+    def create_new_terminal(self) -> _terminal:
         """
         Create a new Terminal object
         """
         return _terminal(sc=self)
 
-    def create_new_chart(self):
+    def create_new_chart(self) -> _chart:
         """
         Create a new Chart object
         """
         return _chart(sc=self)
 
-    def create_new_image(self):
+    def create_new_image(self) -> Image:
         """
         Create a new scImage object
         """

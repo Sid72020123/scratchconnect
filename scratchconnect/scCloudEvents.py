@@ -23,7 +23,7 @@ class CloudEvents:
         }
         self.run = False
 
-    def on(self, e_type: str) -> None:
+    def on(self, e_type: str):
         """
         Decorator
         """

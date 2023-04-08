@@ -55,13 +55,15 @@ class CloudConnection:
         self._make_connection()
         self._start_ping_thread()
 
-    def get_variable_data(self, limit: int = 100, offset: int = 0) -> list:
+    def get_variable_data(self, limit: int = 100, offset: int = 0) -> list[dict]:
         """
         Returns the cloud variable data
         :param limit: The limit
         :param offset: The offset or the number of values you want to skip from the beginning
         """
-        response = self.session.get(
+        # Session is not required in the request below:
+        # If the session is used, the Scratch API sometimes returns cached results
+        response = requests.get(
             f"https://clouddata.scratch.mit.edu/logs?projectid={self.project_id}&limit={limit}&offset={offset}").json()
         data = []
         for i in range(0, len(response)):
