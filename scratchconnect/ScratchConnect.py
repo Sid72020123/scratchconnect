@@ -212,7 +212,7 @@ class ScratchConnect(UserCommon):
             self.user_messages = messages
         return self.user_messages
 
-    def clear_messages(self) -> Response:
+    def clear_messages(self) -> str:
         """
         Clear the messages
         """

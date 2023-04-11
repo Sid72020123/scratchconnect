@@ -277,7 +277,7 @@ Returns the list of shared projects of a user in `#!python list` format
 
 | Name   | Description                                                       | Required | Default Value |
 |--------|-------------------------------------------------------------------|----------|---------------|
-| all    | Set it to True if you want to fetch all the projects of that user | No       | False         |
+| all    | Set it to True if you want to fetch all the projects of that user | No       | `False`       |
 | limit  | The number of projects you want to fetch                          | No       | 20            |
 | offset | The number of projects to be skipped from the beginning           | No       | 0             |
 
@@ -298,7 +298,7 @@ Returns the list of Scratchers the user is following in `#!python list` format
 
 | Name   | Description                                                       | Required | Default Value |
 |--------|-------------------------------------------------------------------|----------|---------------|
-| all    | Set it to True if you want to fetch all the following of that user| No       | False         |
+| all    | Set it to True if you want to fetch all the following of that user| No       | `False`       |
 | limit  | The number of users you want to fetch                             | No       | 20            |
 | offset | The number of users to be skipped from the beginning              | No       | 0             |
 
@@ -319,7 +319,7 @@ Returns the list of Scratchers the user is followed by in `#!python list` format
 
 | Name   | Description                                                       | Required | Default Value |
 |--------|-------------------------------------------------------------------|----------|---------------|
-| all    | Set it to True if you want to fetch all the followers of that user| No       | False         |
+| all    | Set it to True if you want to fetch all the followers of that user| No       | `False`       |
 | limit  | The number of users you want to fetch                             | No       | 20            |
 | offset | The number of users to be skipped from the beginning              | No       | 0             |
 
@@ -340,7 +340,7 @@ Returns the list of projects the user has favourited in `#!python list` format
 
 | Name   | Description                                                       			| Required | Default Value |
 |--------|------------------------------------------------------------------------------|----------|---------------|
-| all    | Set it to True if you want to fetch all the favourite projects of that user  | No       | False         |
+| all    | Set it to True if you want to fetch all the favourite projects of that user  | No       | `False`       |
 | limit  | The number of projects you want to fetch                            			| No       | 20            |
 | offset | The number of projects to be skipped from the beginning             			| No       | 0             |
 
@@ -411,7 +411,7 @@ Returns the [aviate](https://aviateapp.eu.org) data of the user in `#!python dic
 
 | Name | Description                        | Required | Default Value |
 |------|------------------------------------|----------|---------------|
-| code | True to get the code of the status | No       | False         |
+| code | True to get the code of the status | No       | `False`       |
 
 ??? info "Example"
 	```python
@@ -441,3 +441,44 @@ Returns the comments on the user's profile
 
 	print(session.comments(limit=5, page=1))
 	```
+
+### `messages()`
+
+Returns the messages of the logged in user in `#!python dict` format
+
+**Parameters**
+
+| Name   | Description                                                                   | Required | Default Value |
+|--------|-------------------------------------------------------------------------------|----------|---------------|
+| all    | Set it to `True` if you want to fetch all the messages                        | No       | `False`       |
+| limit  | The limit of messages you want to get if you're not using the `all` parameter | No       | 20            |
+| offset | The number of messages to skip from the beginning                             | No       | 0             |
+| filter | Filter the messages                                                           | No       | `""`          |
+
+??? info "Example"
+	```python
+	import scratchconnect
+
+	session = scratchconnect.ScratchConnect("Username", "Password")
+
+	print(session.messages(all=True)) # Get  all the messages
+	
+	print(session.messages(limit=10, offset=0)) # Get the first 10 messages
+	
+	print(session.messages(limit=10, offset=5)) # Get 10 messages skipping 5 from the beginning
+	```
+
+### `clear_messages()`
+
+Clears the messages (count) of the logged in user and returns the response in `#!python str` format
+
+??? info "Example"
+	```python
+	import scratchconnect
+
+	session = scratchconnect.ScratchConnect("Username", "Password")
+
+	print(session.clear_messages())
+	```
+
+### WIP...
