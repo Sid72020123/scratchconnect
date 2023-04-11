@@ -4,6 +4,7 @@ on:
     branches:
       - master 
       - main
+      - update-v5.0
 permissions:
   contents: write
 jobs:
