@@ -1,0 +1,27 @@
+v: 0
+app_name: scAPIs
+micros:
+  - name: main
+    src: /main
+    engine: python3.9
+    public: true
+    primary: true
+
+  - name: proxy
+    src: /proxy
+    engine: python3.9
+    public: true
+    path: proxy
+
+  - name: free-proxy
+    src: /free-proxy
+    engine: python3.9
+    public: true
+    path: free-proxy
+
+  - name: comments-api
+    src: /comments-api
+    engine: python3.9
+    public: true
+    path: comments
+

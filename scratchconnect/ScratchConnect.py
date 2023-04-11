@@ -16,7 +16,6 @@ from scratchconnect import User
 from scratchconnect import Forum
 from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect.scScratchTerminal import _terminal
-from scratchconnect.scChart import _chart
 from scratchconnect.scImage import Image
 
 _website = "scratch.mit.edu"
@@ -417,26 +416,19 @@ class ScratchConnect(UserCommon):
                                logged_in=self._logged_in, unshared=access_unshared, session_id=self.session_id,
                                online_ide=self._online_ide)
 
-    def connect_forum_topic(self, forum_id):
+    def connect_forum_topic(self, forum_id: int) -> Forum.Forum:
         """
         Connect a Scratch Forum Topic
         :param forum_id: A valid forum topic ID
         """
-        # TODO: Add type hinting and update the forum API
         return Forum.Forum(id=forum_id, client_username=self.username, headers=self.headers, logged_in=self._logged_in,
-                           online_ide=self._online_ide)
+                           online_ide=self._online_ide, session=self.session)
 
     def create_new_terminal(self) -> _terminal:
         """
         Create a new Terminal object
         """
         return _terminal(sc=self)
-
-    def create_new_chart(self) -> _chart:
-        """
-        Create a new Chart object
-        """
-        return _chart(sc=self)
 
     def create_new_image(self) -> Image:
         """
