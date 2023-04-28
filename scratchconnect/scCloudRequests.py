@@ -11,7 +11,7 @@ from scratchconnect import Warnings
 from scratchconnect.CloudConnection import CloudConnection
 from scratchconnect.scImage import Image
 
-VERSION = "2.1 (stable)"
+VERSION = "2.5 (stable)"
 RESPONSE_VARIABLES = [f"Response_{i}" for i in range(1, 9)]
 cloud_variable_length_limit = 256
 FAIL = 0
@@ -20,7 +20,7 @@ SUCCESS = 1
 
 class CloudRequests:
     def __init__(self, project_id, client_username, csrf_token, session_id, token, handle_all_errors,
-                 print_logs, default=" "):
+                 print_logs, online_ide, session, default=" "):
         print(f"[33m[1mScratchConnect [36mCloudRequests [37m- [35mv{VERSION}[3m[0m")
         self.t = None
         self.run_thread = False
@@ -31,14 +31,13 @@ class CloudRequests:
         self.print_logs = print_logs
         self.default = default
         self.max_tries = 3
-        self.cloud = CloudConnection(project_id=project_id,
-                                     client_username=client_username,
-                                     csrf_token=csrf_token,
-                                     session_id=session_id, token=token)
+        self.session = session
+        self.cloud = CloudConnection(project_id=project_id, client_username=client_username, csrf_token=csrf_token,
+                                     session_id=session_id, token=token, online_ide=online_ide, session=self.session)
         self._REQUESTS = []
         self._request = {}
 
-    def request(self, req_name):
+    def request(self, req_name: str):
         """
         Decorator
         """
@@ -48,7 +47,7 @@ class CloudRequests:
 
         return wrapper
 
-    def event(self, n):
+    def event(self, n: str):
         """
         Decorator
         """
@@ -336,13 +335,13 @@ class CloudRequests:
             result.append("")
         return result
 
-    def get_request_info(self):
+    def get_request_info(self) -> dict:
         """
         Get the request info
         """
         return self._request
 
-    def start(self, update_time=1):
+    def start(self, update_time: int = 1) -> None:
         """
         Start the events loop
         :param update_time: The update time
@@ -352,7 +351,7 @@ class CloudRequests:
         self.t.start()
         self.emit("connect", t="event")
 
-    def stop(self):
+    def stop(self) -> None:
         """
         Stop the events loop
         """

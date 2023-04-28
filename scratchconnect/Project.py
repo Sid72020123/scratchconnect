@@ -2,14 +2,16 @@
 The Project File
 """
 import json
+
 import requests
+from requests.models import Response
 
 from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect import CloudConnection
 from scratchconnect import TurbowarpCloudConnection
-from scratchconnect import scCloudStorage
 from scratchconnect import scCloudRequests
 from scratchconnect import Exceptions
+from scratchconnect import Warnings
 
 _website = "scratch.mit.edu"
 _login = f"https://{_website}/login/"
@@ -18,7 +20,7 @@ _project = f"https://{_api}/projects/"
 
 
 class Project:
-    def __init__(self, id, client_username, headers, unshared, logged_in, session_id, online_ide):
+    def __init__(self, id, client_username, session, unshared, logged_in, session_id, online_ide):
         """
         The Project Class
         :param id: The project ID
@@ -26,29 +28,27 @@ class Project:
         self.access_unshared = unshared
         self.project_id = str(id)
         self.client_username = client_username
-        self.csrf_token = headers["x-csrftoken"]
+        self.session = session
+        self.csrf_token = self.session.headers["x-csrftoken"]
         self.session_id = session_id
-        self.token = headers["X-Token"]
-        self.headers = headers
+        self.token = self.session.headers["X-Token"]
         self._logged_in = logged_in
         self.json_headers = {
             "x-csrftoken": self.csrf_token,
             "X-Token": self.token,
             "x-requested-with": "XMLHttpRequest",
-            "Cookie": "scratchcsrftoken="
-                      + self.csrf_token
-                      + ";scratchlanguage=en;scratchsessionsid="
-                      + self.session_id
-                      + ";",
-            "referer": "https://scratch.mit.edu/projects/" + str(self.project_id) + "/",
+            "Cookie": f"scratchcsrftoken={self.csrf_token};scratchlanguage=en;scratchsessionsid={self.session_id};",
+            "referer": f"https://scratch.mit.edu/projects/{self.project_id}/",
             "accept": "application/json",
             "Content-Type": "application/json",
+            "origin": f"https://{_website}"
         }
         if online_ide:
             _change_request_url()
+        self.online_ide = online_ide
         self.update_data()
 
-    def update_data(self):
+    def update_data(self) -> None:
         self.project_author = None
         self.project_title = None
         self.project_notes = None
@@ -63,7 +63,7 @@ class Project:
         self.project_thubmnail_url = None
         self.project_token = None
 
-        data = requests.get(f"https://api.scratch.mit.edu/projects/{self.project_id}").json()
+        data = self.session.get(f"{_project}{self.project_id}").json()
         try:
             self.project_id = data["id"]
         except KeyError:
@@ -87,13 +87,13 @@ class Project:
             self.project_thubmnail_url = data["images"]
             self.project_token = data["project_token"]
 
-    def id(self):
+    def id(self) -> int:
         """
         Returns the project ID
         """
         return self.project_id
 
-    def author(self):
+    def author(self) -> dict:
         """
         Returns the author of the project
         """
@@ -101,7 +101,7 @@ class Project:
             self.update_data()
         return self.project_author
 
-    def title(self):
+    def title(self) -> str:
         """
         Returns the title of the project
         """
@@ -109,7 +109,7 @@ class Project:
             self.update_data()
         return self.project_title
 
-    def notes(self):
+    def notes(self) -> str:
         """
         Returns the notes(Notes or Credits) of the project
         """
@@ -117,7 +117,7 @@ class Project:
             self.update_data()
         return self.project_notes
 
-    def instructions(self):
+    def instructions(self) -> str:
         """
         Returns the instructions of the project
         """
@@ -125,7 +125,7 @@ class Project:
             self.update_data()
         return self.project_instructions
 
-    def are_comments_allowed(self):
+    def are_comments_allowed(self) -> bool:
         """
         Returns whether the comments are allowed in a project
         """
@@ -133,7 +133,7 @@ class Project:
             self.update_data()
         return self.project_are_comments_allowed
 
-    def stats(self):
+    def stats(self) -> dict:
         """
         Returns the stats of a project
         """
@@ -141,7 +141,7 @@ class Project:
             self.update_data()
         return self.project_stats
 
-    def history(self):
+    def history(self) -> dict:
         """
         Returns the history of a project
         """
@@ -149,7 +149,7 @@ class Project:
             self.update_data()
         return self.project_history
 
-    def remix_data(self):
+    def remix_data(self) -> dict:
         """
         Returns the remix data of a project
         """
@@ -157,7 +157,7 @@ class Project:
             self.update_data()
         return self.project_remix_data
 
-    def visibility(self):
+    def visibility(self) -> str:
         """
         Returns whether the project is visible
         """
@@ -165,7 +165,7 @@ class Project:
             self.update_data()
         return self.project_visibility
 
-    def is_public(self):
+    def is_public(self) -> bool:
         """
         Returns whether the project is public
         """
@@ -173,7 +173,7 @@ class Project:
             self.update_data()
         return self.project_is_public
 
-    def is_published(self):
+    def is_published(self) -> bool:
         """
         Returns whether the project is published
         """
@@ -181,7 +181,7 @@ class Project:
             self.update_data()
         return self.project_is_public
 
-    def thumbnail_url(self):
+    def thumbnail_url(self) -> dict:
         """
         Returns the thumbnail url of a project
         """
@@ -189,51 +189,45 @@ class Project:
             self.update_data()
         return self.project_thubmnail_url
 
-    def assets_info(self):
+    def assets_info(self) -> dict:
         """
         Returns the Assets info of a project
         """
         return requests.get(f"https://scratchdb.lefty.one/v3/project/info/{self.project_id}").json()[
             "metadata"]
 
-    def scripts(self):
+    def scripts(self) -> dict:
         """
         Returns the scripts of a project
         """
-        return requests.get(f"https://projects.scratch.mit.edu/{self.project_id}?token={self.project_token}").json()
+        return self.session.get(f"https://projects.scratch.mit.edu/{self.project_id}?token={self.project_token}").json()
 
-    def love(self):
+    def love(self) -> dict:
         """
         Love a project
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.post(
-            f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/loves/user/{self.client_username}",
-            headers=self.headers,
-        ).json()
+        return self.session.post(
+            f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/loves/user/{self.client_username}").json()
 
-    def unlove(self):
+    def unlove(self) -> dict:
         """
         UnLove a project
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.delete(
-            f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/loves/user/{self.client_username}",
-            headers=self.headers,
-        ).json()
+        return self.session.delete(
+            f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/loves/user/{self.client_username}").json()
 
-    def favourite(self):
+    def favourite(self) -> dict:
         """
         Favourite a project
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.post(
-            f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/favorites/user/{self.client_username}",
-            headers=self.headers,
-        ).json()
+        return self.session.post(
+            f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/favorites/user/{self.client_username}").json()
 
     def unfavourite(self):
         """
@@ -241,12 +235,10 @@ class Project:
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.delete(
-            f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/favorites/user/{self.client_username}",
-            headers=self.headers,
-        ).json()
+        return self.session.delete(
+            f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/favorites/user/{self.client_username}").json()
 
-    def comments(self, all=False, limit=20, offset=0, comment_id=None):
+    def comments(self, all: bool = False, limit: int = 20, offset: int = 0, comment_id: int = None) -> list:
         """
         Returns the list of comments of a project
         :param all: True if you want all
@@ -261,25 +253,34 @@ class Project:
             offset = 40
             limit = 40
             while True:
-                response = requests.get(
-                    f"https://api.scratch.mit.edu/users/{self.project_author['username']}/projects/{str(self.project_id)}/comments/?limit={limit}&offset={offset}"
-                ).json()
+                response = self.session.get(
+                    f"https://api.scratch.mit.edu/users/{self.project_author['username']}/projects/{self.project_id}/comments/?limit={limit}&offset={offset}").json()
                 if len(response) != 40:
                     break
                 offset += 40
             comments.append(response)
         if not all:
-            comments.append(requests.get(
-                f"https://api.scratch.mit.edu/users/{self.project_author['username']}/projects/{str(self.project_id)}/comments/?limit={limit}&offset={offset}"
+            comments.append(self.session.get(
+                f"https://api.scratch.mit.edu/users/{self.project_author['username']}/projects/{self.project_id}/comments/?limit={limit}&offset={offset}"
             ).json())
         if comment_id is not None:
             comments = []
-            comments.append(requests.get(
-                f"https://api.scratch.mit.edu/users/{self.project_author['username']}/projects/{str(self.project_id)}/comments/{comment_id}"
+            comments.append(self.session.get(
+                f"https://api.scratch.mit.edu/users/{self.project_author['username']}/projects/{self.project_id}/comments/{comment_id}"
             ).json())
         return comments
 
-    def remixes(self, all=False, limit=20, offset=0):
+    def comment_replies(self, comment_id: int, limit: int = 20, offset: int = 0) -> list:
+        """
+        Get the replies of the comment
+        :param comment_id: ID of the comment
+        :param limit: The limit (max: 40)
+        :param offset: The number of replies to skip from the beginning
+        """
+        return self.session.get(
+            f"https://api.scratch.mit.edu/users/{self.project_author['username']}/projects/{self.project_id}/comments/{comment_id}/replies?limit={limit}&offset={offset}").json()
+
+    def remixes(self, all: bool = False, limit: int = 20, offset: int = 0) -> list:
         """
         Returns the list of remixes of a project
         :param all: True if you want all
@@ -290,18 +291,18 @@ class Project:
         if all:
             offset = 0
             while True:
-                response = requests.get(
+                response = self.session.get(
                     f"https://api.scratch.mit.edu/projects/{self.project_id}/remixes/?limit=40&offset={offset}").json()
                 projects += response
                 if len(response) != 40:
                     break
                 offset += 40
         else:
-            projects.append(requests.get(
+            projects.append(self.session.get(
                 f"https://api.scratch.mit.edu/projects/{self.project_id}/remixes/?limit={limit}&offset={offset}").json())
         return projects
 
-    def post_comment(self, content, parent_id="", commentee_id=""):
+    def post_comment(self, content: str, parent_id: int = "", commentee_id: int = "") -> Response:
         """
         Post a comment
         :param content: The comment or the content
@@ -313,13 +314,10 @@ class Project:
             "content": content,
             "parent_id": parent_id,
         }
-        return requests.post(
-            "https://api.scratch.mit.edu/proxy/comments/project/" + str(self.project_id) + "/",
-            headers=self.json_headers,
-            data=json.dumps(data),
-        )
+        return self.session.post(f"https://api.scratch.mit.edu/proxy/comments/project/{self.project_id}/",
+                                 data=json.dumps(data), headers=self.json_headers)
 
-    def reply_comment(self, content, comment_id):
+    def reply_comment(self, content: str, comment_id: int) -> Response:
         """
         Reply a comment
         :param content: The content
@@ -329,7 +327,7 @@ class Project:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return self.post_comment(content=content, parent_id=comment_id)
 
-    def toggle_commenting(self):
+    def toggle_commenting(self) -> dict:
         """
         Toggle the commenting of a project
         """
@@ -338,13 +336,11 @@ class Project:
         if self.author()['username'] != self.client_username:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
-        data = {"comments_allowed": not self.comments_allowed()}
-        return requests.put(f"https://api.scratch.mit.edu/projects/{self.project_id}/",
-                            data=json.dumps(data),
-                            headers=self.json_headers,
-                            ).json()
+        data = {"comments_allowed": not self.are_comments_allowed()}
+        return self.session.put(f"https://api.scratch.mit.edu/projects/{self.project_id}/", data=json.dumps(data),
+                                headers=self.json_headers).json()
 
-    def turn_on_commenting(self):
+    def turn_on_commenting(self) -> dict:
         """
         Turn On the commenting of a project
         """
@@ -354,12 +350,10 @@ class Project:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
         data = {"comments_allowed": True}
-        return requests.put(f"https://api.scratch.mit.edu/projects/{self.project_id}/",
-                            data=json.dumps(data),
-                            headers=self.json_headers,
-                            ).json()
+        return self.session.put(f"https://api.scratch.mit.edu/projects/{self.project_id}/", data=json.dumps(data),
+                                headers=self.json_headers).json()
 
-    def turn_off_commenting(self):
+    def turn_off_commenting(self) -> dict:
         """
         Turn Off the commenting of a project
         """
@@ -369,12 +363,10 @@ class Project:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
         data = {"comments_allowed": False}
-        return requests.put(f"https://api.scratch.mit.edu/projects/{self.project_id}/",
-                            data=json.dumps(data),
-                            headers=self.json_headers,
-                            ).json()
+        return self.session.put(f"https://api.scratch.mit.edu/projects/{self.project_id}/", data=json.dumps(data),
+                                headers=self.json_headers, ).json()
 
-    def report(self, category, reason, image=None):
+    def report(self, category: str, reason: str, image: str = None) -> str:
         """
         Report a project
         :param category: The category
@@ -385,14 +377,12 @@ class Project:
         if self.author()['username'] == self.client_username:
             raise Exceptions.UnauthorizedAction("You can't report your own project!")
         if not image:
-            self.thumbnail_url()
+            image = self.thumbnail_url()
         data = {"notes": reason, "report_category": category, "thumbnail": image}
-        return requests.post(f"https://api.scratch.mit.edu/proxy/comments/project/{self.project_id}/",
-                             data=json.dumps(data),
-                             headers=self.json_headers,
-                             ).text
+        return self.session.post(f"https://api.scratch.mit.edu/proxy/comments/project/{self.project_id}/",
+                                 data=json.dumps(data), headers=self.json_headers).text
 
-    def unshare(self):
+    def unshare(self) -> Response:
         """
         Unshare a project
         """
@@ -401,22 +391,30 @@ class Project:
         if self.author()['username'] != self.client_username:
             raise Exceptions.UnauthorizedAction(
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
-        return requests.put(f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/unshare/",
-                            headers=self.json_headers,
-                            )
+        return self.session.put(f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/unshare/",
+                                headers=self.json_headers)
 
-    def view(self):
+    def share(self) -> Response:
+        """
+        Share a project
+        """
+        Warnings.warn(
+            "[1m[33mScratchConnect Warning: [31mThe 'share()' function doesn't work sometimes because the Scratch server blocks the request returning the status code 503.[0m")
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
+        return self.session.put(f"https://api.scratch.mit.edu/proxy/projects/{self.project_id}/share/",
+                                headers=self.json_headers)
+
+    def view(self) -> Response:
         """
         Just view a project
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.post(
-            f"https://api.scratch.mit.edu/users/{self.client_username}/projects/{self.project_id}/views/",
-            headers=self.headers,
-        )
+        return self.session.post(
+            f"https://api.scratch.mit.edu/users/{self.client_username}/projects/{self.project_id}/views/")
 
-    def set_thumbnail(self, file):
+    def set_thumbnail(self, file: str) -> Response:
         """
         Set the thumbnail of a project
         :param file: The location of the file
@@ -428,36 +426,30 @@ class Project:
                 f"You are not allowed to do that because you are not the owner of the project with ID - '{self.project_id}'!")
         with open(file, "rb") as f:
             image = f.read()
-        return requests.post(f"https://scratch.mit.edu/internalapi/project/thumbnail/{self.project_id}/set/",
-                             data=image,
-                             headers=self.headers,
-                             )
+        return self.session.post(f"https://scratch.mit.edu/internalapi/project/thumbnail/{self.project_id}/set/",
+                                 data=image)
 
-    def delete_comment(self, comment_id):
+    def delete_comment(self, comment_id: int) -> Response:
         """
         Delete a comment
         :param comment_id: Comment ID
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.delete(
-            f"https://api.scratch.mit.edu/proxy/comments/project/{self.project_id}/comment/{comment_id}",
-            headers=self.headers,
-        )
+        return self.session.delete(
+            f"https://api.scratch.mit.edu/proxy/comments/project/{self.project_id}/comment/{comment_id}")
 
-    def report_comment(self, comment_id):
+    def report_comment(self, comment_id: int) -> Response:
         """
         Report a comment
         :param comment_id: Comment ID
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.delete(
-            f"https://api.scratch.mit.edu/proxy/comments/project/{self.project_id}/comment/{comment_id}/report",
-            headers=self.headers,
-        )
+        return self.session.delete(
+            f"https://api.scratch.mit.edu/proxy/comments/project/{self.project_id}/comment/{comment_id}/report")
 
-    def set_title(self, title):
+    def set_title(self, title: str) -> dict:
         """
         Set the title of the project
         :param title: The title
@@ -465,9 +457,9 @@ class Project:
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         data = {'title': title}
-        return requests.put(f"{_project}{self.project_id}", data=json.dumps(data), headers=self.json_headers).json()
+        return self.session.put(f"{_project}{self.project_id}", data=json.dumps(data), headers=self.json_headers).json()
 
-    def set_description(self, description):
+    def set_description(self, description: str) -> dict:
         """
         Set the description of the project
         :param description: The description
@@ -475,9 +467,9 @@ class Project:
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         data = {'description': description}
-        return requests.put(f"{_project}{self.project_id}", data=json.dumps(data), headers=self.json_headers).json()
+        return self.session.put(f"{_project}{self.project_id}", data=json.dumps(data), headers=self.json_headers).json()
 
-    def set_instruction(self, instruction):
+    def set_instruction(self, instruction: str) -> dict:
         """
         Set the instruction of the project
         :param instruction: The instruction
@@ -485,9 +477,25 @@ class Project:
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         data = {'instructions': instruction}
-        return requests.put(f"{_project}{self.project_id}", data=json.dumps(data), headers=self.json_headers).json()
+        return self.session.put(f"{_project}{self.project_id}", data=json.dumps(data), headers=self.json_headers).json()
 
-    def connect_cloud_variables(self):
+    def remix_project(self, title: str) -> dict:
+        """
+        Remix the project
+        :param title: The title of the remixed project
+        """
+        Warnings.warn(
+            "[1m[33mScratchConnect Warning: [31mThe 'remix_project()' function doesn't work sometimes because the Scratch server blocks the request returning the status code 503.[0m")
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
+        if self.access_unshared:
+            raise Exceptions.UnauthorizedAction(
+                "Cannot perform the action because the project as is accessed as an unshared project.")
+        return self.session.post(
+            f"https://projects.scratch.mit.edu/?is_remix=1&original_id={self.id()}&title={title}",
+            data=json.dumps(self.scripts()), headers={"origin": f"https://{_website}"})
+
+    def connect_cloud_variables(self) -> CloudConnection.CloudConnection:
         """
         Connect the cloud variables of the project
         """
@@ -495,9 +503,10 @@ class Project:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return CloudConnection.CloudConnection(project_id=self.project_id, client_username=self.client_username,
                                                csrf_token=self.csrf_token,
-                                               session_id=self.session_id, token=self.token)
+                                               session_id=self.session_id, token=self.token, session=self.session,
+                                               online_ide=self.online_ide)
 
-    def connect_turbowarp_cloud(self, username=None):
+    def connect_turbowarp_cloud(self, username: str = None) -> TurbowarpCloudConnection.TurbowarpCloudConnection:
         """
         Connect the cloud variables of the project
         """
@@ -506,21 +515,15 @@ class Project:
         return TurbowarpCloudConnection.TurbowarpCloudConnection(project_id=self.project_id,
                                                                  username=username)
 
-    def create_cloud_storage(self, file_name="data", rewrite_file=True, edit_access=None, all_access=False):
+    def create_cloud_storage(self):
         """
         Create a Cloud Database/Storage in a project
         """
-        if self._logged_in is False:
-            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        if edit_access is None:
-            edit_access = []
-        return scCloudStorage.CloudStorage(file_name=file_name, rewrite_file=rewrite_file, project_id=self.project_id,
-                                           client_username=self.client_username,
-                                           csrf_token=self.csrf_token,
-                                           session_id=self.session_id, token=self.token, edit_access=edit_access,
-                                           all_access=all_access)
+        Warnings.warn(
+            "[1m[33mScratchConnect Warning: [31mThe Cloud Storage feature is deprecated since the v5.0 of the library. Please use the new alternative Cloud Requests feature instead![0m")
 
-    def create_cloud_requests(self, handle_all_errors=True, print_logs=True):
+    def create_cloud_requests(self, handle_all_errors: bool = True,
+                              print_logs: bool = True) -> scCloudRequests.CloudRequests:
         """
         Create a Cloud Database/Storage in a project
         """
@@ -530,9 +533,10 @@ class Project:
                                              client_username=self.client_username,
                                              csrf_token=self.csrf_token,
                                              session_id=self.session_id, token=self.token,
-                                             handle_all_errors=handle_all_errors, print_logs=print_logs)
+                                             handle_all_errors=handle_all_errors, print_logs=print_logs,
+                                             session=self.session, online_ide=self.online_ide)
 
-    def all_data(self):
+    def all_data(self) -> dict:
         """
         Returns all the data of a Scratch Project
         """

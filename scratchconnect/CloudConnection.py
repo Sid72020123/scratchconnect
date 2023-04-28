@@ -3,12 +3,13 @@ The Cloud Variables File.
 Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Encode/Decode Engine!
 """
 import json
-import requests
+import requests  # Needed to change the URL of the request while using the online IDE
 from ssl import SSLEOFError, SSLError
 import websocket
 import time
 from threading import Thread
 
+from scratchconnect.scOnlineIDE import _change_request_url
 from scratchconnect import Exceptions
 from scratchconnect.scEncoder import Encoder
 from scratchconnect.scCloudEvents import CloudEvents
@@ -19,7 +20,7 @@ _api = f"api.{_website}"
 
 
 class CloudConnection:
-    def __init__(self, project_id, client_username, csrf_token, session_id, token):
+    def __init__(self, project_id, client_username, csrf_token, session_id, token, session, online_ide):
         """
         Main class to connect cloud variables
         """
@@ -28,15 +29,12 @@ class CloudConnection:
         self.csrf_token = csrf_token
         self.session_id = session_id
         self.token = token
+        self.session = session
         self.headers = {
             "x-csrftoken": self.csrf_token,
             "X-Token": self.token,
             "x-requested-with": "XMLHttpRequest",
-            "Cookie": "scratchcsrftoken="
-                      + self.csrf_token
-                      + ";scratchlanguage=en;scratchsessionsid="
-                      + self.session_id
-                      + ";",
+            "Cookie": f"scratchcsrftoken={self.csrf_token};scratchlanguage=en;scratchsessionsid={self.session_id};",
             "referer": "https://scratch.mit.edu/projects/" + self.project_id + "/",
         }
 
@@ -44,26 +42,27 @@ class CloudConnection:
             "x-csrftoken": self.csrf_token,
             "X-Token": self.token,
             "x-requested-with": "XMLHttpRequest",
-            "Cookie": "scratchcsrftoken="
-                      + self.csrf_token
-                      + ";scratchlanguage=en;scratchsessionsid="
-                      + self.session_id
-                      + ";",
+            "Cookie": f"scratchcsrftoken={self.csrf_token};scratchlanguage=en;scratchsessionsid={self.session_id};",
             "referer": "https://scratch.mit.edu/projects/" + str(self.project_id) + "/",
             "accept": "application/json",
             "Content-Type": "application/json",
+            "origin": f"https://{_website}"
         }
+        if online_ide:
+            _change_request_url()
         self._event = CloudEvents("Scratch", self)
         self.encoder = Encoder()
         self._make_connection()
         self._start_ping_thread()
 
-    def get_variable_data(self, limit=100, offset=0):
+    def get_variable_data(self, limit: int = 100, offset: int = 0) -> list[dict]:
         """
         Returns the cloud variable data
         :param limit: The limit
         :param offset: The offset or the number of values you want to skip from the beginning
         """
+        # Session is not required in the request below:
+        # If the session is used, the Scratch API sometimes returns cached results
         response = requests.get(
             f"https://clouddata.scratch.mit.edu/logs?projectid={self.project_id}&limit={limit}&offset={offset}").json()
         data = []
@@ -76,9 +75,9 @@ class CloudConnection:
                          })
         return data
 
-    def get_cloud_variable_value(self, variable_name, limit=100):
+    def get_cloud_variable_value(self, variable_name: str, limit: int = 100) -> list:
         """
-        Returns the cloud variable value
+        Returns the cloud variable value as a list. The first of the list is the latest value
         :param variable_name: The name of the variable
         :param limit: The limit
         """
@@ -139,7 +138,7 @@ class CloudConnection:
         )
         self._event.emit('connect')
 
-    def set_cloud_variable(self, variable_name, value):
+    def set_cloud_variable(self, variable_name: str, value: int | str) -> bool:
         """
         Set a cloud variable
         :param variable_name: Variable name
@@ -170,37 +169,45 @@ class CloudConnection:
             self._make_connection()
             return False
 
-    def encode(self, text, default=" "):
+    def encode(self, text: str, default: str = " ") -> str:
         """
         Encode a text. For example: A -> 1
         Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Engine!
         :param text: The text to encode
+        :param default: The default value to encode when the character found is not accepted by the encoder
         """
         return self.encoder.encode(text, default=default)
 
-    def decode(self, encoded_text):
+    def decode(self, encoded_text: str | int | list) -> str:
         """
         Decode a text. For example: 1 -> A
         Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Engine!
         :param encoded_text: The text to decode
         """
-        return self.encoder.decode(encoded_text)
+        if type(encoded_text) == list:
+            return self.encoder.decode(encoded_text[0])
+        else:
+            return self.encoder.decode(encoded_text)
 
-    def encode_list(self, data, default=" "):
+    def encode_list(self, data: list, default: str = " ") -> str:
         """
         Encode a Python List
-        :param data: The list
+        :param data: The list to encode
+        :param default: The default value to encode when the character found is not accepted by the encoder
         """
         return self.encoder.encode_list(data, default=default)
 
-    def decode_list(self, encoded_data):
+    def decode_list(self, encoded_data: str | int | list) -> list:
         """
         Decode a Python List
         :param encoded_data: The data to be decoded
         """
-        return self.encoder.decode_list(encoded_data)
+        if type(encoded_data) == list:
+            return self.encoder.decode_list(encoded_data[0])
+        else:
+            return self.encoder.decode_list(encoded_data)
 
-    def create_cloud_event(self):
+    def create_cloud_event(self) -> CloudEvents:
         """
         Create a Cloud Event
         """

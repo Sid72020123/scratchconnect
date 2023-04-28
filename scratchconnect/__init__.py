@@ -1,10 +1,10 @@
 __name__ = "scratchconnect"
-__version__ = "4.5.2"
+__version__ = "5.0"
 __author__ = "Siddhesh Chavan"
 __documentation__ = "https://sid72020123.github.io/scratchconnect/"
 __doc__ = f"""
 ScratchConnect is a Python Library to connect Scratch API and much more.
-This library can show the statistics of Users, Projects, Studios, Forums and also connect and set cloud variables of a project!
+This library can show/fetch the statistics of Users, Projects, Studios, Forums and also connect and set cloud variables of a project!
 Import Statement:
     import scratchconnect
 Documentation(Tutorial):
@@ -13,7 +13,6 @@ Required Libraries:
     requests*, re*, json*, time*, traceback*, threading*, urllib*, PIL*, websocket-client
     * -> In-built
 Optional Libraries:
-    pyhtmlchart - For Chart feature
     rich - For Terminal feature
 Change Log:
     View all the change log at: https://github.com/Sid72020123/scratchconnect#change-log

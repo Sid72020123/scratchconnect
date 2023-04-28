@@ -1,0 +1,57 @@
+site_name: ScratchConnect Docs (WIP)
+repo_url: https://github.com/Sid72020123/scratchconnect/
+repo_name: Sid72020123/scratchconnect
+
+nav:
+    - Introduction and Installation: 'index.md'
+    - Getting Started: 'getting_started.md'
+    - Login/Usage in Replit: 'login_in_replit.md'
+    - 'API Reference':
+        - The ScratchConnect class: 'the_scratchconnect_class.md'
+
+theme:
+    name: material
+    icon:
+        repo: fontawesome/brands/github
+    palette:
+        - media: "(prefers-color-scheme: light)"
+          scheme: default
+          primary: amber
+          accent: yellow
+          toggle:
+            icon: material/brightness-7 
+            name: Switch to dark mode
+        - media: "(prefers-color-scheme: dark)"
+          scheme: slate
+          primary: amber
+          accent: yellow
+          toggle:
+            icon: material/brightness-4
+            name: Switch to light mode
+    font:
+        text: Roboto
+        code: Roboto Mono
+    features:
+        - navigation.instant
+        - navigation.expand
+        - navigation.top
+        - navigation.footer
+        - content.code.copy
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Sid72020123/scratchconnect/
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/scratchconnect/
+        
+plugins:
+    - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - toc:
+        permalink: true

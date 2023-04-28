@@ -51,7 +51,7 @@ class TurbowarpCloudConnection:
         )
         self._event.emit('connect')
 
-    def get_variable_data(self):
+    def get_variable_data(self) -> list:
         """
         Returns the cloud variable data
         """
@@ -65,7 +65,7 @@ class TurbowarpCloudConnection:
             return None
         return data
 
-    def get_cloud_variable_value(self, variable_name, limit):
+    def get_cloud_variable_value(self, variable_name: str, limit: int) -> list:
         value = []
         data = self.get_variable_data()
         for d in data:
@@ -73,7 +73,7 @@ class TurbowarpCloudConnection:
                 value.append(d["value"])
         return value[0:limit]
 
-    def set_cloud_variable(self, variable_name, value):
+    def set_cloud_variable(self, variable_name: str, value: int | str) -> bool:
         """
         Set a cloud variable
         :param variable_name: Variable name
@@ -105,15 +105,16 @@ class TurbowarpCloudConnection:
             self._make_connection()
             return False
 
-    def encode(self, text):
+    def encode(self, text: str, default: str = " ") -> str:
         """
         Encode a text. For example: A -> 1
         Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Engine!
         :param text: The text to encode
+        :param default: The default value to encode when the character found is not accepted by the encoder
         """
-        return self.encoder.encode(text)
+        return self.encoder.encode(text, default=default)
 
-    def decode(self, encoded_text):
+    def decode(self, encoded_text: str | int) -> str:
         """
         Decode a text. For example: 1 -> A
         Go to https://scratch.mit.edu/projects/578255313/ for the Scratch Engine!
@@ -121,21 +122,22 @@ class TurbowarpCloudConnection:
         """
         return self.encoder.decode(encoded_text)
 
-    def encode_list(self, data):
+    def encode_list(self, data: list, default: str = " ") -> str:
         """
         Encode a Python List
-        :param data: The list
+        :param data: The list to encode
+        :param default: The default value to encode when the character found is not accepted by the encoder
         """
-        return self.encoder.encode_list(data)
+        return self.encoder.encode_list(data, default=default)
 
-    def decode_list(self, encoded_data):
+    def decode_list(self, encoded_data: str | int) -> list:
         """
         Decode a Python List
         :param encoded_data: The data to be decoded
         """
         return self.encoder.decode_list(encoded_data)
 
-    def create_cloud_event(self):
+    def create_cloud_event(self) -> CloudEvents:
         """
         Create a Cloud Event
         """

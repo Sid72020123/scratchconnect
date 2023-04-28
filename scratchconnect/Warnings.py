@@ -3,5 +3,5 @@ The Warnings File
 """
 
 
-def warn(message):
+def warn(message: str) -> None:
     print(message)

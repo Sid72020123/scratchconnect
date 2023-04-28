@@ -2,6 +2,7 @@
 The Studio File
 """
 import requests
+from requests.models import Response
 import json
 
 import scratchconnect.ScratchConnect
@@ -14,7 +15,7 @@ _api = f"https://api.{_website}"
 
 
 class Studio:
-    def __init__(self, id, client_username, headers, logged_in, online_ide):
+    def __init__(self, id, client_username, session, logged_in, online_ide):
         """
         The Studio Class
         :param id: The ID of the studio
@@ -22,12 +23,13 @@ class Studio:
         self.client_username = client_username
         self._logged_in = logged_in
         self.studio_id = str(id)
-        self.headers = headers
+        self.session = session
+        self.session.headers["referer"] = f"https://scratch.mit.edu/studios/{self.studio_id}"
         if online_ide:
             _change_request_url()
         self.update_data()
 
-    def update_data(self):
+    def update_data(self) -> None:
         """
         Update the studio data
         """
@@ -45,7 +47,7 @@ class Studio:
         self.studio_managers = None
         self.studio_activity = None
 
-        data = requests.get(f"{_api}/studios/{self.studio_id}").json()
+        data = self.session.get(f"{_api}/studios/{self.studio_id}").json()
         try:
             self.studio_id = data["id"]
         except KeyError:
@@ -61,7 +63,7 @@ class Studio:
         self.studio_stats = data["stats"]
         self.studio_thumbnail_url = data["image"]
 
-    def _check_project(self, project_id):
+    def _check_project(self, project_id: int) -> None:
         """
         Don't use this function
         """
@@ -70,7 +72,7 @@ class Studio:
         except KeyError:
             raise Exceptions.InvalidProject(f"The project with ID - '{project_id}' doesn't exist!")
 
-    def _check_username(self, username):
+    def _check_username(self, username) -> None:
         """
         Don't use this function
         """
@@ -79,14 +81,14 @@ class Studio:
         except KeyError:
             raise scratchconnect.Exceptions.InvalidUser(f"Username '{username}' doesn't exist!")
 
-    def user_id(self, username):
+    def user_id(self, username) -> int:
         """
         Returns the user ID
         :param username: Username
         """
-        return requests.get(f"{_api}/users/{username}").json()["id"]
+        return self.session.get(f"{_api}/users/{username}").json()["id"]
 
-    def id(self):
+    def id(self) -> int:
         """
         Returns the studio ID
         """
@@ -94,7 +96,7 @@ class Studio:
             self.update_data()
         return self.studio_id
 
-    def title(self):
+    def title(self) -> str:
         """
         Returns the studio title
         """
@@ -102,7 +104,7 @@ class Studio:
             self.update_data()
         return self.studio_title
 
-    def host_id(self):
+    def host_id(self) -> int:
         """
         Returns the studio owner/host ID
         """
@@ -110,7 +112,7 @@ class Studio:
             self.update_data()
         return self.studio_owner
 
-    def description(self):
+    def description(self) -> str:
         """
         Returns the studio description
         """
@@ -118,7 +120,7 @@ class Studio:
             self.update_data()
         return self.studio_description
 
-    def visibility(self):
+    def visibility(self) -> str:
         """
         Returns the studio visibility
         """
@@ -126,7 +128,7 @@ class Studio:
             self.update_data()
         return self.studio_visibility
 
-    def is_public(self):
+    def is_public(self) -> bool:
         """
         Returns whether a studio is public
         """
@@ -134,7 +136,7 @@ class Studio:
             self.update_data()
         return self.studio_is_public
 
-    def is_open_to_all(self):
+    def is_open_to_all(self) -> bool:
         """
         Returns whether a studio is open to all
         """
@@ -142,7 +144,7 @@ class Studio:
             self.update_data()
         return self.studio_is_open_to_all
 
-    def are_comments_allowed(self):
+    def are_comments_allowed(self) -> bool:
         """
         Returns whether a studio has comments allowed
         """
@@ -150,7 +152,7 @@ class Studio:
             self.update_data()
         return self.studio_are_comments_allowed
 
-    def history(self):
+    def history(self) -> dict:
         """
         Returns the history of the studio
         """
@@ -158,7 +160,7 @@ class Studio:
             self.update_data()
         return self.studio_history
 
-    def stats(self):
+    def stats(self) -> dict:
         """
         Returns the stats of the studio
         """
@@ -166,7 +168,7 @@ class Studio:
             self.update_data()
         return self.studio_stats
 
-    def thumbnail_url(self):
+    def thumbnail_url(self) -> str:
         """
         Returns the thumbnail URL of the studio
         """
@@ -174,7 +176,7 @@ class Studio:
             self.update_data()
         return self.studio_thumbnail_url
 
-    def add_project(self, project_id):
+    def add_project(self, project_id) -> dict:
         """
         Add a project to a studio
         :param project_id: The project ID
@@ -182,13 +184,11 @@ class Studio:
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_project(project_id)
-        headers = self.headers
-        headers["referer"] = f"https://scratch.mit.edu/projects/{project_id}/"
-        return requests.post(f"https://api.scratch.mit.edu/studios/{self.studio_id}/project/{project_id}/",
-                             headers=headers,
-                             ).json()
+        headers = {"referer": f"https://scratch.mit.edu/projects/{project_id}/"}
+        return self.session.post(f"https://api.scratch.mit.edu/studios/{self.studio_id}/project/{project_id}/",
+                                 headers=headers).json()
 
-    def remove_project(self, project_id):
+    def remove_project(self, project_id) -> dict:
         """
         Remove a project from a studio
         :param project_id: The project ID
@@ -196,96 +196,75 @@ class Studio:
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_project(project_id)
-        headers = self.headers
-        headers["referer"] = f"https://scratch.mit.edu/projects/{project_id}/"
-        return requests.post(
-            "https://api.scratch.mit.edu/studios/"
-            + str(self.studio_id)
-            + "/project/"
-            + str(project_id)
-            + "/",
-            headers=headers,
-        ).json()
+        headers = {"referer": f"https://scratch.mit.edu/projects/{project_id}/"}
+        return self.session.post(f"https://api.scratch.mit.edu/studios/{self.studio_id}/project/{project_id}/",
+                                 headers=headers).json()
 
-    def open_to_public(self):
+    def open_to_public(self) -> dict:
         """
         Open the studio to public
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.put(
-            f"https://scratch.mit.edu/site-api/galleries/{self.studio_id}/mark/open/",
-            headers=self.headers,
-        ).json()
+        return self.session.put(
+            f"https://scratch.mit.edu/site-api/galleries/{self.studio_id}/mark/open/").json()
 
-    def close_to_public(self):
+    def close_to_public(self) -> dict:
         """
         Close the studio to public
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return requests.put(
-            f"https://scratch.mit.edu/site-api/galleries/{self.studio_id}/mark/closed/",
-            headers=self.headers,
-        ).json()
+            f"https://scratch.mit.edu/site-api/galleries/{self.studio_id}/mark/closed/").json()
 
-    def follow_studio(self):
+    def follow_studio(self) -> dict:
         """
         Follow the studio
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.put(
-            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.studio_id}/add/?usernames={self.client_username}",
-            headers=self.headers,
-        ).json()
+        return self.session.put(
+            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.studio_id}/add/?usernames={self.client_username}").json()
 
-    def unfollow_studio(self):
+    def unfollow_studio(self) -> dict:
         """
         UnFollow the studio
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        return requests.put(
-            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.studio_id}/remove/?usernames={self.client_username}",
-            headers=self.headers,
-        ).json()
+        return self.session.put(
+            f"https://scratch.mit.edu/site-api/users/bookmarkers/{self.studio_id}/remove/?usernames={self.client_username}").json()
 
-    def toggle_commenting(self):
+    def toggle_commenting(self) -> str:
         """
         Toggle the commenting of the studio
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        headers = self.headers
-        headers["referer"] = (
-            f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"
-        )
-        return requests.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.studio_id}/toggle-comments/",
-                             headers=headers,
-                             ).text
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"}
+        return self.session.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.studio_id}/toggle-comments/",
+                                 headers=headers).text
 
-    def post_comment(self, content, parent_id="", commentee_id=""):
+    def post_comment(self, content: str, parent_id: int = "", commentee_id: int = "") -> Response:
         """
         Post comment in the studio
         :param content: The comment
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"
-                              )
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"}
         data = {
             "commentee_id": commentee_id,
             "content": content,
             "parent_id": parent_id,
         }
-        return requests.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.studio_id}/add/",
-                             headers=headers,
-                             data=json.dumps(data),
-                             )
+        return self.session.post(f"https://scratch.mit.edu/site-api/comments/gallery/{self.studio_id}/add/",
+                                 headers=headers,
+                                 data=json.dumps(data)
+                                 )
 
-    def reply_comment(self, content, comment_id):
+    def reply_comment(self, content: str, comment_id: int) -> Response:
         """
         Reply a comment
         :param content: The content
@@ -295,37 +274,31 @@ class Studio:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         return self.post_comment(content=content, parent_id=comment_id)
 
-    def delete_comment(self, comment_id):
+    def delete_comment(self, comment_id: int) -> Response:
         """
         Delete comment in the studio
         :param comment_id: The comment ID
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/comments/")
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"}
         data = {"id": comment_id}
-        return requests.post(f"https://scratch.mit.edu/site-api/comments/user/{self.client_username}/del/",
-                             headers=headers,
-                             data=json.dumps(data),
-                             )
+        return self.session.post(f"https://scratch.mit.edu/site-api/comments/user/{self.client_username}/del/",
+                                 headers=headers, data=json.dumps(data))
 
-    def report_comment(self, comment_id):
+    def report_comment(self, comment_id: int) -> Response:
         """
         Report comment in the studio
         :param comment_id: The comment ID
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/comments/")
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/comments/"}
         data = {"id": comment_id}
-        return requests.post(f"https://scratch.mit.edu/site-api/comments/user/{self.client_username}/rep/",
-                             headers=headers,
-                             data=json.dumps(data),
-                             )
+        return self.session.post(f"https://scratch.mit.edu/site-api/comments/user/{self.client_username}/rep/",
+                                 headers=headers, data=json.dumps(data))
 
-    def invite_curator(self, username):
+    def invite_curator(self, username: str) -> Response:
         """
         Invite a user to the studio
         :param username: The Username
@@ -333,27 +306,36 @@ class Studio:
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_username(username)
-        headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/curators/")
-        return requests.put(
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/curators/"}
+        return self.session.put(
             f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/invite_curator/?usernames={username}",
-            headers=headers,
-        )
+            headers=headers)
 
-    def accept_curator(self):
+    def remove_curator(self, username: str) -> Response:
+        """
+        Remove a user from the studio
+        :param username: The Username
+        """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
+        self._check_username(username)
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/curators/"}
+        return self.session.put(
+            f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/remove/?usernames={username}",
+            headers=headers)
+
+    def accept_curator(self) -> Response:
         """
         Accept the curator invitation in a studio
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        headers = self.headers
-        headers["referer"] = (f"https://scratch.mit.edu/studios/{self.studio_id}/curators/")
-        return requests.put(
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/curators/"}
+        return self.session.put(
             f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/add/?usernames={self.client_username}",
-            headers=headers,
-        )
+            headers=headers)
 
-    def promote_curator(self, username):
+    def promote_curator(self, username: str) -> Response:
         """
         Promote a user in the studio
         :param username: The Username
@@ -361,42 +343,34 @@ class Studio:
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_username(username)
-        headers = self.headers
-        headers["referer"] = (
-                "https://scratch.mit.edu/studios/" + str(self.studio_id) + "/curators/"
-        )
-        return requests.put(
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/curators/"}
+        return self.session.put(
             f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/promote/?usernames={username}",
-            headers=headers,
-        )
+            headers=headers)
 
-    def set_description(self, content):
+    def set_description(self, content: str) -> dict:
         """
         Set the description of a Studio
         :param content: The description or content
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        data = {"description": content}
-        return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
-                            headers=self.headers,
-                            data=json.dumps(data),
-                            ).json()
+        data = json.dumps({"description": content})
+        return self.session.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
+                                data=data).json()
 
-    def set_title(self, content):
+    def set_title(self, content: str) -> dict:
         """
         Set the title of a Studio
         :param content: The title or content
         """
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
-        data = {"title": content}
-        return requests.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
-                            headers=self.headers,
-                            data=json.dumps(data),
-                            ).json()
+        data = json.dumps({"title": content})
+        return self.session.put(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}/",
+                                data=data).json()
 
-    def projects(self, all=False, limit=20, offset=0):
+    def projects(self, all: bool = False, limit: int = 20, offset: int = 0) -> list:
         """
         Get the projects of the studio
         :param all: If you want all the projects then set it to True
@@ -409,19 +383,19 @@ class Studio:
                 limit = 40
                 offset = 0
                 while True:
-                    response = json.loads(requests.get(
-                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/projects/?limit={limit}&offset={offset}").text)
+                    response = self.session.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/projects/?limit={limit}&offset={offset}").json()
                     projects.append(response)
                     offset += 40
                     if len(response) != 40:
                         break
             if not all:
-                projects.append(json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/projects/?limit={limit}&offset={offset}").text))
+                projects.append(self.session.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/projects/?limit={limit}&offset={offset}").json())
             self.studio_projects = projects
         return self.studio_projects
 
-    def comments(self, all=False, limit=20, offset=0):
+    def comments(self, all: bool = False, limit: int = 20, offset: int = 0) -> list:
         """
         Get the comments of the studio
         :param all: If you want all the comments then set it to True
@@ -434,19 +408,42 @@ class Studio:
                 limit = 40
                 offset = 0
                 while True:
-                    response = json.loads(requests.get(
-                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/comments/?limit={limit}&offset={offset}").text)
+                    response = self.session.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/comments/?limit={limit}&offset={offset}").json()
                     comments.append(response)
                     offset += 40
                     if len(response) != 40:
                         break
             if not all:
-                comments.append(json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/comments/?limit={limit}&offset={offset}").text))
+                comments.append(self.session.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/comments/?limit={limit}&offset={offset}").json())
             self.studio_comments = comments
         return self.studio_comments
 
-    def curators(self, all=False, limit=20, offset=0):
+    def comment_replies(self, comment_id: int, limit: int = 20, offset: int = 0) -> list:
+        """
+        Get the comment replies from the comment ID
+        :param comment_id: The comment ID
+        :param limit: The limit (max: 40)
+        :param offset: The offset or the number of replies to skip from the beginning
+        """
+        return self.session.get(
+            f"https://api.scratch.mit.edu/studios/{self.studio_id}/comments/{comment_id}/replies?limit={limit}&offset={offset}").json()
+
+    # Doesn't work :/
+    # def set_thumbnail(self, image_path: str) -> Response:
+    #     """
+    #     Set the thumbnail of the Studio
+    #     :param image_path: The path of the image
+    #     """
+    #     if self._logged_in is False:
+    #         raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
+    #     with open(image_path, "rb") as f:
+    #         image = f.read()
+    #     return self.session.post(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}",
+    #                              data=image)
+
+    def curators(self, all: bool = False, limit: int = 20, offset: int = 0) -> list:
         """
         Get the curators of the studio
         :param all: If you want all the curators then set it to True
@@ -459,19 +456,19 @@ class Studio:
                 limit = 40
                 offset = 0
                 while True:
-                    response = json.loads(requests.get(
-                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/curators/?limit={limit}&offset={offset}").text)
+                    response = self.session.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/curators/?limit={limit}&offset={offset}").json()
                     curators.append(response)
                     offset += 40
                     if len(response) != 40:
                         break
             if not all:
-                curators.append(json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/curators/?limit={limit}&offset={offset}").text))
+                curators.append(self.session.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/curators/?limit={limit}&offset={offset}").json())
             self.studio_curators = curators
         return self.studio_curators
 
-    def managers(self, all=False, limit=20, offset=0):
+    def managers(self, all: bool = False, limit: int = 20, offset: int = 0) -> list:
         """
         Get the managers of the studio
         :param all: If you want all the managers then set it to True
@@ -484,19 +481,19 @@ class Studio:
                 limit = 40
                 offset = 0
                 while True:
-                    response = json.loads(requests.get(
-                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/managers/?limit={limit}&offset={offset}").text)
+                    response = self.session.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/managers/?limit={limit}&offset={offset}").json()
                     managers.append(response)
                     offset += 40
                     if len(response) != 40:
                         break
             if not all:
-                managers.append(json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/managers/?limit={limit}&offset={offset}").text))
+                managers.append(self.session.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/managers/?limit={limit}&offset={offset}").json())
             self.studio_managers = managers
         return self.studio_managers
 
-    def activity(self, all=False, limit=20, offset=0):
+    def activity(self, all: bool = False, limit: int = 20, offset: int = 0) -> list:
         """
         Get the activity of the studio
         :param all: If you want all the activity then set it to True
@@ -509,19 +506,19 @@ class Studio:
                 limit = 40
                 offset = 0
                 while True:
-                    response = json.loads(requests.get(
-                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/activity/?limit={limit}&offset={offset}").text)
+                    response = self.session.get(
+                        f"https://api.scratch.mit.edu/studios/{self.studio_id}/activity/?limit={limit}&offset={offset}").json()
                     activity.append(response)
                     offset += 40
                     if len(response) != 40:
                         break
             if not all:
-                activity.append(json.loads(requests.get(
-                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/activity/?limit={limit}&offset={offset}").text))
+                activity.append(self.session.get(
+                    f"https://api.scratch.mit.edu/studios/{self.studio_id}/activity/?limit={limit}&offset={offset}").json())
             self.studio_activity = activity
-        return activity
+        return self.studio_activity
 
-    def all_data(self):
+    def all_data(self) -> dict:
         """
         Returns all the data of a Scratch Studio
         """

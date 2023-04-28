@@ -15,6 +15,7 @@ class Image:
         self._image_size = None
         self.image_success = None
         self.name = None
+        self.hex_values = ""
         if online_ide:
             _change_request_url()
 
@@ -26,7 +27,7 @@ class Image:
         code = ("0" * (8 - len(decimal))) + str(decimal)
         return code
 
-    def download_image(self, url, name):
+    def download_image(self, url: str, name: str) -> None:
         """
         Download the image
         """
@@ -39,7 +40,7 @@ class Image:
         except:
             self.image_success = False
 
-    def resize_image(self, size, name, maintain_aspect_ratio=True):
+    def resize_image(self, size: tuple, name: str, maintain_aspect_ratio: bool = True) -> None:
         """
         Resize the given image
         :param size: The size (in tuple format)
@@ -55,7 +56,7 @@ class Image:
             new_image.save(f"{name}.png")
         self.name = name
 
-    def get_user_image(self, query, size=32, name="scImage"):
+    def get_user_image(self, query: str, size: int = 32, name: str = "scImage") -> None:
         """
         Get the image of a user on Scratch
         """
@@ -63,21 +64,21 @@ class Image:
         url = f"https://cdn2.scratch.mit.edu/get_image/user/{user_id}_{size}x{size}.png?v="
         self.download_image(url, name)
 
-    def get_studio_image(self, studio_id, name="scImage"):
+    def get_studio_image(self, studio_id: int, name: str = "scImage") -> None:
         """
         Get the image of a studio on Scratch
         """
         url = f"https://uploads.scratch.mit.edu/get_image/gallery/{studio_id}_170x100.png"
         self.download_image(url, name)
 
-    def get_project_image(self, project_id, size=32, name="scImage"):
+    def get_project_image(self, project_id: str, size: int = 32, name: str = "scImage") -> None:
         """
         Get the image of a project on Scratch
         """
         url = f"https://uploads.scratch.mit.edu/get_image/project/{project_id}_{size}x{size}.png"
         self.download_image(url, name)
 
-    def encode_image(self):
+    def encode_image(self) -> bool | None:
         """
         Encode the image data to numbers. Use the function get_data() to get the encoded data
         """
@@ -113,13 +114,13 @@ class Image:
             print(E)
             return None
 
-    def get_image_data(self):
+    def get_image_data(self) -> str:
         """
         Get the encoded image data
         """
         return self.hex_values
 
-    def get_size(self):
+    def get_size(self) -> tuple:
         """
         Get the size of the image
         """
