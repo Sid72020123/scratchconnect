@@ -1,4 +1,4 @@
-# ScratchConnect v4.5.2
+# ScratchConnect v5.0
 
 Python Library to connect Scratch API and much more.
 
@@ -36,7 +36,7 @@ to [this link](https://packaging.python.org/tutorials/installing-packages/)**
 
 ### Documentation
 
-Documentation is taking a bit longer to make. It will be ready soon...
+WIP docs: https://sid72020123.github.io/scratchconnect/
 
 ### Data Credits:
 
