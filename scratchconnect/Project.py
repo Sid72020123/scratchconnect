@@ -270,6 +270,16 @@ class Project:
             ).json())
         return comments
 
+    def comment_replies(self, comment_id: int, limit: int = 20, offset: int = 0) -> list:
+        """
+        Get the replies of the comment
+        :param comment_id: ID of the comment
+        :param limit: The limit (max: 40)
+        :param offset: The number of replies to skip from the beginning
+        """
+        return self.session.get(
+            f"https://api.scratch.mit.edu/users/{self.project_author['username']}/projects/{self.project_id}/comments/{comment_id}/replies?limit={limit}&offset={offset}").json()
+
     def remixes(self, all: bool = False, limit: int = 20, offset: int = 0) -> list:
         """
         Returns the list of remixes of a project

@@ -481,4 +481,74 @@ Clears the messages (count) of the logged in user and returns the response in `#
 	print(session.clear_messages())
 	```
 
-### WIP...
+### `my_stuff_projects()`
+
+Get the projects in the MyStuff section of the logged in user
+
+**Parameters**
+
+| Name    | Description             | Required | Default Value |
+|---------|-------------------------|----------|---------------|
+| order   | The order               | No       | all           |
+| page    | The page                | No       | 1             |
+| sort_by | Sort by a specific case | No       | `""`          |
+
+??? info "Example"
+	```python
+	import scratchconnect
+
+	session = scratchconnect.ScratchConnect("Username", "Password")
+
+	print(session.my_stuff_projects())
+	```
+
+### `toggle_commenting()`
+
+Toggle the commenting of the profile
+
+??? info "Example"
+	```python
+	import scratchconnect
+
+	session = scratchconnect.ScratchConnect("Username", "Password")
+
+	print(session.toggle_commenting())
+	```
+
+### `follow_user(username)`
+
+Follow a user
+
+**Parameter**
+
+| Name     | Description             | Required | Default Value |
+|----------|-------------------------|----------|---------------|
+| username | The username to follow  | Yes      | -             |
+
+??? info "Example"
+	```python
+	import scratchconnect
+
+	session = scratchconnect.ScratchConnect("Username", "Password")
+
+	print(session.follow_user(username="griffpatch"))
+	```
+
+### `unfollow_user(username)`
+
+UnFollow a user
+
+**Parameter**
+
+| Name     | Description             | Required | Default Value |
+|----------|-------------------------|----------|---------------|
+| username | The username to unfollow| Yes      | -             |
+
+??? info "Example"
+	```python
+	import scratchconnect
+
+	session = scratchconnect.ScratchConnect("Username", "Password")
+
+	print(session.unfollow_user(username="griffpatch"))
+	```

@@ -24,6 +24,7 @@ class Studio:
         self._logged_in = logged_in
         self.studio_id = str(id)
         self.session = session
+        self.session.headers["referer"] = f"https://scratch.mit.edu/studios/{self.studio_id}"
         if online_ide:
             _change_request_url()
         self.update_data()
@@ -310,6 +311,19 @@ class Studio:
             f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/invite_curator/?usernames={username}",
             headers=headers)
 
+    def remove_curator(self, username: str) -> Response:
+        """
+        Remove a user from the studio
+        :param username: The Username
+        """
+        if self._logged_in is False:
+            raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
+        self._check_username(username)
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/curators/"}
+        return self.session.put(
+            f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/remove/?usernames={username}",
+            headers=headers)
+
     def accept_curator(self) -> Response:
         """
         Accept the curator invitation in a studio
@@ -329,7 +343,7 @@ class Studio:
         if self._logged_in is False:
             raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
         self._check_username(username)
-        headers = {"referer": "https://scratch.mit.edu/studios/" + str(self.studio_id) + "/curators/"}
+        headers = {"referer": f"https://scratch.mit.edu/studios/{self.studio_id}/curators/"}
         return self.session.put(
             f"https://scratch.mit.edu/site-api/users/curators-in/{self.studio_id}/promote/?usernames={username}",
             headers=headers)
@@ -405,6 +419,29 @@ class Studio:
                     f"https://api.scratch.mit.edu/studios/{self.studio_id}/comments/?limit={limit}&offset={offset}").json())
             self.studio_comments = comments
         return self.studio_comments
+
+    def comment_replies(self, comment_id: int, limit: int = 20, offset: int = 0) -> list:
+        """
+        Get the comment replies from the comment ID
+        :param comment_id: The comment ID
+        :param limit: The limit (max: 40)
+        :param offset: The offset or the number of replies to skip from the beginning
+        """
+        return self.session.get(
+            f"https://api.scratch.mit.edu/studios/{self.studio_id}/comments/{comment_id}/replies?limit={limit}&offset={offset}").json()
+
+    # Doesn't work :/
+    # def set_thumbnail(self, image_path: str) -> Response:
+    #     """
+    #     Set the thumbnail of the Studio
+    #     :param image_path: The path of the image
+    #     """
+    #     if self._logged_in is False:
+    #         raise Exceptions.UnauthorizedAction("Cannot perform the action because the user is not logged in!")
+    #     with open(image_path, "rb") as f:
+    #         image = f.read()
+    #     return self.session.post(f"https://scratch.mit.edu/site-api/galleries/all/{self.studio_id}",
+    #                              data=image)
 
     def curators(self, all: bool = False, limit: int = 20, offset: int = 0) -> list:
         """
